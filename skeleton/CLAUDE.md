@@ -115,20 +115,25 @@ See `OVERVIEW.md` — the living state document. This CLAUDE.md does not duplica
 
 ---
 
-## THEHUB Vault — metacognition layer
+## The Vault — Layer 4 semantic memory
 
-This hub's vault lives at `~/thehub/vault/` (shared across all this user's hubs). Treat it as the shared memory layer for decisions, people, projects, lessons, and cross-cutting reflection.
+The vault at `~/thehub/vault/` is this user's **semantic memory** — the layer that holds *what things mean*. It is user-scoped (shared across every hub this user owns), not hub-scoped. The same vault is queried by every hub, and entries written from one hub are visible to all of them. This is correct and intentional: semantic knowledge about an entity doesn't care which hub is coordinating work with it, and fragmenting the wikilink graph per-hub would destroy most of its value.
 
 **When to read and write the vault:** see the Session Rituals section above. Vault reads happen at session start; vault writes happen at session end when real work was done. This section covers *what the vault is for* and *what goes where*; Session Rituals covers *when*.
 
-**Canonicality boundary — do NOT use the vault for:**
-- Current operational state → `OVERVIEW.md` (Layer 2)
-- Active tasks, proposals, briefs, reports → `kanban/` YAML files (Layer 2)
-- Agent instructions and operating rules → per-role `CLAUDE.md` files (Layers 1 and 5)
-- Cross-session user preferences → `~/thehub/USER.md` (Layer 3)
+**The retrieval test — procedural or semantic?** Before writing anything anywhere in the hub, ask: *am I looking up mechanics or meaning?*
+- **Mechanics** (how the system behaves, what's currently live, who executes, which rule applies) → procedural layers (Layers 1, 2, 3, 5, 6, 7, 8 depending on what kind of mechanics)
+- **Meaning** (what a thing is abstractly, why a decision was made, what a pattern is called, who a person is as a character) → Layer 4 (this vault)
 
-**The rule:** if it's a THING or an OPERATIONAL FACT, it goes in the systems above. If it's a REFLECTION, a RATIONALE, or CROSS-CUTTING KNOWLEDGE about why/who/what-was-learned, it goes in the vault. *"Would I need this to DO something?"* → other system. *"Would I need this to UNDERSTAND something I'm about to decide?"* → vault.
+**Canonicality boundary — do NOT use the vault for:**
+- Current operational state → `OVERVIEW.md` (Layer 2, procedural)
+- Active tasks, proposals, briefs, reports → `kanban/` YAML files (Layer 2, procedural)
+- Agent instructions and operating rules → per-role `CLAUDE.md` files (Layers 1 and 5, procedural)
+- Cross-hub user preferences and working style → `~/thehub/USER.md` (Layer 3, procedural-about-the-user)
+- Session rituals and schedules → Layer 8 declaration in Layer 1 CLAUDE.md
+
+**A note on the two user-scoped layers.** Both Layer 3 (`USER.md` + `memory/`) and Layer 4 (this vault) are user-scoped. They are not redundant — they hold different memory types. Layer 3 is the user's *procedural* layer (rules, preferences, working style). Layer 4 is the user's *semantic* layer (concepts, lessons, characters, decisions-with-reasoning). A rule goes in Layer 3; a concept goes in Layer 4.
 
 **Obsidian syntax:** when writing or editing any file in the vault, use correct Obsidian Flavored Markdown. Wikilinks as `[[Note Name]]` (filenames unique, no paths), callouts as `> [!type] Title`, properties as YAML frontmatter, embeds as `![[file]]`. Not mandatory for hub-os to work, but strongly recommended — lets the user open the vault in Obsidian for visual graph traversal.
 
-**Background:** this hub is built on hub-os framework v0.2.1 or later (`~/thehub/hub-os/FRAMEWORK.md`). The framework defines 8 layers that every hub exercises. This CLAUDE.md is Layer 1; `OVERVIEW.md` + `kanban/` are Layer 2; `USER.md` + auto-memory are Layer 3; the vault at `~/thehub/vault/` is Layer 4; `ops/` is Layer 5; the never list + credential separation are Layer 6; tools available is Layer 7; session rituals are Layer 8. See `FRAMEWORK.md` for the full spec.
+**Background:** this hub is built on hub-os framework v0.3.0 or later (`~/thehub/hub-os/FRAMEWORK.md`). The framework defines 8 layers that every hub exercises. This CLAUDE.md is Layer 1; `OVERVIEW.md` + `kanban/` are Layer 2; `USER.md` + auto-memory are Layer 3 (user-scoped, procedural); the vault at `~/thehub/vault/` is Layer 4 (user-scoped, semantic); `ops/` is Layer 5; the never list + credential separation are Layer 6; tools available is Layer 7; session rituals are Layer 8. See `FRAMEWORK.md` Section 4.4 for the procedural/semantic framing.

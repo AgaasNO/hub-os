@@ -1,6 +1,6 @@
 # hub-os — Framework for Cognitive-Operational Hubs
 
-*Version 0.2.4 — snapshot extracted from chiefofstaff hub 2026-04-13, reviewed and patched 2026-04-14*
+*Version 0.3.0 — snapshot extracted from chiefofstaff hub 2026-04-13, reviewed and patched 2026-04-14, Layer 4 rewritten as semantic memory 2026-04-14*
 
 ---
 
@@ -18,7 +18,7 @@
    - 4.1 Coordinator
    - 4.2 State
    - 4.3 Auto-memory
-   - 4.4 Metacognition (Vault)
+   - 4.4 Semantic Memory (Vault)
    - 4.5 Ops (Delegation)
    - 4.6 Safety (Enforcement)
    - 4.7 Integration
@@ -151,32 +151,44 @@ Every hub exercises 8 layers. They are not modules you add or skip — they are 
 |---|---|---|---|
 | 1 | **Coordinator** | hub | The thinking layer — archetype, mandate, routing, never list |
 | 2 | **State** | hub | What is currently true — OVERVIEW.md, kanban |
-| 3 | **Auto-memory** | user | Cross-session preferences and user profile — USER.md, memory/ |
-| 4 | **Metacognition (vault)** | hub | Why decisions were made, what was learned — vault/wiki/ |
+| 3 | **Auto-memory** | user¹ | Procedural user preferences and working style — USER.md, memory/ |
+| 4 | **Semantic Memory (vault)** | user¹ | What things mean — concepts, decisions, lessons, characters — vault/wiki/ |
 | 5 | **Ops (delegation)** | hub | Named specialists and the routing that enforces them — ops/ |
 | 6 | **Safety (enforcement)** | hub | Hard rules the coordinator can't violate — never list, hooks, cred split |
 | 7 | **Integration** | hub | External tools and their contracts — MCP, APIs, per-tool notes |
 | 8 | **Cadence (rituals)** | hub | Session rituals and scheduled rhythms — start/end routine, cron |
 
+¹ *Layers 3 and 4 are both user-scoped and cover different memory types. Layer 3 is procedural — rules, preferences, working style, the user's cross-hub how-to-collaborate. Layer 4 is semantic — concepts, rationales, lessons, people-as-characters, the knowledge the user's hubs have accumulated about the world. They live in different places (`~/thehub/USER.md` + `~/.claude/projects/{hub}/memory/` for Layer 3; `~/thehub/vault/` for Layer 4) and never duplicate content. See Section 4.3 for the procedural side, Section 4.4 for the semantic side.*
+
 ### 3.2 The canonicality decision table
 
 Canonicality is the rule that governs how layers stay separate. It is load-bearing enough to live in the architecture section, not the back of the book. Before writing anything into a hub, ask: *which layer owns this kind of information?*
 
+The deep structure of the table is the **procedural / semantic split**. Procedural information — mechanics, rules, state, routing, credentials, schedules — lives in Layers 1, 2, 3, 5, 6, 7, 8. Semantic information — meaning, rationales, concepts, characters, lessons — lives in Layer 4. A single entity (a person, a project, a decision) can be referenced by both sides; it is *represented* on only one.
+
 | Information type | Lives in (canonical) | Never lives in |
 |---|---|---|
-| What is currently true, live work | Layer 2 (OVERVIEW.md, kanban/) | Layer 4 (vault), duplicated in Layer 1 CLAUDE.md |
-| Why a decision was made | Layer 4 (`vault/wiki/decisions/`) | Layer 2 state, inline in CLAUDE.md |
-| A reusable pattern with a name | Layer 4 (`vault/wiki/lessons/`) | CLAUDE.md, reflex card |
-| An actor in the domain (person, project, client) | Layer 4 (`vault/wiki/people/`, `projects/`, `clients/`) | Layer 2 state |
-| A hard rule the coordinator must follow | Layer 1 declaration (never list) + Layer 6 enforcement (hook/architecture) | Layer 4 vault |
-| A cross-session user preference | Layer 3 (`USER.md` or `memory/`) | Layer 1 CLAUDE.md inlined |
-| Per-role execution rules | Layer 5 (`ops/{role}/CLAUDE.md`) | Layer 1 top-level CLAUDE.md |
-| Tool contracts and quirks | Layer 7 ("Tools available" in CLAUDE.md or dedicated integration notes) | Inline where the tool is used |
-| Session rituals and scheduled rhythms | Layer 8 (declared in Layer 1 CLAUDE.md rituals section) | Layer 3 memory/ |
-| An incident that produced a rule | Section 7 reflex card + Layer 4 vault decision | Duplicated in Layer 1 |
-| Recent context cache (what just happened) | Layer 4 (`vault/wiki/hot.md`) | Layer 2 state |
+| What is currently true, live work (mechanics) | Layer 2 (`OVERVIEW.md`, `kanban/`) | Layer 4 vault, duplicated in Layer 1 CLAUDE.md |
+| Why a decision was made (reasoning as meaning) | Layer 4 (`vault/wiki/decisions/`) | Layer 2 state, inline in CLAUDE.md |
+| A reusable pattern with a name (concept) | Layer 4 (`vault/wiki/lessons/`) | CLAUDE.md, reflex card |
+| An actor in the domain as a character (who they are) | Layer 4 (`vault/wiki/people/`, `projects/`, `clients/`) | Layer 2 state, Layer 5 ops files |
+| An actor as a routing target (how work flows to them) | Layer 5 (`ops/{role}/`) or Layer 1 routing table | Layer 4 vault (link from the character page, don't duplicate) |
+| A hard rule the coordinator must follow (mechanics) | Layer 1 declaration (never list) + Layer 6 enforcement (hook/architecture) | Layer 4 vault |
+| A cross-hub user preference (procedural, about the user) | Layer 3 (`USER.md` or `memory/`) | Layer 1 CLAUDE.md inlined, Layer 4 vault |
+| A cross-hub concept the user has internalized (semantic, about the world) | Layer 4 (`vault/wiki/lessons/` or `people/`) | Layer 3 `USER.md` |
+| Per-role execution rules (mechanics) | Layer 5 (`ops/{role}/CLAUDE.md`) | Layer 1 top-level CLAUDE.md |
+| Tool contracts and quirks (mechanics) | Layer 7 ("Tools available" in CLAUDE.md or dedicated integration notes) | Inline where the tool is used |
+| Session rituals and scheduled rhythms (mechanics) | Layer 8 (declared in Layer 1 CLAUDE.md rituals section) | Layer 3 memory/, Layer 4 vault |
+| An incident that produced a rule (the rule is procedural; the story is semantic) | Section 7 reflex card (rule) + Layer 4 `decisions/` (story with wikilinks) | Duplicated in Layer 1 |
+| Recent context cache (what just happened — meaning as priority) | Layer 4 (`vault/wiki/hot.md`) | Layer 2 state |
 
-The rule of thumb when unsure: **"Would I need this to DO something?"** → a fact layer (2, 5, 6, 7). **"Would I need this to UNDERSTAND something I'm about to decide?"** → Layer 4 (vault). **"Is this about me, not about the hub?"** → Layer 3 (auto-memory).
+The rule of thumb when unsure — the retrieval test from Section 4.4:
+**"Am I looking up mechanics or meaning?"**
+
+- **Mechanics** (how the system behaves, what is live, who executes, what rule applies) → procedural layers: 1, 2, 5, 6, 7, 8. If the mechanics are about the user rather than the hub → Layer 3.
+- **Meaning** (what a thing is abstractly, why a decision was made, what a pattern is called, who a person is as a character) → Layer 4 (vault).
+
+The row pair "actor as character" vs "actor as routing target" is the clearest worked example of the split. `[[Alex]]` as a character — his background, his strengths, the reason he's hard to delegate to — lives once in `vault/wiki/people/Alex.md`. `omar` as an ops routing target — which roles dispatch to him, which CONTEXT.md carries his mechanics — lives in `ops/`. The vault page links to the ops file; the ops file links back to the vault page; nothing is duplicated.
 
 ### 3.3 Visual
 
@@ -216,7 +228,7 @@ Every layer has a **minimum implementation** — what must exist on day one — 
 | 1 Coordinator | Archetype, mandate, working-style import, never list (seeded from reflex card), empty routing table, status pointer | Rich archetype (own file), full routing table, domain map, tool catalog |
 | 2 State | OVERVIEW.md with 4 canonical sections, empty `kanban/proposals/pending.yaml` | Briefs, reports, per-project state, domain-extended schemas |
 | 3 Auto-memory | `USER.md` reference, `memory/MEMORY.md` index skeleton | Populated feedback, user-profile files, project memories, reference pointers |
-| 4 Vault | `vault/wiki/hot.md`, `index.md`, `log.md`, empty subfolders | Populated decisions, lessons, people, projects, client briefs, timeline archives |
+| 4 Semantic Memory (Vault) | `vault/wiki/hot.md`, `index.md`, `log.md`, empty subfolders | Populated decisions, lessons, people, projects, client briefs, timeline archives |
 | 5 Ops | `ops/` folder containing `_template/CLAUDE.md`, empty routing table in Layer 1 | Populated roles with per-role CLAUDE.md, context files, cross-role signals |
 | 6 Safety | Never list (non-empty, seeded from reflex card), credential separation pattern declared | Hooks, dedicated safety configs, credential split in practice |
 | 7 Integration | "Tools available" section (may be empty) | Per-tool contracts, MCP wiring, endpoint quirks, documentation pointers |
@@ -257,7 +269,7 @@ The coordinator holds the big picture and makes decisions. It delegates speciali
 
 If the coordinator starts executing, it loses altitude. Altitude is the thing specialists cannot provide for themselves — they are each inside their own domain. Only the coordinator sees across. Protect that by keeping execution out.
 
-The coordinator is the hub's thinking layer: state is what's true, vault is why, ops is who does it, coordinator is *what to do next* — the decision layer on top of all the others.
+The coordinator is the hub's thinking layer: state is what's currently true, vault holds what things mean, ops is who executes, coordinator is *what to do next* — the decision layer on top of all the others.
 
 #### Files
 
@@ -346,9 +358,9 @@ Notice that **the never list is non-empty on day one**. It is seeded from Sectio
 
 State is **what is currently true**. It is the operational snapshot of the hub's live work — active priorities, blocked items, decisions waiting, open proposals, things at risk of being forgotten. Where the coordinator looks to remember what's on its plate.
 
-Sharp distinction from Layer 4 (vault): **state = what is true now; vault = why it's true, or what we learned from it.** A decision rationale belongs in vault. The fact that the decision is active and waiting for action belongs in state. Mixing the two is the fastest way to rot the hub. Section 3.2's canonicality table governs this.
+Sharp distinction from Layer 4 (vault): **state is procedural — the mechanics of what is currently live. Vault is semantic — what things mean, including why decisions were made.** A decision's rationale is semantic and belongs in vault. The fact that the decision is active and waiting for action is mechanics and belongs in state. Mixing the two is the fastest way to rot the hub. Section 3.2's canonicality table governs this.
 
-**State is overwrite-only.** History does not live here. If history matters, it belongs in Layer 4.
+**State is overwrite-only.** History does not live here. If history matters as mechanics (the log of what happened when), it belongs in `vault/wiki/log.md`. If history matters as meaning (the reasoning that produced a pattern), it belongs in `vault/wiki/decisions/` or `lessons/`.
 
 #### Files
 
@@ -413,13 +425,15 @@ That's the whole minimum. Briefs and reports appear later when expansion trigger
 
 #### Purpose
 
-Auto-memory is where the **user** lives across all their hubs. It carries working style, decision lens, feedback history, user profile, and any rule the user has taught the system that applies *regardless of which hub it's working in*. It is the only user-scoped layer in hub-os, and it's what makes hub #2 start smart instead of naive.
+Auto-memory is the user's **procedural** layer — the cross-hub record of *how the user works*. Working style, decision lens, feedback history, rules the user has taught the system, rituals the user wants followed. It is one of two user-scoped layers in hub-os (the other is Layer 4, semantic memory / vault), and it is specifically the half that holds *mechanics about the user* as opposed to *meaning about the world*.
+
+Alongside Layer 4, auto-memory is what makes hub #2 start smart instead of naive. Without the user-scoped layers done right, every new hub has to re-learn what the last one already knew.
 
 Sharp distinctions:
-- **Auto-memory vs Vault (Layer 4):** auto-memory is about *the user*; vault is about *the hub's domain*. If the insight would still be valid in a completely different hub, it's Layer 3. If removing the hub would make the insight meaningless, it's Layer 4.
-- **Auto-memory vs Coordinator (Layer 1):** CLAUDE.md is per-hub operating spec; auto-memory is cross-hub user wisdom. Layer 1 imports from Layer 3 by reference.
+- **Auto-memory vs Vault (Layer 4) — the procedural/semantic split.** Both are user-scoped. The difference is *memory type*. Layer 3 holds procedural content about the user: "be direct, don't hedge," "never pass write credentials to subagents," "design preferences lean restrained." Layer 4 holds semantic content the user's hubs have come to understand: concepts, named patterns, decisions-with-reasoning, people as characters. If the entry is a *rule the system should follow*, it's procedural → Layer 3. If the entry is a *concept the system should understand*, it's semantic → Layer 4.
+- **Auto-memory vs Coordinator (Layer 1):** CLAUDE.md is a per-hub procedural layer (mechanics specific to this hub); auto-memory is a cross-hub procedural layer (mechanics about the user that apply everywhere). Layer 1 imports Layer 3 by reference.
 
-Without auto-memory done right, every new hub you build starts as a naive bot on day one and has to be re-taught what you already taught the last one.
+The common failure mode is writing a semantic entry into Layer 3 or a procedural entry into Layer 4. A page called "What Boring Empire philosophy means" is semantic and belongs in `vault/wiki/lessons/`, even though it describes the user's worldview. A rule called "no emojis in files" is procedural and belongs in `USER.md` cross-hub preferences, even though it feels like a "preference about aesthetics." The retrieval test — *mechanics or meaning?* — decides both.
 
 #### Files
 
@@ -497,18 +511,37 @@ See Section 5.6 for a fully worked example of a populated `USER.md`.
 
 ---
 
-### 4.4 Metacognition (Vault) *[hub-scoped]*
+### 4.4 Semantic Memory (Vault) *[user-scoped]*
 
 #### Purpose
 
-The vault is where the hub **remembers why**. Not what is happening now, but what was decided, why, what was learned from it, and how everything connects. The graph of rationales, lessons, people, projects, and timeline that makes the hub able to *reflect on its own work* rather than just execute it.
+The vault is the hub's **semantic memory** — the layer that holds *what things mean* rather than *how the system behaves*. Concepts, characters, philosophies, rationales, named lessons, the people in the domain's orbit as full figures rather than routing targets. Everything outside the vault is procedural / structural memory: routines, rules, routing, state snapshots, credentials, hooks, task mechanics. Together they form a two-layer memory system that maps onto the classical cognitive-science distinction between *procedural memory* (know-how) and *semantic memory* (know-what).
 
-The vault is what makes a hub **wise** as opposed to merely **functional**. A hub without a vault can execute but cannot explain. A hub with a vault can trace any decision back to its reasoning and any pattern back to its origin incident.
+Under this framing, the same entity returns different payloads from each layer. Query `Black Rabbit Games` from the procedural layers (`OVERVIEW.md`, `CLAUDE.md`, `ops/`, `kanban/`) and you get routing rules, state, task mechanics — *how the system is behaving toward Black Rabbit*. Query it from the vault and you get the manifesto, the philosophy, the people in its orbit, the decisions that shaped it, the lessons it has taught — *what Black Rabbit means*. Two genuinely different kinds of recall. Neither is reducible to the other; a hub needs both.
+
+The vault is what makes a hub **wise** as opposed to merely **functional**. A hub without semantic memory can execute but cannot explain. A hub with it can trace any decision back to its reasoning, any pattern back to its origin incident, and any project back to the philosophy that motivates it.
+
+#### The retrieval test
+
+The test for whether a piece of information belongs in the vault or outside it is a *retrieval test*, not a write test: **"Am I looking up mechanics or meaning?"**
+
+- **Mechanics** — how the system behaves, what state is live, what to do next, who executes, which credentials apply → procedural layers (State, Coordinator, Ops, Safety, Integration, Cadence)
+- **Meaning** — what a thing *is* abstractly, why it exists, why a decision was made, what a pattern is called, who a person is beyond their routing role → Layer 4 (vault)
+
+The test generalizes the old "would I need this to DO something / UNDERSTAND something" rule of thumb without discarding it. "Do" is mechanics; "understand" is meaning. The new vocabulary is sharper because it names the memory type directly instead of gesturing at usage.
 
 Sharp distinctions (see Section 3.2 canonicality table):
-- **Vault vs State (Layer 2):** state is what's true now; vault is why it's true and what we learned. A pricing decision's *status* goes in state; its *rationale* goes in vault.
-- **Vault vs Auto-memory (Layer 3):** vault is about *this hub's domain*; auto-memory is about *the user across hubs*. General design preferences go in `USER.md`; the specific decision "we picked palette X for project Y because of Z" goes in that hub's vault.
-- **Vault vs Coordinator (Layer 1):** CLAUDE.md is the operating spec (how the coordinator behaves); vault is the history and rationale (what the coordinator has decided and learned).
+- **Vault vs State (Layer 2):** state is the procedural snapshot of what is currently true; vault is the semantic layer of what things mean. A pricing decision's *status* (live, blocked, pending) is mechanics → state. Its *rationale* (why this price, what it compounds toward) is meaning → vault.
+- **Vault vs Auto-memory (Layer 3):** both are user-scoped, but they hold different kinds of memory. Layer 3 (`USER.md` + `memory/`) is the user's *procedural* layer — working style, decision lens, cross-hub preferences, rules the user has taught. Layer 4 (vault) is the user's *semantic* layer — concepts, lessons, characters, decisions-with-reasoning. If the entry is a rule the system follows, it's procedural (Layer 3). If the entry is a concept the system understands, it's semantic (Layer 4).
+- **Vault vs Coordinator (Layer 1):** CLAUDE.md is the operating spec (procedural — how the coordinator behaves); vault is semantic (what the coordinator has come to understand). CLAUDE.md can reference vault pages by name but never duplicates their content.
+
+#### Scope: user-scoped by nature
+
+Layer 4 is **user-scoped**, not by convention but by the nature of semantic memory. Concepts about `[[Alex]]` as a character don't care which hub is currently coordinating work with him; the manifesto of `[[Black Rabbit Games]]` is the same idea whether it's being read from a consulting hub or a ventures hub. Semantic knowledge about an entity is inherently indifferent to which procedural layer is querying it.
+
+The practical consequence: a shared `~/thehub/vault/` at the user namespace is the correct home. Per-hub vaults would fragment the wikilink graph and lose most of its value — `[[Alex]]` should link from every project Alex touches regardless of which hub coordinates it, and that link is only possible if all those projects write into the same graph.
+
+Layer 3 (auto-memory) and Layer 4 (vault) are therefore the two user-scoped layers in hub-os. They are not redundant: they cover genuinely different memory types (procedural preferences vs semantic knowledge), and the "why two user-scoped layers" question answers itself once the memory-type distinction is explicit.
 
 #### Files
 
@@ -595,14 +628,17 @@ Not mandatory for hub-os to work, but strongly recommended — it lets the user 
 
 #### Anti-patterns
 
-- **State in vault.** User files current status notes here because it felt reflective. Next session's coordinator reads OVERVIEW.md and misses half the state. Fix: state in Layer 2, vault for *why* only.
+- **State in vault.** User files current status notes here because it felt reflective. Next session's coordinator reads OVERVIEW.md and misses half the state. Fix: mechanics goes in Layer 2, vault is for meaning only.
 - **Vault as scratch pad.** Dumping session notes with no wikilinks. Graph stays flat. Fix: every entry links affected people/projects. No links = no entry.
 - **Orphan pages.** A note exists but nothing links to it, and it links to nothing. Effectively invisible. Fix: session-end ritual checks for orphans; link them in or delete.
 - **hot.md accumulating history.** User adds to `hot.md` instead of overwriting. It grows to 3000 words and stops being a hot cache. Fix: `hot.md` is overwrite-only, ~500 words, history goes in `log.md`.
 - **Vault without rituals.** The vault exists but nothing is written to it because there's no enforced session-end trigger. Fix: Layer 8 session-end must name vault writes as non-negotiable when real work happened.
 - **Everything is a decision.** User files every minor choice as a decision file. Decisions folder becomes noise. Fix: decisions are non-trivial; small choices don't need vault entries.
 - **Lesson with no name.** User files patterns without distinctive names. They can't be referenced elsewhere. Fix: every lesson gets a memorable name so it can appear in cross-references.
-- **Duplicate with auto-memory.** A hub-specific project note gets filed in both `vault/wiki/projects/` and `memory/MEMORY.md`. Fix: hub-scoped = vault; user-scoped = auto-memory. Section 3.2's canonicality table governs.
+- **Procedural content in vault.** A routing rule, credential pattern, or cron config gets filed in the vault because it feels like "accumulated wisdom." Apply the retrieval test: *mechanics or meaning?* Routing rules are mechanics → Layer 5 ops; credential patterns are mechanics → Layer 6 safety; cron configs are mechanics → Layer 8 cadence. Only the *rationale* for those mechanics belongs in the vault.
+- **Semantic content forced into procedural layers.** The opposite failure: a project's philosophy or a person's character gets jammed into an ops `CONTEXT.md` or a routing comment because "it was relevant to the mechanics." Fix: mechanics references the meaning by wikilink, it does not absorb it. `ops/seo-agent/CONTEXT.md` may link `[[Nomods]]`; it does not copy the Nomods manifesto.
+- **Duplicate with auto-memory (Layer 3).** The same content appears in both `vault/wiki/` and `memory/MEMORY.md`. Because both are user-scoped this is easy to get wrong. Fix: apply the procedural-vs-semantic split. Procedural rule the user taught → Layer 3. Semantic concept the hub has come to understand → Layer 4. Section 3.2's canonicality table governs.
+- **Per-hub vault fragmentation.** User creates a separate `vault/` inside a new hub directory instead of pointing at the shared `~/thehub/vault/`. The graph splits; cross-hub wikilinks become impossible. Fix: there is one vault per user, not one per hub. New hubs point at the existing vault.
 - **Duplicate with CLAUDE.md.** Coordinator's CLAUDE.md starts quoting vault content inline. Drifts. Fix: CLAUDE.md can reference vault pages by name but never duplicates their content.
 
 ---
@@ -994,7 +1030,9 @@ Day-one Layer 8 is a pair of short bulleted lists in CLAUDE.md. No scripts, no c
 
 `USER.md` is the **single anchor of user-scoped wisdom** that every hub inherits. It's the reason hub #2 starts smart instead of naive. Without it, every new hub has to re-learn the user's working style, decision lens, cross-hub preferences, and recurring people — and the user has to pay the teaching cost over and over again.
 
-`USER.md` is the reference implementation of Layer 3's user-scoped half. The user writes it once, maintains it rarely, and every future hub's Layer 1 CLAUDE.md imports it automatically.
+`USER.md` is the reference implementation of Layer 3. The user writes it once, maintains it rarely, and every future hub's Layer 1 CLAUDE.md imports it automatically.
+
+**`USER.md` is the *procedural* user-scoped file.** It holds rules, preferences, working style, decision lens, and collaboration mechanics — everything about *how the user wants to work*. Its sibling at the user scope is Layer 4 (vault), the *semantic* user-scoped layer, which holds concepts, lessons, people-as-characters, and decisions-with-reasoning — everything about *what the user's hubs have come to understand about the world*. Same scope, different memory type. A rule goes in `USER.md`; a concept goes in the vault. When the distinction is unclear, apply the Section 4.4 retrieval test: *mechanics or meaning?*
 
 One-sentence version: **If you removed the current hub tomorrow and built a new one for a completely different domain, `USER.md` would still be true. Everything else in the hub would not.**
 
@@ -1627,12 +1665,14 @@ Promotion is the upward flow from specific to general. A lesson learned in one s
 **Authority:** Claude proposes, user approves
 **Trigger:** session-end check + periodic review
 
-#### Path B — Staging (`memory/`) → Hub vault (Layer 4)
+#### Path B — Staging (`memory/`) → Vault (Layer 4)
 
-**What flows:** hub-scoped domain knowledge that Claude accumulated but that belongs as a decision, lesson, or project note
-**Scope:** one hub
-**Authority:** Claude can write directly (Layer 4 is designed to accumulate)
-**Trigger:** session-end when real work produced a vault-worthy entry
+**What flows:** semantic entries the session produced — decisions with reasoning, named lessons, domain actors as characters, project/client reflections. Content originates from work done inside one hub, but lands in the *user-scoped* vault because semantic memory is shared across every hub the user owns.
+**Scope:** written once, visible to every hub at the user scope. A client brief filed from the consulting hub is still there when a future hub references the same client.
+**Authority:** Claude can write directly (Layer 4 is designed to accumulate; the graph is strengthened, not compromised, by session-end writes).
+**Trigger:** session-end when real work produced a vault-worthy entry.
+
+*Note:* Path B is for *semantic* content only. Hub-specific procedural notes — a routing rule a specific ops role needs to remember, a mechanics-only CONTEXT.md update — do not flow through Path B. They go to Layer 5 (`ops/{role}/`), which remains hub-scoped. The retrieval test decides: if the entry is mechanics, it does not belong in the vault regardless of how "reflective" it feels.
 
 #### Path C — Hub reflex → Framework (this document)
 
@@ -1738,6 +1778,47 @@ Every change gets one entry: a date, a version number, and a short note. Changes
 
 ---
 
+### 2026-04-14 — v0.3.0 (Layer 4 rewritten as semantic memory, user-scoped)
+
+Dedicated session executing the vault rehaul parked in v0.2.4. Layer 4's framing was loose in v0.2.x — it used a WHY/WHAT test and called the layer "Metacognition (Vault)," which gestured at the right thing without naming it. This version replaces that framing with the **procedural / semantic memory** distinction from classical cognitive science, and propagates the consequences across the affected sections.
+
+**Core reframe.** The vault is the hub's semantic memory — it holds *what things mean*. Everything outside the vault is procedural / structural memory — it holds *how the system behaves*. The same entity (a person, a project, a decision) returns different payloads when queried from the two layers: from the procedural side you get routing, state, and mechanics; from the semantic side you get concepts, characters, rationales, and the lessons the system has accumulated. Both memory types are necessary; neither is reducible to the other.
+
+**Why this framing beat WHY/WHAT.** The old framing said Layer 4 holds "why decisions were made and what was learned," which is a *subset* of semantic memory. It missed concepts-about-projects, people-as-characters, domain philosophies, and cross-cutting reflection — all of which were already accumulating in chiefofstaff's vault without theoretical backing. The procedural/semantic vocabulary covers everything the old framing covered and the content the old framing left homeless. It also makes the canonicality decision table populate itself: *"mechanics or meaning?"* is sharper than *"state or rationale?"*
+
+**Layer 4 renamed: Metacognition (Vault) → Semantic Memory (Vault).** Alternatives considered: pure "Semantic Memory" (rejected because "Vault" is load-bearing shorthand across file paths, rituals, and file-casual references; dropping it would have rippled through ~60 occurrences with no semantic benefit) and "Knowledge Substrate" (rejected because it breaks the cognitive-science parallel with Layer 3 Auto-memory, and the parallel is doing real explanatory work). The parenthetical form preserves "Vault" as the short label everywhere else in the doc while making the memory-type framing primary in the section header.
+
+**Layer 4 scope changed: `hub` → `user`.** This was the original contradiction surfaced during the v0.2.4 skeleton walk: Section 3.1 said Layer 4 was hub-scoped, but the skeleton CLAUDE.md and chiefofstaff's actual vault both live at `~/thehub/vault/` — user-scoped. Under the semantic-memory framing, the scope flip is inevitable. Semantic knowledge about an entity doesn't care which hub is currently querying it, so a shared `~/thehub/vault/` is the natural home and per-hub vaults would fragment the wikilink graph. The framework text now matches the reference implementation's actual behavior.
+
+**Two user-scoped layers, explained.** Layers 3 and 4 are now both user-scoped. This would look redundant under the old framing but is correct under the new one: they cover different *memory types*. Layer 3 (`USER.md` + `memory/`) is the user's procedural layer — rules, preferences, working style, decision lens, rituals the user wants followed. Layer 4 (vault) is the user's semantic layer — concepts, lessons, characters, decisions-with-reasoning. A rule goes in Layer 3; a concept goes in Layer 4. Section 3.1 now carries a footnote pairing them explicitly.
+
+**Sections edited:**
+
+1. **Section 3.1 scope table** — Layer 3 purpose updated to name "procedural user preferences"; Layer 4 row renamed, scope changed to user, purpose rewritten around semantic memory; new footnote pairs L3 and L4 as procedural vs semantic user-scoped layers.
+2. **Section 3.2 canonicality table** — rewritten around the retrieval test (*mechanics or meaning?*). Every row referencing the vault revised; added a new paired-row for "actor as character (vault)" vs "actor as routing target (ops)" to make the split concrete. Trailing rule-of-thumb replaced with the retrieval test verbatim.
+3. **Section 4.1 line 260** — the rhythm sentence "state is what's true, vault is why…" softened to "state is what's currently true, vault holds what things mean…" — preserves the rhythm in the new vocabulary.
+4. **Section 4.2 State** — sharp distinction against Layer 4 rewritten as "state is procedural (mechanics of what is live); vault is semantic (what things mean, including why)." History paragraph clarified: procedural history → `log.md`, semantic history → `decisions/` or `lessons/`.
+5. **Section 4.3 Auto-memory** — Purpose paragraph rewritten to name Layer 3 as the user's procedural layer and position Layer 4 as the user's semantic sibling. Sharp distinction against Layer 4 rewritten around the procedural/semantic split. Added a closing paragraph naming the common failure mode (semantic entries jammed into `USER.md`; procedural rules jammed into the vault) and pointing at the retrieval test.
+6. **Section 4.4 Semantic Memory (Vault)** — full rewrite. New Purpose opens with the procedural/semantic distinction in two paragraphs and keeps the "wise vs functional" sentence as the third beat. New "Retrieval test" subsection replaces the implicit WHY test with the explicit *mechanics or meaning?* question. Sharp distinctions section updated against L2/L3/L1 in the new vocabulary. New "Scope: user-scoped by nature" subsection explains the scope flip as a consequence of the memory type, not a convention. Files, Slots, Minimum, Expansion, Example kept structurally intact with content references unchanged (the vault's sub-structure is still correct; only the framing around it was wrong). Anti-patterns updated: two new entries for "procedural content in vault" and "semantic content forced into procedural layers"; the auto-memory duplication anti-pattern rewritten to apply the procedural/semantic test; new anti-pattern for "per-hub vault fragmentation."
+7. **Section 5.1 USER.md Purpose** — new paragraph naming `USER.md` as the *procedural* user-scoped file and the vault as its semantic sibling. Resolves the "why two user-scoped layers" question that v0.2.x dodged.
+8. **Section 8.2 Path B** — header relabeled from "Hub vault (Layer 4)" to "Vault (Layer 4)." Scope line rewritten: content is hub-originated but lands in the user-scoped vault. New clarifying note: Path B is for semantic content only; hub-specific procedural notes flow to Layer 5, not through Path B. This is the non-obvious side effect of the scope flip — it had to be resolved as part of the rewrite because the old Path B definition silently contradicted the new Layer 4 scope.
+9. **Section 11** — this entry.
+
+**Label ripple (Pass 2):**
+- Table of contents: `4.4 Metacognition (Vault)` → `4.4 Semantic Memory (Vault)`
+- Section 3.4 minimum table Layer 4 row label updated
+- Header version `v0.2.4` → `v0.3.0`; footer "End of FRAMEWORK.md v0.2.4" → "v0.3.0"
+- `README.md` version label updated to v0.3.0
+- `skeleton/CLAUDE.md` section title `## THEHUB Vault — metacognition layer` updated to `## Vault — semantic memory layer` (the shared user-scoped nature was already correctly described at line 120; only the phrase "metacognition layer" was stale). The layer enumeration at line 134 updated to say "semantic memory layer" instead of "metacognition (vault)."
+
+**What was deliberately not done.** No vault content migration — chiefofstaff's vault was already user-scoped in practice, so no files moved. No `USER.md` creation — still deferred. No propagation of the retrieval test into Section 4.5 / 4.6 / 4.7 / 4.8, even though those sections use procedural language without naming it — they don't need the explicit vocabulary because they're unambiguously procedural, and adding the word would be theatrical. No new reflex card entries. No restructuring of the eight-layer model itself; the procedural/semantic split is a *framing* of Layer 4 and its neighbors, not a ninth layer.
+
+**Trade-offs.** The biggest one: the framework now assumes readers can hold "two user-scoped layers, different memory types" in their head. That's a harder concept than "one user-scoped layer, everything else hub-scoped." Accepted the extra load because the old framing was producing real confusion (the scope contradiction was itself evidence of that) and the cognitive-science vocabulary is well-established enough to be learnable. Second trade-off: keeping "Vault" in parentheses rather than removing it preserves legacy shorthand across file paths and casual references, but it also means the rename is visually soft — readers skimming might still think of the layer as "the vault" rather than "semantic memory." Accepted this because the heavy edit is the *concept*, not the label, and forcing a hard rename everywhere would have been expensive with minimal concept gain.
+
+**Origin.** The v0.2.4 skeleton walk surfaced the scope contradiction. Munger proposed three shallow options (per-hub, user-scoped, two-vault hybrid). Gabriel cut past them with a deeper framing: *the vault is semantic memory; everything else is procedural memory*. The concept was filed to `vault/wiki/lessons/Vault is semantic memory.md` in parallel with the v0.2.4 entry, parked for a dedicated session, and executed here. See that lesson page for the full distinction, retrieval test, and worked example.
+
+---
+
 ### 2026-04-14 — v0.2.4 (skeleton walk + vault rehaul parked)
 
 First end-to-end walk of `skeleton/` against the framework spec. Four fixes applied. One architectural question surfaced that is too large for this pass and has been parked for a dedicated future session.
@@ -1834,4 +1915,4 @@ Four additional findings from the same review pass are **deferred** pending user
 
 ---
 
-*End of FRAMEWORK.md v0.2.4*
+*End of FRAMEWORK.md v0.3.0*
