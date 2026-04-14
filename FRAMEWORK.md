@@ -1,6 +1,6 @@
 # hub-os — Framework for Cognitive-Operational Hubs
 
-*Version 0.2.2 — snapshot extracted from chiefofstaff hub 2026-04-13, reviewed and patched 2026-04-14*
+*Version 0.2.3 — snapshot extracted from chiefofstaff hub 2026-04-13, reviewed and patched 2026-04-14*
 
 ---
 
@@ -293,11 +293,9 @@ This is the slot that most affects hub quality. A wrong archetype produces wrong
 
 2. **Pick for reflexes, not aesthetics.** What does the domain punish? What does it reward? The archetype's native reflexes should match. Ecommerce consulting punishes impulse and rewards patience — Munger's reflexes are exactly patience and skepticism. Design punishes decoration and rewards restraint — Rams's reflex is "less, but better." Don't pick an archetype because you admire them; pick one whose instincts cover the domain's failure modes.
 
-3. **Pick someone with character contrast to the user.** The archetype is a counterweight, not a mirror. A high-drive user with a high-drive archetype amplifies impulse and the hub becomes noise. A high-drive user with a patient archetype introduces friction in exactly the right place. Use the user profile (`USER.md`) to find the contrast points.
+3. **Pick someone with character contrast to the user — someone the user respects but would disagree with sometimes.** The archetype is a counterweight, not a mirror. A high-drive user with a high-drive archetype amplifies impulse and the hub becomes noise. A high-drive user with a patient archetype introduces friction in exactly the right place. A yes-man archetype is useless; the archetype has to be credible enough for its pushback to land and distinct enough for the pushback to be real. Use the user profile (`USER.md`) to find contrast points.
 
-4. **Pick someone the user respects but would disagree with sometimes.** A yes-man archetype is useless. The archetype has to be credible enough that its pushback lands, and distinct enough that the pushback is real.
-
-5. **Write the fit.** 1–2 paragraphs in CLAUDE.md explaining *why this archetype for this domain*. Future Claude sessions need to know, and future promotion checks need something to compare against.
+4. **Write the fit.** 1–2 paragraphs in CLAUDE.md explaining *why this archetype for this domain*. Future Claude sessions need to know, and future promotion checks need something to compare against.
 
 #### Minimum (day one)
 
@@ -644,9 +642,8 @@ The verb-naming test: **"If we replaced every tool this role uses with a differe
 
 The coordinator **does not pass mutation credentials to dispatched subagents.** If a specialist needs write access, one of:
 
-1. The coordinator gets user approval in the current session, loads credentials into *its own* context, and performs the mutation under the specialist's direction.
-2. The specialist runs as a subprocess with its own credential environment (credentials loaded via the subprocess's own env vars, not passed down the prompt chain).
-3. The work is broken into a read phase (delegated to a subagent for research/analysis) and a write phase (performed by the coordinator itself after approval).
+1. **The coordinator performs the mutation itself after user approval.** Credentials stay loaded in *its own* context; the coordinator can do this directly under the specialist's direction, or after a subagent has done the read-phase research and analysis.
+2. **The specialist runs as a subprocess with its own credential environment.** Credentials are loaded via the subprocess's own env vars, not passed down the prompt chain.
 
 Subagents spun up by the coordinator **never** receive write tokens as dispatch arguments. This is the 2026-03-27 reflex (R-002), hard-wired into every hub-os hub.
 
@@ -1473,18 +1470,18 @@ The reflex card is therefore **load-bearing for day-one Layer 6.**
 
 ### 7.2 Schema
 
-Each reflex entry has:
+Each reflex entry has the following fields:
 
-```yaml
-- id: R-XXX
-  incident: One-sentence description of what broke
-  rule: The rule that was added in response (hard language, imperative)
-  why: The causal link — why this rule prevents this kind of incident
-  layer: Which hub-os layer the rule affects
-  date: When the reflex entered the card (YYYY-MM-DD)
-  source_hub: Which hub surfaced it
-  enforcement: "discipline-only" | "hook" | "architecture"
-```
+- **id** — `R-XXX`, sequential
+- **incident** — One-sentence description of what broke
+- **rule** — The rule that was added in response (hard language, imperative)
+- **why** — The causal link — why this rule prevents this kind of incident
+- **layer** — Which hub-os layer the rule affects
+- **date** — When the reflex entered the card (YYYY-MM-DD)
+- **source_hub** — Which hub surfaced it
+- **enforcement** — `discipline-only` | `hook` | `architecture`
+
+Reflex entries are rendered as markdown tables in Section 7.4 for readability.
 
 **Enforcement values:**
 - **discipline-only** — the rule is prose in CLAUDE.md; depends on Claude following instructions
@@ -1741,6 +1738,20 @@ Every change gets one entry: a date, a version number, and a short note. Changes
 
 ---
 
+### 2026-04-14 — v0.2.3 (judgment-call cleanup from second review pass)
+
+Applied the four judgment-call findings that v0.2.2 deferred. Each is recorded here with the reasoning so the user can challenge any of them on a later pass.
+
+1. **Section 7.2 reflex schema reformatted** — was a YAML block, but Section 7.4 renders entries as markdown tables, so the schema format didn't match the actual format of the thing it was describing. Rewrote 7.2 as a field list (not a YAML block, not a table) and added a closing note that the fields are rendered as markdown tables in 7.4. *Why this shape rather than converting 7.4 to YAML:* markdown tables are strictly more readable for humans reading the doc top-to-bottom, and nothing is parsing this file as structured data. The schema is descriptive, not executable. Decoupling the field definition from the rendering format keeps the schema abstract — a future change to how entries render in 7.4 doesn't require editing 7.2.
+
+2. **Section 4.5 coordinator-delegation options collapsed from 3 to 2.** Options 1 ("coordinator performs the mutation under the specialist's direction") and 3 ("work is broken into read phase via subagent + write phase by coordinator") both placed the mutation on the coordinator post-approval — they were the same pattern with or without a read-phase subagent in front of it. Folded them into a single option 1 that names both variants. Option 2 (specialist runs as subprocess with its own credential environment) was left intact because it is the genuinely distinct alternative — it's the only path where mutation credentials actually exist outside the coordinator's context. *Why this matters:* three apparently-distinct options that are really two-plus-one is confusing when the reader is trying to implement the rule. Two genuinely distinct patterns are clearer than three overlapping ones.
+
+3. **Section 4.1 archetype-selection rules 3 and 4 folded into one.** Rule 3 ("character contrast") and rule 4 ("respects but would disagree with") were the same idea approached from two angles — contrast necessarily implies occasional disagreement, and disagreement without contrast is just noise. Merged into a single rule that names both the contrast principle and the respect/disagreement test together. Renumbered rule 5 ("Write the fit") to rule 4. The archetype selection list now has 4 rules instead of 5. *Why collapse rather than keep both:* rule lists where two adjacent items cover the same ground make readers wonder what the distinction is, which wastes attention. A single rule that names both faces of the same principle is more load-bearing than two rules that feel almost-but-not-quite redundant.
+
+4. **Section 11 v0.2.1 "Proof of the living loop" bullet rewritten in dry factual voice.** Was written in narrator voice — "confirms the loop closes," "three iterations of the same principle in 24 hours," "not aspirational anymore" — which broke the evolution-log tone the rest of the doc maintains (and that the v0.2.2 entry explicitly established). Replaced with a factual statement of what was found and what was done ("Section 4.4 was duplicating Section 4.8's session-end ritual content — an R-008 canonicality violation in the framework doc itself. Replaced with a pointer to Section 4.8."). *Why rewrite rather than delete:* the fact itself is worth preserving — the framework doc violated its own rule, it got caught, it got fixed. Deleting the bullet would erase a real event. Rewriting it lets the fact stay while removing the editorializing. *Judgment call explicitly not made:* I did not rewrite any other bullets in the v0.2.1 entry, even though some have mild narrator voice. The rule going forward is: facts stay, evaluation goes. Past entries are only edited when they have obvious tone violations; new entries are written in the dry voice from the start.
+
+---
+
 ### 2026-04-14 — v0.2.2 (second review pass — residual fixes)
 
 A second end-to-end read of the framework found four residual issues the v0.2.1 pass had missed:
@@ -1769,7 +1780,7 @@ Four additional findings from the same review pass are **deferred** pending user
   6. Section 7.3 "minimum R-001 through R-004" was misleading — all eight reflexes are universal and day-one. Replaced with a safety-critical-core vs. operational-hygiene framing that tells instantiators to keep all eight unless the domain explicitly doesn't exercise one.
   7. Section 7.4 R-008 layer field: "All (meta-rule, governs the framework itself)" → "All (cross-cutting meta-rule)" for consistency with other entries' format.
 - **First real application of the framework back to its source hub** (`chiefofstaff`). Two canonicality violations fixed: (1) session rituals duplicated across `CLAUDE.md` and `memory/MEMORY.md` → consolidated into a new `## Session Rituals` section in `CLAUDE.md` as the canonical home. (2) State-scoped "Open Questions" items living in `memory/MEMORY.md` with decaying countdowns → migrated to `OVERVIEW.md` per R-005. Full decision record at `~/thehub/vault/wiki/decisions/Memory canonicality fixes applied from hub-os framework.md`. Phase 2 of the source-hub cleanup (16 hub-scoped project entries still in `memory/MEMORY.md`) and Phase 3 (creating `USER.md` for real) are deferred.
-- **Proof of the living loop.** R-008 was surfaced during the extraction (v0.2). v0.2.1 confirms the loop closes: the extraction produced a rule, the rule was applied back to the source hub, and the review pass caught the framework doc itself violating that rule in Section 4.4. Three iterations of the same principle in 24 hours. The "living framework" phrasing in the preamble is not aspirational anymore.
+- **Self-application of R-008.** Section 4.4 was duplicating Section 4.8's session-end ritual content — an R-008 canonicality violation in the framework doc itself. Replaced with a pointer to Section 4.8. Same rule surfaced during the v0.2 extraction; this pass applied it to the doc that defines it.
 - **Skeleton scaffolded.** After the patch pass, the `hub-os/skeleton/` directory was created with all 13 canonical subdirectories and 16 template files populated from the framework spec: `README.md` (quick-start guide), `USER.md.template` (user-scoped anchor template with 6 canonical sections), `skeleton/CLAUDE.md` (Layer 1 coordinator template with all required sections, all 8 reflex-card entries pre-seeded in the never list), `skeleton/OVERVIEW.md` (4 canonical state sections), `skeleton/kanban/proposals/pending.yaml` (schema-documented empty array), `skeleton/vault/wiki/{hot,index,log}.md` (frontmatter-seeded stubs), 5 `.gitkeep` marker files in the empty vault subfolders (each documenting what belongs in its directory), `skeleton/ops/_template/CLAUDE.md` (per-role template), and `skeleton/memory/MEMORY.md` (Layer 3 staging-ground template with the canonicality rules and what-doesn't-belong-here section baked in). First external instantiation can now proceed by copying `skeleton/` to a new hub directory and filling slots from the interview.
 
 ---
@@ -1797,4 +1808,4 @@ Four additional findings from the same review pass are **deferred** pending user
 
 ---
 
-*End of FRAMEWORK.md v0.2.2*
+*End of FRAMEWORK.md v0.2.3*
