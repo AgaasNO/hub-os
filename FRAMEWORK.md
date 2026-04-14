@@ -1,6 +1,6 @@
 # hub-os — Framework for Cognitive-Operational Hubs
 
-*Version 0.2.1 — snapshot extracted from chiefofstaff hub 2026-04-13, reviewed and patched 2026-04-14*
+*Version 0.2.2 — snapshot extracted from chiefofstaff hub 2026-04-13, reviewed and patched 2026-04-14*
 
 ---
 
@@ -168,7 +168,7 @@ Canonicality is the rule that governs how layers stay separate. It is load-beari
 | Why a decision was made | Layer 4 (`vault/wiki/decisions/`) | Layer 2 state, inline in CLAUDE.md |
 | A reusable pattern with a name | Layer 4 (`vault/wiki/lessons/`) | CLAUDE.md, reflex card |
 | An actor in the domain (person, project, client) | Layer 4 (`vault/wiki/people/`, `projects/`, `clients/`) | Layer 2 state |
-| A hard rule the coordinator must follow | Layer 1 (never list) or Layer 6 (hook) | Layer 4 vault |
+| A hard rule the coordinator must follow | Layer 1 declaration (never list) + Layer 6 enforcement (hook/architecture) | Layer 4 vault |
 | A cross-session user preference | Layer 3 (`USER.md` or `memory/`) | Layer 1 CLAUDE.md inlined |
 | Per-role execution rules | Layer 5 (`ops/{role}/CLAUDE.md`) | Layer 1 top-level CLAUDE.md |
 | Tool contracts and quirks | Layer 7 ("Tools available" in CLAUDE.md or dedicated integration notes) | Inline where the tool is used |
@@ -270,6 +270,7 @@ The coordinator is the hub's thinking layer: state is what's true, vault is why,
   - **Never list** — hard lines the coordinator refuses to cross (seeded from Section 7 reflex card)
   - **Current status** — pointer to `OVERVIEW.md`, not duplicated
   - **Tools available** — per-tool contracts or pointer to Layer 7
+  - **Session rituals** — session start + session end routines declared inline (see Section 4.8 for canonical content)
 
 - **`ARCHETYPE.md`** *(appears during expansion)*. If the archetype section in CLAUDE.md grows past ~500 words, split to its own file.
 
@@ -309,7 +310,8 @@ CLAUDE.md
 ├── Routing table (empty table with column headers)
 ├── Never list (seeded from reflex card — minimum 2-3 entries)
 ├── Current status → pointer to OVERVIEW.md
-└── Tools available → empty or minimal
+├── Tools available → empty or minimal
+└── Session rituals (start + end, per Section 4.8)
 ```
 
 Notice that **the never list is non-empty on day one**. It is seeded from Section 7 (reflex card). A new hub inherits at least the incidents other hubs have already survived, so day-one Layer 6 is non-trivial.
@@ -427,7 +429,7 @@ Two sub-locations with different lifecycles:
 
 - **`USER.md`** at the user-namespace root (provisional location: `~/thehub/USER.md`; see Section 1 preamble for the pending reflection). Human-curated durable profile. Rarely edited, never auto-written by Claude. Contains identity-stable content: how the user thinks, their profile markers, their collaboration preferences, their decision lens.
 
-- **`memory/`** inside each hub directory (Claude Code's existing auto-memory, currently at `~/.claude/projects/{project-path}/memory/`). Per-hub staging ground that Claude writes to as it learns. Contains fresh feedback, recent project-specific patterns, reference pointers — all awaiting promotion.
+- **`memory/`** at `~/.claude/projects/{hub-path}/memory/` — Claude Code's native auto-memory, auto-created per hub, **not inside the hub directory itself**. Per-hub staging ground that Claude writes to as it learns. Contains fresh feedback, recent project-specific patterns, reference pointers — all awaiting promotion. The path uses a mangled version of the hub's absolute path as its folder name (e.g. `C--Users-Gabri-thehub-chiefofstaff`), which is how Claude Code identifies which hub a memory belongs to.
 
 The two locations have different roles:
 
@@ -1739,6 +1741,23 @@ Every change gets one entry: a date, a version number, and a short note. Changes
 
 ---
 
+### 2026-04-14 — v0.2.2 (second review pass — residual fixes)
+
+A second end-to-end read of the framework found four residual issues the v0.2.1 pass had missed:
+
+1. **Section 4.3 still carried the wrong description of where `memory/` lives.** The v0.2.1 pass fixed Section 6.3 Step 5 (the instantiation how-to) but left Section 4.3 (the layer definition) saying `memory/` is "inside each hub directory" with a parenthetical self-contradicting that claim. Rewrote 4.3 to state the correct path (`~/.claude/projects/{hub-path}/memory/`) and to name the mangled-path-as-folder-name convention Claude Code uses to identify hubs. The fix-the-symptom-miss-the-cause pattern here is itself an R-008 lesson: a bad mental model duplicated across two sections only got fixed in one.
+2. **Section 4.1 required-sections list was missing Session Rituals.** Section 4.8 explicitly requires a Session Rituals section in Layer 1 CLAUDE.md day-one, and Section 6.3 Step 10 confirms it, but Section 4.1 itself listed only 8 sections. Added Session Rituals as the 9th required section in both the Files sub-list and the Minimum code block, with a pointer to Section 4.8.
+3. **Section 3.2 canonicality table row 5 used an ambiguous "or".** The row read `Layer 1 (never list) or Layer 6 (hook)` as if they were alternatives, contradicting Section 4.6's explicit statement that the declaration-and-enforcement split is deliberate. Rewrote to `Layer 1 declaration (never list) + Layer 6 enforcement (hook/architecture)`.
+4. **Footer version label was stale.** Said `v0.2` while the header said `v0.2.1`. Updated footer to `v0.2.2` to match this entry's header.
+
+Four additional findings from the same review pass are **deferred** pending user judgment — they involve restructuring content the user wrote and should not be auto-patched:
+- Section 7.2 reflex schema declares YAML but Section 7.4 uses markdown tables (format inconsistency, not a correctness bug)
+- Section 4.5 coordinator-delegation options 1 and 3 overlap (both place the mutation on the coordinator post-approval; could collapse to two options)
+- Section 4.1 archetype-selection rules 3 and 4 both describe contrast/disagreement from slightly different angles (could fold into one rule)
+- Section 11 v0.2.1 entry's "Proof of the living loop" bullet is written in narrator voice rather than the dry factual tone of the rest of the evolution log
+
+---
+
 ### 2026-04-14 — v0.2.1 (review pass + first source-hub application)
 
 - **Review pass** — read FRAMEWORK.md end-to-end and applied seven fixes:
@@ -1778,4 +1797,4 @@ Every change gets one entry: a date, a version number, and a short note. Changes
 
 ---
 
-*End of FRAMEWORK.md v0.2*
+*End of FRAMEWORK.md v0.2.2*
