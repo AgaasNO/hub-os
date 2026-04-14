@@ -1,8 +1,10 @@
-# {hub_name} — Auto-memory
+# {hub_name} — Auto-memory (REFERENCE FILE, DO NOT COPY)
 
-*Layer 3 staging ground for this hub. Claude Code writes here automatically during sessions as it learns new preferences, corrections, and observations.*
+*This is a **reference file**, not a template to copy. It shows what a populated `MEMORY.md` index should look like.*
 
-*This file lives at `~/.claude/projects/{hub-path}/memory/MEMORY.md` — not inside the hub directory itself. The hub-os skeleton provides this template as a reference for what the file should look like when Claude Code first scaffolds it. You may not need to create this file manually; Claude Code often creates it on first session.*
+*Claude Code auto-memory lives at `~/.claude/projects/{hub-path}/memory/MEMORY.md` — **not inside the hub directory**. Claude Code creates this file automatically on first session. You do not create it manually and you do not copy this reference file into your hub. It exists here purely so you can understand what belongs in the index when Claude Code starts populating it.*
+
+*Moved out of `skeleton/memory/` in v0.2.4 after the review pass caught that its placement inside `skeleton/` would cause instantiators to copy it into the wrong location — see FRAMEWORK.md Section 11 and Section 4.3.*
 
 ---
 

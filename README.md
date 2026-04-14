@@ -9,6 +9,7 @@ Framework for building **cognitive-operational hubs** — Claude Code projects t
 | **`FRAMEWORK.md`** | The full specification. 8 layers, minimum implementations, reflex card, instantiation playbook, promotion rules. Start here if you want to understand *why*. |
 | **`skeleton/`** | The copy-able directory structure for a new hub. Used during instantiation — see Section 6 of `FRAMEWORK.md`. |
 | **`USER.md.template`** | Template for the user-scoped profile file. Copy to `~/thehub/USER.md` the first time you set up hub-os. See `FRAMEWORK.md` Section 5. |
+| **`MEMORY.md.reference`** | Reference for what Claude Code's auto-memory index should contain. **Not** copied into your hub — Claude Code auto-creates `memory/MEMORY.md` at `~/.claude/projects/{hub-path}/` on first session. Read this only to understand what the file should look like. |
 | **`README.md`** | This file — quick-start for using hub-os. |
 
 ## The golden rule of instantiation
@@ -40,10 +41,10 @@ If you find yourself re-teaching Claude something that applied to the last hub, 
 
 hub-os is a living document. Every time a real incident surfaces a rule that proves universal across domains, the rule gets promoted into `FRAMEWORK.md` Section 7 (reflex card). Every time a `USER.md` learning turns out to apply to every hub a user builds, it gets promoted into the user's anchor file. The framework compounds through use.
 
-Current version: **v0.2.1** (2026-04-14). See `FRAMEWORK.md` Section 11 for the full evolution log.
+Current version: **v0.2.4** (2026-04-14). See `FRAMEWORK.md` Section 11 for the full evolution log.
 
 ## Source
 
-hub-os was extracted 2026-04-13 from `chiefofstaff`, an e-commerce consulting hub that had evolved the pattern organically over weeks of real operational work. The framework is the pattern stripped of its ecommerce specifics. The first application of the framework back to `chiefofstaff` (2026-04-14) surfaced an R-008 violation inside the framework doc itself — see v0.2.1 in the evolution log for that story.
+hub-os was extracted 2026-04-13 from `chiefofstaff`, an e-commerce consulting hub that had evolved the pattern organically over weeks of real operational work. The framework is the pattern stripped of its ecommerce specifics. See `FRAMEWORK.md` Section 11 for the full change history.
 
-The framework will continue evolving as new hubs are built from it and new incidents produce new reflexes. Contributions flow one direction only: **up** (hub → `USER.md` → framework), per Section 8 promotion rules.
+The framework evolves as new hubs are built from it and new incidents produce new reflexes. Contributions flow one direction only: **up** (hub → `USER.md` → framework), per Section 8 promotion rules.

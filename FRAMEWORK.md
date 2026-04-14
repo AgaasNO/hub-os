@@ -1,6 +1,6 @@
 # hub-os — Framework for Cognitive-Operational Hubs
 
-*Version 0.2.3 — snapshot extracted from chiefofstaff hub 2026-04-13, reviewed and patched 2026-04-14*
+*Version 0.2.4 — snapshot extracted from chiefofstaff hub 2026-04-13, reviewed and patched 2026-04-14*
 
 ---
 
@@ -264,13 +264,13 @@ The coordinator is the hub's thinking layer: state is what's true, vault is why,
 - **`CLAUDE.md`** at hub root. The coordinator's complete operating spec. Required sections in order:
   - **Identity** — archetype, character, how it applies to this hub
   - **Working style** — imported from `USER.md`, or inlined if `USER.md` doesn't exist yet
+  - **Session rituals** — session start + session end routines declared inline (see Section 4.8 for canonical content). Placed high so the coordinator reads it before any domain content; rituals are foundational and need to be in the first screenful.
   - **Mandate** — 1–3 sentences on what the coordinator is responsible for
   - **Domain map** — what work this hub coordinates
   - **Routing table** — task → specialist mapping (can be empty)
   - **Never list** — hard lines the coordinator refuses to cross (seeded from Section 7 reflex card)
   - **Current status** — pointer to `OVERVIEW.md`, not duplicated
   - **Tools available** — per-tool contracts or pointer to Layer 7
-  - **Session rituals** — session start + session end routines declared inline (see Section 4.8 for canonical content)
 
 - **`ARCHETYPE.md`** *(appears during expansion)*. If the archetype section in CLAUDE.md grows past ~500 words, split to its own file.
 
@@ -303,13 +303,13 @@ This is the slot that most affects hub quality. A wrong archetype produces wrong
 CLAUDE.md
 ├── Identity (archetype + 1 paragraph fit)
 ├── Working style (import from USER.md)
+├── Session rituals (start + end, per Section 4.8)
 ├── Mandate (1-3 sentences)
 ├── Domain map (bulleted)
 ├── Routing table (empty table with column headers)
 ├── Never list (seeded from reflex card — minimum 2-3 entries)
 ├── Current status → pointer to OVERVIEW.md
-├── Tools available → empty or minimal
-└── Session rituals (start + end, per Section 4.8)
+└── Tools available → empty or minimal
 ```
 
 Notice that **the never list is non-empty on day one**. It is seeded from Section 7 (reflex card). A new hub inherits at least the incidents other hubs have already survived, so day-one Layer 6 is non-trivial.
@@ -1738,6 +1738,32 @@ Every change gets one entry: a date, a version number, and a short note. Changes
 
 ---
 
+### 2026-04-14 — v0.2.4 (skeleton walk + vault rehaul parked)
+
+First end-to-end walk of `skeleton/` against the framework spec. Four fixes applied. One architectural question surfaced that is too large for this pass and has been parked for a dedicated future session.
+
+**Skeleton fixes applied:**
+
+1. **`skeleton/memory/MEMORY.md` moved out of the skeleton.** The v0.2.2 fix to Section 4.3 clarified that Claude Code auto-memory lives at `~/.claude/projects/{hub-path}/memory/`, not inside the hub directory itself. But `skeleton/memory/MEMORY.md` still existed — meaning a fresh `cp -r skeleton/ ~/thehub/newhub/` would create `~/thehub/newhub/memory/MEMORY.md` at the wrong physical location, contradicting the framework. The file's content (a template showing what a populated MEMORY.md index should look like) is valuable enough to preserve, so it was relocated to `hub-os/MEMORY.md.reference` with a reference-mode header explicitly telling readers not to copy it. README.md updated to reflect the new file.
+
+2. **CLAUDE.md section order in Section 4.1 updated to match skeleton + chiefofstaff reality.** The framework prescribed `Identity → Working style → Mandate → Domain map → Routing table → Never list → Current status → Tools available → Session rituals` (session rituals at position 9, the bottom). The skeleton CLAUDE.md and chiefofstaff's real CLAUDE.md both place session rituals at position 3 (right after working style). The skeleton-and-real order is better: session rituals are foundational and need to be in the first screenful of the file, not buried at the bottom where they'll be skipped on quick reads. Updated Section 4.1 Files list and Minimum code block to put Session rituals at position 3 and added a one-line justification for the placement in the Files list.
+
+3. **README.md version label updated** from v0.2.1 to v0.2.4.
+
+4. **README.md "Source" paragraph rewritten.** The prior version said *"the first application of the framework back to chiefofstaff (2026-04-14) surfaced an R-008 violation inside the framework doc itself — see v0.2.1 in the evolution log for that story."* Same narrator-voice tone as the v0.2.1 "Proof of the living loop" bullet we rewrote in v0.2.3. Replaced with a factual one-line pointer to Section 11 for change history. Going-forward rule from v0.2.3 holds: facts stay, evaluation goes.
+
+**Parked for a dedicated session — vault scope + Layer 4 conceptual framing:**
+
+The skeleton walk surfaced an architectural contradiction: Section 3.1's scope table labels Layer 4 (vault) as `hub`-scoped, but the skeleton CLAUDE.md uses absolute `~/thehub/vault/` paths and describes the vault as *"shared across all this user's hubs."* Chiefofstaff's actual vault also lives at `~/Thehub/vault/`, not inside the chiefofstaff hub directory. The framework's stated scope and the reference implementation's real scope disagree.
+
+In-session discussion with the user produced a deeper framing than the scope question itself. The user's intuition: **the vault is semantic memory; everything outside the vault is procedural/structural memory.** When you query `Black Rabbit Games` from the procedural layers (`OVERVIEW.md`, `CLAUDE.md`, `ops/`, `kanban/`), you get routing rules, state snapshots, and task mechanics — *how things hang together*. When you query it from the vault, you get concepts, manifesto, philosophy, the people in its orbit, the decisions that shaped it — *what the thing means*. These are two genuinely different kinds of recall, mapping onto the classical cognitive-science distinction between procedural memory (know-how) and semantic memory (know-what).
+
+Under that framing, the scope question becomes downstream. Semantic memory about "Black Rabbit as an idea" is inherently user-scoped — the concept doesn't care which hub you're working in — so a shared `~/thehub/vault/` is the natural home and hub-scoped per-hub vaults fragment the graph and lose most of the value. But this is a Section 4.4 rewrite, not a drive-by fix: Layer 4 probably wants to be renamed (current: "Metacognition (Vault)"; candidate: "Semantic Memory" or "Knowledge Substrate"), Section 3.1's scope table needs updating, Section 4.4's retrieval test needs to be rewritten in terms of mechanics-vs-meaning, and the whole "what goes where" boundary between vault and outside-vault layers deserves to be re-derived from the procedural/semantic distinction rather than from the WHY/WHAT distinction currently in use.
+
+Parked as a **planned v0.3.0 revision** with a dedicated session. See the corresponding note in the vault's `hot.md` Active Threads and the concept page `vault/wiki/lessons/Vault is semantic memory.md` filed in parallel with this entry.
+
+---
+
 ### 2026-04-14 — v0.2.3 (judgment-call cleanup from second review pass)
 
 Applied the four judgment-call findings that v0.2.2 deferred. Each is recorded here with the reasoning so the user can challenge any of them on a later pass.
@@ -1808,4 +1834,4 @@ Four additional findings from the same review pass are **deferred** pending user
 
 ---
 
-*End of FRAMEWORK.md v0.2.3*
+*End of FRAMEWORK.md v0.2.4*
