@@ -1,0 +1,88 @@
+# USER.md
+
+*Canonical user profile shared by every hub this user builds. Imported by each hub's Layer 1 CLAUDE.md by reference, not by copy.*
+
+*Per hub-os framework Section 5. Human-curated, rarely edited. Claude proposes promotions at session end; user approves. If this file is changing weekly, something is wrong — probably hub-specific content is sneaking in.*
+
+**Location:** copy this template to `~/thehub/USER.md` (the provisional default) or wherever you want the user-scoped anchor to live. See `FRAMEWORK.md` Section 1 preamble for the three open angles on location (thehub namespace vs user namespace; single file vs split; relationship to Claude Code auto-memory).
+
+---
+
+## 1. Identity
+
+*Who you are operationally. Role, background, relevant personality markers, cognitive patterns, operational constraints. This is the section that tells Claude how to frame advice — a senior engineer gets a different explanation than a student learning to code.*
+
+*Good identity content includes: professional role and domain, personality traits (Enneagram/Big Five/MBTI if useful), cognitive patterns that affect collaboration, operational constraints, what you're optimizing for at a life level.*
+
+*Bad identity content: generic résumé content, aspirational self-descriptions, lists of tools you know. Identity is about how you think and operate, not what skills you have.*
+
+{Replace this block with your real identity content. Aim for 1–3 paragraphs plus any relevant personality markers.}
+
+---
+
+## 2. Working style
+
+*How you want Claude to collaborate with you. This is the single highest-impact section for daily experience — it controls how Claude talks, pushes back, and paces responses.*
+
+*Good working style content includes: directness preference (hedging vs blunt), detail preference (concise vs expansive), pushback tolerance (yes-man vs devil's advocate), when to extract-before-solution vs jump to answers, how to handle ambiguous requests, what you don't want Claude to do.*
+
+*The best source material for this section is the feedback you've actually given Claude over time — the corrections, the "stop doing that," the "yes exactly, keep that up." Populate this section from real history, not from how you wish you worked.*
+
+- {replace with real working-style rules, bulleted; aim for 5–10}
+
+---
+
+## 3. Decision lens
+
+*How you weigh tradeoffs. A framework-agnostic rubric you apply when deciding what's worth doing. This section shapes Claude's recommendations across every hub you build.*
+
+*This section is the closest thing you have to a written philosophy of your own work. Most people don't have this written down anywhere. Forcing it into `USER.md` is one of the highest-leverage moves in the entire framework.*
+
+*Good decision lens content includes: named decision philosophies you've committed to, filters you apply, explicit anti-patterns you've learned to avoid, your time horizon and risk posture.*
+
+{Replace with your named philosophy, your filters, your anti-patterns. Can start partial and grow.}
+
+---
+
+## 4. People
+
+*Humans who recur **across** every hub you build, not within a single one. Family, long-term business partners, regular collaborators, key advisors.*
+
+*Per-hub people (a specific client, a specific counterparty in one domain) belong in that hub's `vault/wiki/people/`, not here.*
+
+*The test: "Will this person still matter in a hub I build three years from now for a different domain?" If yes, here. If no, in the specific hub's vault.*
+
+- {replace with recurring people; can start partial and grow}
+
+---
+
+## 5. Cross-hub preferences
+
+*Rules that apply in every hub you will ever build. Not domain-specific, not client-specific. The universal slice of your preferences.*
+
+*Examples of what belongs here: design preferences, communication preferences, meta-rules you've taught Claude through feedback, cross-tool conventions you always use.*
+
+*Examples of what does NOT belong here: hub-specific rules (e.g., "don't mutate Shopify without approval" — lives in the relevant hub's never list), domain-specific practices (e.g., "always pull GSC alongside Ahrefs" — lives in that domain's ops role CLAUDE.md).*
+
+- {replace with real cross-hub rules; can start partial and grow}
+
+---
+
+## 6. Scope note
+
+*This section is mandatory. Without it, `USER.md` bloats — every piece of reflection starts to look like it belongs here, and suddenly the file is 10,000 words of mixed hub-scoped and user-scoped content.*
+
+This file is user-scoped. Things it is **not** for:
+
+- **Current operational state** → hub's `OVERVIEW.md` (Layer 2)
+- **Hub-specific decisions and rationales** → hub's `vault/wiki/decisions/` (Layer 4)
+- **Per-client context** → hub's `vault/wiki/clients/` (Layer 4)
+- **Per-project context** → hub's `vault/wiki/projects/` (Layer 4)
+- **Hub-specific rules** → hub's Layer 1 never list (Layer 6)
+- **Hub-specific tool contracts** → hub's Layer 7 integration notes
+- **Session rituals** → hub's Layer 1 CLAUDE.md rituals section (Layer 8)
+- **Cross-session agent behavior context** → Claude auto-memory (`~/.claude/projects/...`, per-hub)
+
+**Default test:** *"Would this still be true in a completely different hub I build three years from now?"*
+If yes → it belongs here.
+If no → it goes in the hub.

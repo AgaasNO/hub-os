@@ -1,0 +1,30 @@
+# Open proposals awaiting decision.
+#
+# Schema per hub-os framework Layer 2 spec (FRAMEWORK.md Section 4.2).
+# Required fields per proposal:
+#   id:           Unique identifier (e.g., "p-001" or a running integer)
+#   title:        One-line summary
+#   status:       "open" | "resolved"
+#   created_date: YYYY-MM-DD
+#
+# Required when resolved:
+#   resolved_date: YYYY-MM-DD
+#   resolved_note: One-line explanation of how the item was resolved
+#
+# Optional (add as domain requires):
+#   owner:        Who's responsible for driving it
+#   priority:     A simple ranking if it helps triage
+#   related:      Cross-refs to other proposal ids, vault pages, or clients
+#   domain-specific fields: whatever the hub actually needs
+#
+# Reconciliation rule (non-negotiable per R-005):
+#   At every session end where real work happened, cross-reference this file
+#   against completed work. Mark resolved items with `resolved_date` and
+#   `resolved_note`. Within one cycle, resolved items are deleted or archived
+#   to `~/thehub/vault/wiki/log.md`. History does not accumulate here.
+#
+# Stale proposals describing finished work erode trust in the entire state
+# layer. If this file has items older than a few weeks still marked `open`,
+# triage before adding new ones.
+
+proposals: []

@@ -1,0 +1,18 @@
+# clients/
+
+Per-counterparty agent-oriented briefs. Strategy, constraints, standing rules, cross-agent notes.
+
+**Rename this folder per domain if "clients" doesn't fit.** Alternatives:
+- `customers/` — if you sell to individuals, not businesses
+- `collaborators/` — if the counterparties are partners, not clients
+- `subjects/` — research hubs
+- `accounts/` — if the domain is account-based
+- `properties/` — real estate
+- whatever the domain calls its counterparties
+
+Schema per FRAMEWORK.md Section 4.4:
+- Frontmatter: type: client (or rename), status: active|paused|former, date: YYYY-MM-DD
+- Body: who they are, strategy, constraints, standing rules, Cross-Agent Notes section
+- Wikilinks to related decisions, people, projects
+
+**Cross-Agent Notes section** is where ops agents leave signals for each other via the coordinator. When this section exceeds ~10 entries, timeline rotation archives older entries to `~/thehub/vault/wiki/timeline/{Name} — {year}.md`.

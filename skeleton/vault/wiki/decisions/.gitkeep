@@ -1,0 +1,10 @@
+# decisions/
+
+Per-decision markdown files. Populates as non-trivial decisions get filed.
+
+Schema per FRAMEWORK.md Section 4.4:
+- Frontmatter: type: decision, status: active|superseded|pending, date: YYYY-MM-DD
+- Body: title, context, options considered, choice, rationale, tradeoffs, consequences
+- Wikilinks to every affected person and project (non-negotiable — see Section 4.4 wikilink rule)
+
+Filename convention: descriptive title, no date prefix (date lives in frontmatter).

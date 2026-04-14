@@ -1,0 +1,10 @@
+# lessons/
+
+Per-lesson markdown files. Named reusable patterns extracted from experience.
+
+Schema per FRAMEWORK.md Section 4.4:
+- Frontmatter: type: lesson, status: active, date: YYYY-MM-DD
+- Body: name, what-it-is, when-safe, when-unsafe, how-to-apply
+- Wikilinks to related decisions, people, projects
+
+Every lesson needs a memorable name so it can be referenced elsewhere (e.g., "Turn-boundary hot-patch," "Boring Empire philosophy"). Unnamed patterns rot because they can't be cited.

@@ -1,0 +1,9 @@
+# people/
+
+Per-person markdown files. Domain actors — clients, collaborators, counterparties, suppliers, advisors.
+
+Schema per FRAMEWORK.md Section 4.4:
+- Frontmatter: type: person, role: (their role in this domain), date: YYYY-MM-DD
+- Body: who they are, what they do, relevant history, wikilinks to related decisions and projects
+
+**Scope boundary:** people who recur across EVERY hub the user builds (family, long-term partners) live in `~/thehub/USER.md` People section, NOT here. This folder is for people specific to this hub's domain. Test: "Will this person still matter in a completely different hub I build?" If yes, USER.md. If no, here.

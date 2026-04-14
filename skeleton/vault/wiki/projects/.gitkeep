@@ -1,0 +1,9 @@
+# projects/
+
+Per-project markdown files. Initiatives, ventures, ongoing work streams within this hub.
+
+Schema per FRAMEWORK.md Section 4.4:
+- Frontmatter: type: project, status: active|paused|superseded|abandoned, date: YYYY-MM-DD
+- Body: what the project is, current state, history, wikilinks to related people and decisions
+
+A project is an initiative that crosses from "task" to "worth its own page" — typically when it has its own history, its own decisions, or its own set of people. Small tasks don't need pages; big initiatives do.
