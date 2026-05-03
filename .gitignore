@@ -1,0 +1,19 @@
+# Credentials & secrets
+*.env
+.env.*
+!.env.example
+*credentials*
+!*credentials*.md
+*.secret
+*.key
+*.pem
+client_secret*.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# OS / editor
+.DS_Store
+Thumbs.db

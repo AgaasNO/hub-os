@@ -1,0 +1,2545 @@
+% !TEX program = xelatex
+% hub-os FRAMEWORK - auto-generated from FRAMEWORK.md
+% Compiler: XeLaTeX (required for Unicode box-drawing glyphs in 3.3 Visual)
+% In Overleaf: Menu -> Settings -> Compiler: XeLaTeX. Recompile twice for TOC.
+
+\documentclass[11pt,a4paper]{article}
+
+% --- XeLaTeX fonts & Unicode ---
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}
+\setsansfont{Latin Modern Sans}
+\setmonofont{DejaVu Sans Mono}[Scale=0.92]
+\usepackage{microtype}
+
+% --- Layout ---
+\usepackage[a4paper,margin=2.3cm,headheight=14pt]{geometry}
+\usepackage{parskip}
+\usepackage{setspace}
+\setstretch{1.06}
+
+% --- Typography ---
+\usepackage{titlesec}
+\titleformat{\section}{\Large\bfseries\sffamily}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\large\bfseries\sffamily}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\sffamily}{\thesubsubsection}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.6em}{0.6em}
+\titlespacing*{\subsection}{0pt}{1.2em}{0.4em}
+\titlespacing*{\subsubsection}{0pt}{0.9em}{0.3em}
+
+% --- Lists ---
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=1.3em, itemsep=2pt, topsep=3pt}
+\setlist[enumerate]{leftmargin=1.7em, itemsep=2pt, topsep=3pt}
+
+% --- Tables ---
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{ragged2e}
+\newcolumntype{L}{>{\RaggedRight\arraybackslash}X}
+
+% --- Code ---
+\usepackage{xcolor}
+\definecolor{codebg}{RGB}{246,247,249}
+\definecolor{coderule}{RGB}{220,222,228}
+\definecolor{codekw}{RGB}{106,27,154}
+\definecolor{codestr}{RGB}{27,94,32}
+\definecolor{codecom}{RGB}{120,120,120}
+
+\usepackage{listings}
+\lstdefinestyle{plain}{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{coderule},
+  framesep=6pt,
+  xleftmargin=8pt,
+  xrightmargin=8pt,
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  upquote=true,
+  extendedchars=true,
+  inputencoding=utf8
+}
+\lstdefinelanguage{YAMLish}{
+  keywords={type,kill_by,domain,task_shape,artifact,confidence,evidence_log,date,source,event,status,id,incident,rule,why,layer,source_hub,enforcement},
+  keywordstyle=\color{codekw}\bfseries,
+  sensitive=true,
+  comment=[l]{\#},
+  commentstyle=\color{codecom}\itshape,
+  morestring=[b]',
+  stringstyle=\color{codestr},
+}
+\lstset{style=plain}
+
+% --- Headers & footers ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\sffamily hub-os}
+\fancyhead[R]{\small\sffamily\leftmark}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+
+% --- Hyperlinks & TOC ---
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=blue!60!black,
+  pdftitle={hub-os Framework for Cognitive-Operational Hubs},
+  pdfauthor={Gabriel Lindberg},
+  bookmarksnumbered=true
+}
+
+\title{\sffamily\textbf{\Huge hub-os} \\[0.4em]
+  \Large Framework for Cognitive-Operational Hubs}
+\author{Gabriel Lindberg}
+\date{Source: \texttt{FRAMEWORK.md} \ \textbullet\ \ Generated \today}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\vspace{1.5em}
+{\small\tableofcontents}
+\newpage
+
+
+\emph{Version 0.3.0 — snapshot extracted from chiefofstaff hub 2026-04-13, reviewed and patched 2026-04-14, Layer 4 rewritten as semantic memory 2026-04-14}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+
+\section{Preamble}
+
+
+\subsection{The core analogy}
+
+
+A hub is an organism, not an assembly.
+
+Nobody understands the economy. Not because supply chains or monetary policy or labor markets are individually incomprehensible — each part can be studied in isolation by someone smart enough. The economy is incomprehensible because it is \emph{living}: its behavior emerges from how the parts interact, and emergence is too much for one head. You can understand every organ in isolation and still not be able to predict the organism, because the organism isn't the sum of its organs — it's the \emph{pattern of their interaction}.
+
+A sufficiently ambitious domain of operational work behaves the same way. Any one client can be held in your head. Any one venture, any one project. But the moment you're running six of each across four ventures with shifting priorities, compounding decisions, and threads that cross-reference, the system outgrows any single head. What's missing isn't intelligence — it's a place for the whole thing to live. A hub is that place.
+
+hub-os is a skeleton for building these organisms.
+
+\subsection{What hub-os is}
+
+
+hub-os defines \textbf{8 layers} (you can think of them as \emph{organs}) that every hub exercises, a \textbf{minimum implementation} for each layer, and a set of \textbf{interaction rules} that govern how layers exchange information. None of the layers are optional — they are faculties every hub has, at some depth. A day-one hub exercises them at minimum depth. A mature hub exercises them at substantive depth. Both are legitimate hubs; neither is missing an organ.
+
+The distilled content of hub-os is the structure of \texttt{chiefofstaff}, stripped of its ecommerce specifics. What remains is universal: the layers, the slots inside them, the rules for filling the slots, the rituals that keep the layers coherent over time, and the reflexes accumulated from real incidents other hubs have already survived.
+
+The core premise is simple: \textbf{Claude without a hub is a bot. Claude with a hub is a system.} A bot answers the current message. A hub holds the world, remembers why decisions were made, enforces its own reflexes, and gets smarter per session rather than resetting. The gap is not a prompt — it's a layered structure. hub-os is that structure, written down.
+
+\subsection{What hub-os is not}
+
+
+\begin{itemize}
+  \item \textbf{Not a generator.} There is no command that says "make me thehub for webdesign" and produces a working hub. The domain interview — \emph{what archetype fits? what roles exist? what credentialed surfaces need safety?} — happens in a live session. hub-os provides the skeleton; it does not replace the thinking.
+  \item \textbf{Not a replacement for Claude Code.} It sits on top as a pattern. Every file is plain markdown or YAML; no new runtime, no magic.
+  \item \textbf{Not complete.} This is a snapshot of what \texttt{chiefofstaff} had learned by 2026-04-13. Reflexes that prove universal get promoted in; patterns that fail get removed. Section 11 tracks changes.
+  \item \textbf{Not opinionated about the domain.} hub-os is opinionated about \emph{structure} — how information flows, where rationales live, how delegation works, how safety gets enforced — and agnostic about \emph{content}. It works for ecommerce consulting, web design, research, writing, bookkeeping, or anything else where one operator needs to hold a big picture.
+\end{itemize}
+
+\subsection{Who it's for}
+
+
+\begin{itemize}
+  \item \textbf{Primary:} a single operator running multiple complex domains who wants Claude to hold the full picture across all of them, without re-teaching the working style every time a new hub is built.
+  \item \textbf{Secondary:} someone willing to pay the upfront cost of codifying their working style once (\texttt{USER.md}) in exchange for every future hub inheriting it automatically.
+  \item \textbf{Less suitable:} single-use bots, one-shot task runners, teams with multiple primary users (hub-os assumes one), or ephemeral projects where accumulation is waste.
+\end{itemize}
+
+\subsection{The insight driving the user/hub split}
+
+
+Every hub-os user will eventually build more than one hub. Without a framework, hub \#2 starts from zero — no working style, no feedback history, no accumulated design preferences, none of the hard-won rules about how to push back. The second hub ends up being the first hub again, minus the scar tissue.
+
+hub-os fixes this by drawing a hard line between \textbf{what belongs to the hub} and \textbf{what belongs to the user across all their hubs}. The user-scoped layer (\texttt{USER.md} + auto-memory) is inherited by every new hub automatically. The hub-scoped layers are built fresh per domain. The operator pays the teaching cost once and every future hub starts smart.
+
+\subsection{A note on \texttt{USER.md} location}
+
+
+\texttt{USER.md} is provisionally located at \texttt{\textasciitilde{}/thehub/USER.md}, sibling to every hub directory. This location is flagged for reflection before first instantiation. Three angles to think through:
+
+\begin{itemize}
+  \item \textbf{thehub namespace vs. user namespace.} \texttt{\textasciitilde{}/thehub/} is the umbrella directory for current work. If a hub ever gets built outside that umbrella, a \texttt{USER.md} trapped under \texttt{\textasciitilde{}/thehub/} doesn't serve it. Alternatives: \texttt{\textasciitilde{}/.claude/USER.md} (alongside auto-memory) or \texttt{\textasciitilde{}/USER.md} (pure user scope).
+  \item \textbf{Single file vs split.} One \texttt{USER.md} or a \texttt{user/} directory with section-per-file? Single file is simpler until it grows past \textasciitilde{}2000 words; split is cleaner after.
+  \item \textbf{Relationship to Claude Code auto-memory.} Claude Code's existing \texttt{\textasciitilde{}/.claude/projects/\{project-path\}/memory/} is per-project-path. \texttt{USER.md} is the layer that escapes this per-project trap. Whether \texttt{USER.md} lives \emph{next to} auto-memory or \emph{above} it is an unresolved convention question.
+\end{itemize}
+
+Recommendation for the first real instantiation: start with \texttt{\textasciitilde{}/thehub/USER.md}. The cost of relocating later is a one-line change per hub.
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\section{Core Concepts}
+
+
+These are the terms the rest of the document assumes. Read this section before any other.
+
+\subsection{Hub}
+
+
+A Claude Code project directory that holds the full operational picture of one domain of work. Every hub exercises all 8 layers at some depth. A hub is not just a folder with a CLAUDE.md — it is a \emph{layered organism} where each layer carries a specific kind of information and a clear rule about what goes where.
+
+\subsection{Coordinator}
+
+
+The top-level agent in a hub. Holds the big picture, makes decisions, delegates specialist work, and is \textbf{forbidden from doing specialist work directly}. The coordinator's job is coordination — the moment it starts executing, it loses the altitude it needs to see the whole board.
+
+Every coordinator has:
+
+\begin{itemize}
+  \item An \textbf{archetype} — a named historical or fictional figure whose reflexes fit the domain's failure modes
+  \item A \textbf{mandate} — what the coordinator is responsible for and what it refuses to do
+  \item A \textbf{routing table} — explicit task → specialist mapping (can start empty)
+  \item A \textbf{never list} — hard lines the coordinator refuses to cross (starts seeded from the reflex card)
+  \item A \textbf{working style section} — imported from \texttt{USER.md}
+\end{itemize}
+
+The coordinator's personality is load-bearing, not decoration. Wrong archetype = wrong reflexes at every decision point = hub feels permanently off.
+
+\subsection{Layer (organ)}
+
+
+A faculty every hub exercises, implemented as a set of files with a common purpose. There are 8 layers total. No layer is optional — but each has a defined \textbf{minimum implementation} and an \textbf{expansion path}. Some minimums are substantive (Layer 1 coordinator, Layer 2 state). Some are near-empty stubs (Layer 5 ops with no roles yet, Layer 7 integration with no tools yet).
+
+Layers are \emph{orthogonal} — no layer can be implemented inside another. If two layers start overlapping, one of them is wrong. Section 3.2's canonicality rules keep them separated.
+
+\subsection{Slot}
+
+
+A placeholder inside a layer that gets filled per-hub or per-domain. \texttt{\{archetype\}}, \texttt{\{mandate\}}, \texttt{\{ops\_roster\}}, \texttt{\{never\_list\}}, \texttt{\{credentialed\_surfaces\}} — these are all slots. A framework is a collection of slots plus rules for filling them. hub-os is exactly that.
+
+\subsection{Scope}
+
+
+Every piece of information in a hub has a scope: either \textbf{hub-scoped} (lives in one hub) or \textbf{user-scoped} (shared across every hub the same user owns). Scope determines file location. Getting scope wrong is the main reason hub \#2 ends up being hub \#1 minus the wisdom. Rule of thumb: \emph{"Will this still be true in a hub I build three years from now for a totally different domain?"} If yes, user-scoped.
+
+\subsection{Promotion}
+
+
+The upward flow of learnings. Two paths:
+
+\begin{itemize}
+  \item \textbf{Hub → framework.} When a reflex that started in one hub proves universal, it gets promoted into this framework doc (Layer 6 never-list seeds, Section 7 reflex card).
+  \item \textbf{Hub → USER.md.} When a working-style lesson from one hub applies to every hub the same user will ever build, it gets promoted into \texttt{USER.md}.
+\end{itemize}
+
+Promotion is the mechanism that keeps the framework living. Without it, the framework freezes and real wisdom stays trapped in individual hubs.
+
+\subsection{Reflex}
+
+
+A rule that exists because something broke. Every reflex has: incident, rule, why, date. Reflexes are the scar tissue that makes a hub robust. Section 7 is the reflex card — scar tissue available to every new hub so day-one hubs don't have to re-earn every lesson.
+
+\subsection{Canonicality}
+
+
+The rule that every piece of information has exactly \textbf{one authoritative location}. No piece is stored in two layers. If a decision is in the vault, it is not also in OVERVIEW.md. If a rule is in CLAUDE.md, it is not also duplicated in the reflex card.
+
+Canonicality is what keeps the layer graph honest. Without it, information duplicates, duplicates drift, and the hub starts lying to itself. Section 3.2 is the canonicality decision table.
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\section{Architecture}
+
+
+\subsection{The 8 layers}
+
+
+Every hub exercises 8 layers. They are not modules you add or skip — they are faculties every hub has, implemented at some depth.
+
+\begin{tabularx}{\linewidth}{L L L L}
+\toprule
+\textbf{\#} & \textbf{Layer} & \textbf{Scope} & \textbf{One-line purpose} \\
+\midrule
+1 & \textbf{Coordinator} & hub & The thinking layer — archetype, mandate, routing, never list \\
+2 & \textbf{State} & hub & What is currently true — OVERVIEW.md, kanban \\
+3 & \textbf{Auto-memory} & user¹ & Procedural user preferences and working style — USER.md, memory/ \\
+4 & \textbf{Semantic Memory (vault)} & user¹ & What things mean — concepts, decisions, lessons, characters — vault/wiki/ \\
+5 & \textbf{Ops (delegation)} & hub & Named specialists and the routing that enforces them — ops/ \\
+6 & \textbf{Safety (enforcement)} & hub & Hard rules the coordinator can't violate — never list, hooks, cred split \\
+7 & \textbf{Integration} & hub & External tools and their contracts — MCP, APIs, per-tool notes \\
+8 & \textbf{Cadence (rituals)} & hub & Session rituals and scheduled rhythms — start/end routine, cron \\
+\bottomrule
+\end{tabularx}
+
+
+¹ \emph{Layers 3 and 4 are both user-scoped and cover different memory types. Layer 3 is procedural — rules, preferences, working style, the user's cross-hub how-to-collaborate. Layer 4 is semantic — concepts, rationales, lessons, people-as-characters, the knowledge the user's hubs have accumulated about the world. They live in different places (\texttt{\textasciitilde{}/thehub/USER.md} + \texttt{\textasciitilde{}/.claude/projects/\{hub\}/memory/} for Layer 3; \texttt{\textasciitilde{}/thehub/vault/} for Layer 4) and never duplicate content. See Section 4.3 for the procedural side, Section 4.4 for the semantic side.}
+
+\subsection{The canonicality decision table}
+
+
+Canonicality is the rule that governs how layers stay separate. It is load-bearing enough to live in the architecture section, not the back of the book. Before writing anything into a hub, ask: \emph{which layer owns this kind of information?}
+
+The deep structure of the table is the \textbf{procedural / semantic split}. Procedural information — mechanics, rules, state, routing, credentials, schedules — lives in Layers 1, 2, 3, 5, 6, 7, 8. Semantic information — meaning, rationales, concepts, characters, lessons — lives in Layer 4. A single entity (a person, a project, a decision) can be referenced by both sides; it is \emph{represented} on only one.
+
+\begin{tabularx}{\linewidth}{L L L}
+\toprule
+\textbf{Information type} & \textbf{Lives in (canonical)} & \textbf{Never lives in} \\
+\midrule
+What is currently true, live work (mechanics) & Layer 2 (\texttt{OVERVIEW.md}, \texttt{kanban/}) & Layer 4 vault, duplicated in Layer 1 CLAUDE.md \\
+Why a decision was made (reasoning as meaning) & Layer 4 (\texttt{vault/wiki/decisions/}) & Layer 2 state, inline in CLAUDE.md \\
+A reusable pattern with a name (concept) & Layer 4 (\texttt{vault/wiki/lessons/}) & CLAUDE.md, reflex card \\
+An actor in the domain as a character (who they are) & Layer 4 (\texttt{vault/wiki/people/}, \texttt{projects/}, \texttt{clients/}) & Layer 2 state, Layer 5 ops files \\
+An actor as a routing target (how work flows to them) & Layer 5 (\texttt{ops/\{role\}/}) or Layer 1 routing table & Layer 4 vault (link from the character page, don't duplicate) \\
+A hard rule the coordinator must follow (mechanics) & Layer 1 declaration (never list) + Layer 6 enforcement (hook/architecture) & Layer 4 vault \\
+A cross-hub user preference (procedural, about the user) & Layer 3 (\texttt{USER.md} or \texttt{memory/}) & Layer 1 CLAUDE.md inlined, Layer 4 vault \\
+A cross-hub concept the user has internalized (semantic, about the world) & Layer 4 (\texttt{vault/wiki/lessons/} or \texttt{people/}) & Layer 3 \texttt{USER.md} \\
+Per-role execution rules (mechanics) & Layer 5 (\texttt{ops/\{role\}/CLAUDE.md}) & Layer 1 top-level CLAUDE.md \\
+Tool contracts and quirks (mechanics) & Layer 7 ("Tools available" in CLAUDE.md or dedicated integration notes) & Inline where the tool is used \\
+Session rituals and scheduled rhythms (mechanics) & Layer 8 (declared in Layer 1 CLAUDE.md rituals section) & Layer 3 memory/, Layer 4 vault \\
+An incident that produced a rule (the rule is procedural; the story is semantic) & Section 7 reflex card (rule) + Layer 4 \texttt{decisions/} (story with wikilinks) & Duplicated in Layer 1 \\
+Recent context cache (what just happened — meaning as priority) & Layer 4 (\texttt{vault/wiki/hot.md}) & Layer 2 state \\
+\bottomrule
+\end{tabularx}
+
+
+The rule of thumb when unsure — the retrieval test from Section 4.4:
+\textbf{"Am I looking up mechanics or meaning?"}
+
+\begin{itemize}
+  \item \textbf{Mechanics} (how the system behaves, what is live, who executes, what rule applies) → procedural layers: 1, 2, 5, 6, 7, 8. If the mechanics are about the user rather than the hub → Layer 3.
+  \item \textbf{Meaning} (what a thing is abstractly, why a decision was made, what a pattern is called, who a person is as a character) → Layer 4 (vault).
+\end{itemize}
+
+The row pair "actor as character" vs "actor as routing target" is the clearest worked example of the split. \texttt{[[Alex]]} as a character — his background, his strengths, the reason he's hard to delegate to — lives once in \texttt{vault/wiki/people/Alex.md}. \texttt{omar} as an ops routing target — which roles dispatch to him, which CONTEXT.md carries his mechanics — lives in \texttt{ops/}. The vault page links to the ops file; the ops file links back to the vault page; nothing is duplicated.
+
+\subsection{Visual}
+
+
+\begin{lstlisting}
+                    ┌──────────────────────────────┐
+                    │      USER.md (user-scoped)   │
+                    │  imported by every hub CLAUDE.md
+                    └───────────────┬──────────────┘
+                                    │
+        ╔═══════════════════════════▼════════════════════════════╗
+        ║              Layer 1: Coordinator                       ║
+        ║   CLAUDE.md — archetype, mandate, routing, never list   ║
+        ╚═══════╤═════════╤═════════╤══════════╤════════╤════════╝
+                │         │         │          │        │
+                ▼         ▼         ▼          ▼        ▼
+           ┌────────┐ ┌────────┐ ┌────────┐ ┌───────┐ ┌────────┐
+           │   L2   │ │   L3   │ │   L4   │ │  L5   │ │   L6   │
+           │ State  │ │ Memory │ │ Vault  │ │  Ops  │ │ Safety │
+           └────────┘ └────────┘ └────────┘ └───────┘ └────────┘
+                │                    │         │        │
+                └────────┬───────────┴─────────┴────────┘
+                         ▼
+                   ┌─────────────┐  ┌─────────────┐
+                   │     L7      │  │     L8      │
+                   │ Integration │  │   Cadence   │
+                   └─────────────┘  └─────────────┘
+
+       All 8 layers are present in every hub. Depth varies.
+\end{lstlisting}
+
+
+\subsection{Minimum vs. expansion}
+
+
+Every layer has a \textbf{minimum implementation} — what must exist on day one — and an \textbf{expansion path} — what grows as the hub matures under pressure.
+
+\begin{tabularx}{\linewidth}{L L L}
+\toprule
+\textbf{Layer} & \textbf{Day-one minimum} & \textbf{Grows toward} \\
+\midrule
+1 Coordinator & Archetype, mandate, working-style import, never list (seeded from reflex card), empty routing table, status pointer & Rich archetype (own file), full routing table, domain map, tool catalog \\
+2 State & OVERVIEW.md with 4 canonical sections, empty \texttt{kanban/proposals/pending.yaml} & Briefs, reports, per-project state, domain-extended schemas \\
+3 Auto-memory & \texttt{USER.md} reference, \texttt{memory/MEMORY.md} index skeleton & Populated feedback, user-profile files, project memories, reference pointers \\
+4 Semantic Memory (Vault) & \texttt{vault/wiki/hot.md}, \texttt{index.md}, \texttt{log.md}, empty subfolders & Populated decisions, lessons, people, projects, client briefs, timeline archives \\
+5 Ops & \texttt{ops/} folder containing \texttt{\_template/CLAUDE.md}, empty routing table in Layer 1 & Populated roles with per-role CLAUDE.md, context files, cross-role signals \\
+6 Safety & Never list (non-empty, seeded from reflex card), credential separation pattern declared & Hooks, dedicated safety configs, credential split in practice \\
+7 Integration & "Tools available" section (may be empty) & Per-tool contracts, MCP wiring, endpoint quirks, documentation pointers \\
+8 Cadence & Session start/end ritual documented & Scheduled automation, daily/weekly/monthly reviews, reconciliation loops, cron \\
+\bottomrule
+\end{tabularx}
+
+
+Some minimums are substantive (Layers 1, 2, 6, 8). Some are near-empty stubs (Layer 5 with no roles, Layer 7 with no tools, Layer 4 with a skeleton). \textbf{All 8 are present on day one.} The hub grows inside its layers, not by adding new layers.
+
+\subsection{Growth triggers}
+
+
+Expansion happens under pressure, not on schedule. These are the signals that a specific layer wants to grow beyond its current depth. None are commands — they're invitations.
+
+\begin{tabularx}{\linewidth}{L L}
+\toprule
+\textbf{Layer} & \textbf{When it's ready to grow} \\
+\midrule
+1 Coordinator & CLAUDE.md feels thin; archetype section wants more space; never list grows past 3–4 entries \\
+2 State & Proposals start needing more than a YAML row; scheduled work starts producing outputs \\
+3 Auto-memory & Feedback and preferences start accumulating; user notices they've taught the same thing twice \\
+4 Vault & A decision's rationale matters but has nowhere to live; a pattern emerges that deserves a name \\
+5 Ops & The coordinator is doing specialist work it shouldn't; the CLAUDE.md grows domain-specific execution rules \\
+6 Safety & A new mutation-capable tool enters; an incident happens; the never list grows from inherited reflexes \\
+7 Integration & A new external tool gets used regularly; tool quirks worth documenting accumulate \\
+8 Cadence & Informal rituals emerge and want to be codified; scheduled automation becomes useful \\
+\bottomrule
+\end{tabularx}
+
+
+When a trigger fires, grow that layer. When it doesn't, leave it at its current depth. A hub that tries to grow every layer at once collapses under the bureaucracy.
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\section{Layer Reference}
+
+
+Each layer section follows the same sub-structure: \textbf{Purpose / Files / Slots / Minimum / Expansion / Example from chiefofstaff / Anti-patterns}. Read sections for layers you're implementing; skim the rest.
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\subsection{Coordinator \emph{[hub-scoped]}}
+
+
+\subsubsection{Purpose}
+
+
+The coordinator holds the big picture and makes decisions. It delegates specialist work and refuses to execute it directly. Its job is to keep the altitude the hub needs to see the whole board.
+
+If the coordinator starts executing, it loses altitude. Altitude is the thing specialists cannot provide for themselves — they are each inside their own domain. Only the coordinator sees across. Protect that by keeping execution out.
+
+The coordinator is the hub's thinking layer: state is what's currently true, vault holds what things mean, ops is who executes, coordinator is \emph{what to do next} — the decision layer on top of all the others.
+
+\subsubsection{Files}
+
+
+\begin{itemize}
+  \item \textbf{\texttt{CLAUDE.md}} at hub root. The coordinator's complete operating spec. Required sections in order:
+\begin{itemize}
+  \item \textbf{Identity} — archetype, character, how it applies to this hub
+  \item \textbf{Working style} — imported from \texttt{USER.md}, or inlined if \texttt{USER.md} doesn't exist yet
+  \item \textbf{Session rituals} — session start + session end routines declared inline (see Section 4.8 for canonical content). Placed high so the coordinator reads it before any domain content; rituals are foundational and need to be in the first screenful.
+  \item \textbf{Mandate} — 1–3 sentences on what the coordinator is responsible for
+  \item \textbf{Domain map} — what work this hub coordinates
+  \item \textbf{Routing table} — task → specialist mapping (can be empty)
+  \item \textbf{Never list} — hard lines the coordinator refuses to cross (seeded from Section 7 reflex card)
+  \item \textbf{Current status} — pointer to \texttt{OVERVIEW.md}, not duplicated
+  \item \textbf{Tools available} — per-tool contracts or pointer to Layer 7
+\end{itemize}
+\end{itemize}
+
+\begin{itemize}
+  \item \textbf{\texttt{ARCHETYPE.md}} \emph{(appears during expansion)}. If the archetype section in CLAUDE.md grows past \textasciitilde{}500 words, split to its own file.
+\end{itemize}
+
+\subsubsection{Slots}
+
+
+\begin{tabularx}{\linewidth}{L L L}
+\toprule
+\textbf{Slot} & \textbf{What fills it} & \textbf{Example (chiefofstaff)} \\
+\midrule
+\texttt{\{archetype\}} & A named real or fictional figure whose reflexes fit the domain & Charlie Munger \\
+\texttt{\{mandate\}} & 1–3 sentence statement of coordinator's job & "Hold the full picture of everything Gabriel is building so he doesn't have to hold it all in his head" \\
+\texttt{\{domain\}} & What kind of work the hub coordinates & E-commerce consulting + ventures \\
+\texttt{\{primary\_user\}} & Who the coordinator reports to & Gabriel (one user, one hub) \\
+\texttt{\{routing\_table\}} & Task → specialist mapping & 6 roles in \texttt{../ops/} \\
+\texttt{\{never\_list\}} & Hard lines coordinator refuses & "No direct Shopify writes. No subagent credential passing." \\
+\bottomrule
+\end{tabularx}
+
+
+\subsubsection{Archetype selection — the hard slot}
+
+
+This is the slot that most affects hub quality. A wrong archetype produces wrong reflexes at every decision point and the hub feels permanently off. Rules:
+
+\begin{enumerate}
+  \item \textbf{Pick a real, named figure.} Historical, cultural, fictional — but concrete. "A senior engineer" doesn't have reflexes. Munger does. Rams does. Feynman does. Jane Jacobs does. Vignelli does. Carse does. Specificity is the whole point.
+\end{enumerate}
+
+\begin{enumerate}
+  \item \textbf{Pick for reflexes, not aesthetics.} What does the domain punish? What does it reward? The archetype's native reflexes should match. Ecommerce consulting punishes impulse and rewards patience — Munger's reflexes are exactly patience and skepticism. Design punishes decoration and rewards restraint — Rams's reflex is "less, but better." Don't pick an archetype because you admire them; pick one whose instincts cover the domain's failure modes.
+\end{enumerate}
+
+\begin{enumerate}
+  \item \textbf{Pick someone with character contrast to the user — someone the user respects but would disagree with sometimes.} The archetype is a counterweight, not a mirror. A high-drive user with a high-drive archetype amplifies impulse and the hub becomes noise. A high-drive user with a patient archetype introduces friction in exactly the right place. A yes-man archetype is useless; the archetype has to be credible enough for its pushback to land and distinct enough for the pushback to be real. Use the user profile (\texttt{USER.md}) to find contrast points.
+\end{enumerate}
+
+\begin{enumerate}
+  \item \textbf{Write the fit.} 1–2 paragraphs in CLAUDE.md explaining \emph{why this archetype for this domain}. Future Claude sessions need to know, and future promotion checks need something to compare against.
+\end{enumerate}
+
+\subsubsection{Minimum (day one)}
+
+
+\begin{lstlisting}
+CLAUDE.md
+├── Identity (archetype + 1 paragraph fit)
+├── Working style (import from USER.md)
+├── Session rituals (start + end, per Section 4.8)
+├── Mandate (1-3 sentences)
+├── Domain map (bulleted)
+├── Routing table (empty table with column headers)
+├── Never list (seeded from reflex card — minimum 2-3 entries)
+├── Current status → pointer to OVERVIEW.md
+└── Tools available → empty or minimal
+\end{lstlisting}
+
+
+Notice that \textbf{the never list is non-empty on day one}. It is seeded from Section 7 (reflex card). A new hub inherits at least the incidents other hubs have already survived, so day-one Layer 6 is non-trivial.
+
+\subsubsection{Expansion}
+
+
+\begin{itemize}
+  \item \textbf{Populate the routing table} when specialists get added (Layer 5 grows)
+  \item \textbf{Extend the never list} when incidents happen or new mutation-capable tools enter
+  \item \textbf{Split ARCHETYPE.md} when the archetype section crosses \textasciitilde{}500 words
+  \item \textbf{Enrich the domain map} as the hub coordinates more work
+\end{itemize}
+
+\subsubsection{Example (chiefofstaff)}
+
+
+\begin{itemize}
+  \item \textbf{Archetype:} Charlie Munger — patient, multidisciplinary, blunt, allergic to foolishness. Fit: the domain punishes impulse and rewards patient capital allocation. Gabriel is high-drive low-orderliness; Munger's patience is the counterweight.
+  \item \textbf{Mandate:} one sentence. Holds the full picture so Gabriel doesn't have to.
+  \item \textbf{Routing table:} 6 ops roles with task → role mapping, each row including what the coordinator must never do directly.
+  \item \textbf{Never list:} no direct Shopify writes, no subagent credential passing, no bypass of named roles. All three seeded from the 2026-03-27 incident.
+\end{itemize}
+
+\subsubsection{Anti-patterns}
+
+
+\begin{itemize}
+  \item \textbf{Coordinator as executor.} The coordinator starts doing specialist work. Recognize when CLAUDE.md grows long execution rules or session logs show domain-API calls instead of delegations. Fix: promote execution to a specialist, strip it from the coordinator.
+  \item \textbf{Generic archetype.} "A thoughtful advisor." "A senior engineer." These produce generic reflexes, which are no reflexes at all. Fix: pick a real named figure with documented character.
+  \item \textbf{Aesthetic archetype.} Picked because the user likes the person, not because reflexes fit. Fix: pick for reflex fit; verify by asking \emph{what does this domain punish, and does the archetype flinch from it?}
+  \item \textbf{Mirror archetype.} Agrees with the user on everything. Useless. Fix: pick contrast, especially on user weaknesses.
+  \item \textbf{Empty never list.} The never list exists as a section but is empty because no incident has happened yet. This is how incidents happen. Fix: seed from the reflex card on day one.
+  \item \textbf{Mandate creep.} The mandate grows over time and starts including every new thing. Fix: mandate changes go through deliberate revision, not drift.
+  \item \textbf{State duplication.} "Current status" section in CLAUDE.md gets copied from OVERVIEW.md instead of pointing. Fix: pointer only, never a copy.
+\end{itemize}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\subsection{State \emph{[hub-scoped]}}
+
+
+\subsubsection{Purpose}
+
+
+State is \textbf{what is currently true}. It is the operational snapshot of the hub's live work — active priorities, blocked items, decisions waiting, open proposals, things at risk of being forgotten. Where the coordinator looks to remember what's on its plate.
+
+Sharp distinction from Layer 4 (vault): \textbf{state is procedural — the mechanics of what is currently live. Vault is semantic — what things mean, including why decisions were made.} A decision's rationale is semantic and belongs in vault. The fact that the decision is active and waiting for action is mechanics and belongs in state. Mixing the two is the fastest way to rot the hub. Section 3.2's canonicality table governs this.
+
+\textbf{State is overwrite-only.} History does not live here. If history matters as mechanics (the log of what happened when), it belongs in \texttt{vault/wiki/log.md}. If history matters as meaning (the reasoning that produced a pattern), it belongs in \texttt{vault/wiki/decisions/} or \texttt{lessons/}.
+
+\subsubsection{Files}
+
+
+\begin{itemize}
+  \item \textbf{\texttt{OVERVIEW.md}} at hub root. A single living document, completely overwritten as things change. Required sections:
+\begin{itemize}
+  \item \textbf{Active priorities} — what's being worked on right now, ranked
+  \item \textbf{Blocked / waiting on} — items held up on something external
+  \item \textbf{Decisions needed} — explicit decisions the user owes
+  \item \textbf{Things that might be falling through the cracks} — items the coordinator suspects are at risk
+\end{itemize}
+\end{itemize}
+
+\begin{itemize}
+  \item \textbf{\texttt{kanban/}} directory — structured work queue. Canonical subfolders:
+\begin{itemize}
+  \item \textbf{\texttt{kanban/proposals/pending.yaml}} — open proposals awaiting decision. Minimum schema: \texttt{id}, \texttt{title}, \texttt{status}, \texttt{created\_date}, \texttt{resolved\_date?}, \texttt{resolved\_note?}, domain extensions per hub.
+  \item \textbf{\texttt{kanban/briefs/}} \emph{(appears during expansion)} — per-item context files when a proposal needs more than a YAML row
+  \item \textbf{\texttt{kanban/reports/}} \emph{(appears during expansion)} — outputs from scheduled runs (once Layer 8 automation activates)
+\end{itemize}
+\end{itemize}
+
+Other subfolders can be added per hub (drafts, campaigns, research threads), but the framework defines only these as canonical starters.
+
+\subsubsection{Slots}
+
+
+\begin{tabularx}{\linewidth}{L L L}
+\toprule
+\textbf{Slot} & \textbf{What fills it} & \textbf{Example (chiefofstaff)} \\
+\midrule
+\texttt{\{state\_topology\}} & What unit the kanban tracks & Proposals + briefs + reports \\
+\texttt{\{proposal\_schema\_extensions\}} & Per-hub fields beyond the minimum & \texttt{client}, \texttt{venture}, \texttt{value\_nok} \\
+\texttt{\{overview\_sections\}} & Optional rename of the four canonical sections & Active / Blocked / Decisions / Cracks \\
+\bottomrule
+\end{tabularx}
+
+
+\subsubsection{Minimum (day one)}
+
+
+\begin{lstlisting}
+OVERVIEW.md                 # four canonical sections, may be near-empty
+kanban/
+└── proposals/
+    └── pending.yaml        # empty array with schema reference comment
+\end{lstlisting}
+
+
+That's the whole minimum. Briefs and reports appear later when expansion triggers fire.
+
+\subsubsection{Expansion}
+
+
+\begin{itemize}
+  \item \textbf{Add \texttt{briefs/}} when a proposal grows past what fits in a YAML row
+  \item \textbf{Add \texttt{reports/}} when Layer 8 cadence grows scheduled runs that produce outputs
+  \item \textbf{Add custom subfolders} when the domain has a natural unit that isn't a proposal (drafts in a writing hub, campaigns in an ads hub, research threads in a research hub)
+  \item \textbf{Extend the proposal schema} with domain-specific fields when triage needs them. Resist over-fielding.
+\end{itemize}
+
+\subsubsection{Example (chiefofstaff)}
+
+
+\begin{itemize}
+  \item \textbf{\texttt{OVERVIEW.md}} is overwritten every session where real work happened. All four canonical sections in use.
+  \item \textbf{\texttt{kanban/proposals/pending.yaml}} — open proposals reconciled at session end (the rule is non-negotiable in CLAUDE.md).
+  \item \textbf{\texttt{kanban/briefs/}} — weekly briefs from scheduled cadence.
+  \item \textbf{\texttt{kanban/reports/}} — daily health checks and failure logs from Layer 8 automation.
+\end{itemize}
+
+\subsubsection{Anti-patterns}
+
+
+\begin{itemize}
+  \item \textbf{State drift.} \texttt{OVERVIEW.md} stops getting updated and goes stale. Coordinator operates from memory instead of file. Fix: the session-end reconciliation ritual (Layer 8) must overwrite \texttt{OVERVIEW.md} every session; the coordinator's CLAUDE.md should name it as non-negotiable.
+  \item \textbf{History leaks into state.} Old resolved proposals pile up in \texttt{pending.yaml}. Fix: periodic deletion or archive-to-vault. Resolved items leave state.
+  \item \textbf{State in vault.} User files current status notes in the vault because it felt reflective. Next session's coordinator reads \texttt{OVERVIEW.md} and misses half the actual state. Fix: see Section 3.2 — state goes in Layer 2, only \emph{why} goes in Layer 4.
+  \item \textbf{Kanban sprawl.} Every subproject grows its own folder with its own schema. Unnavigable. Fix: one canonical schema per hub, resist per-project forking, use briefs instead.
+  \item \textbf{OVERVIEW.md as changelog.} User adds dates and diffs inline. Fix: state is overwrite-only; changelog is \texttt{vault/wiki/log.md}.
+  \item \textbf{Duplication with CLAUDE.md.} Current status copied into CLAUDE.md instead of pointed at. Drifts instantly. Fix: pointer only.
+\end{itemize}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\subsection{Auto-memory \emph{[user-scoped]}}
+
+
+\subsubsection{Purpose}
+
+
+Auto-memory is the user's \textbf{procedural} layer — the cross-hub record of \emph{how the user works}. Working style, decision lens, feedback history, rules the user has taught the system, rituals the user wants followed. It is one of two user-scoped layers in hub-os (the other is Layer 4, semantic memory / vault), and it is specifically the half that holds \emph{mechanics about the user} as opposed to \emph{meaning about the world}.
+
+Alongside Layer 4, auto-memory is what makes hub \#2 start smart instead of naive. Without the user-scoped layers done right, every new hub has to re-learn what the last one already knew.
+
+Sharp distinctions:
+\begin{itemize}
+  \item \textbf{Auto-memory vs Vault (Layer 4) — the procedural/semantic split.} Both are user-scoped. The difference is \emph{memory type}. Layer 3 holds procedural content about the user: "be direct, don't hedge," "never pass write credentials to subagents," "design preferences lean restrained." Layer 4 holds semantic content the user's hubs have come to understand: concepts, named patterns, decisions-with-reasoning, people as characters. If the entry is a \emph{rule the system should follow}, it's procedural → Layer 3. If the entry is a \emph{concept the system should understand}, it's semantic → Layer 4.
+  \item \textbf{Auto-memory vs Coordinator (Layer 1):} CLAUDE.md is a per-hub procedural layer (mechanics specific to this hub); auto-memory is a cross-hub procedural layer (mechanics about the user that apply everywhere). Layer 1 imports Layer 3 by reference.
+\end{itemize}
+
+The common failure mode is writing a semantic entry into Layer 3 or a procedural entry into Layer 4. A page called "What Boring Empire philosophy means" is semantic and belongs in \texttt{vault/wiki/lessons/}, even though it describes the user's worldview. A rule called "no emojis in files" is procedural and belongs in \texttt{USER.md} cross-hub preferences, even though it feels like a "preference about aesthetics." The retrieval test — \emph{mechanics or meaning?} — decides both.
+
+\subsubsection{Files}
+
+
+Two sub-locations with different lifecycles:
+
+\begin{itemize}
+  \item \textbf{\texttt{USER.md}} at the user-namespace root (provisional location: \texttt{\textasciitilde{}/thehub/USER.md}; see Section 1 preamble for the pending reflection). Human-curated durable profile. Rarely edited, never auto-written by Claude. Contains identity-stable content: how the user thinks, their profile markers, their collaboration preferences, their decision lens.
+\end{itemize}
+
+\begin{itemize}
+  \item \textbf{\texttt{memory/}} at \texttt{\textasciitilde{}/.claude/projects/\{hub-path\}/memory/} — Claude Code's native auto-memory, auto-created per hub, \textbf{not inside the hub directory itself}. Per-hub staging ground that Claude writes to as it learns. Contains fresh feedback, recent project-specific patterns, reference pointers — all awaiting promotion. The path uses a mangled version of the hub's absolute path as its folder name (e.g. \texttt{C--Users-Gabri-thehub-chiefofstaff}), which is how Claude Code identifies which hub a memory belongs to.
+\end{itemize}
+
+The two locations have different roles:
+
+\begin{tabularx}{\linewidth}{L L L}
+\toprule
+\textbf{} & \textbf{\texttt{USER.md}} & \textbf{\texttt{memory/}} \\
+\midrule
+Scope & User (cross-hub) & Staging ground (starts per-hub) \\
+Writer & Human + Claude via promotion & Claude auto-writes during sessions \\
+Lifecycle & Stable anchor; rarely changes & Accumulates then gets promoted \\
+Role & Day-one inheritance for every hub & Fresh observation buffer \\
+\bottomrule
+\end{tabularx}
+
+
+Every hub's Layer 1 CLAUDE.md imports \texttt{USER.md} by reference. Day-one hubs inherit the stable wisdom. Per-hub observations accumulate fresh in each hub's \texttt{memory/} and get promoted up into \texttt{USER.md} when they prove cross-hub.
+
+\textbf{\texttt{memory/} is a staging area, not a final destination.} Its contents flow outward to other layers via promotion (see Section 8):
+\begin{itemize}
+  \item Cross-hub user preferences → promoted up to \texttt{USER.md}
+  \item Hub-specific domain knowledge → promoted down/across to Layer 4 vault
+  \item Ephemeral session state → deleted
+\end{itemize}
+
+This staging-area framing is critical. Without it, \texttt{memory/} becomes an unstructured dumping ground that mixes user-scoped and hub-scoped content, which violates canonicality and poisons hub \#2's inheritance.
+
+\subsubsection{Slots}
+
+
+\begin{tabularx}{\linewidth}{L L L}
+\toprule
+\textbf{Slot} & \textbf{What fills it} & \textbf{Example} \\
+\midrule
+\texttt{\{user\_profile\}} & Who the user is operationally & "ENK consultant, 3w4, ADHD, low orderliness (6), high drive (19)" \\
+\texttt{\{working\_style\}} & How the user wants to be collaborated with & "Direct, no hedging; systems thinking; pushback expected and wanted" \\
+\texttt{\{decision\_lens\}} & Framework for weighing tradeoffs & "Boring Empire: does it compound? does it build reusable infra?" \\
+\texttt{\{recurring\_people\}} & Humans who show up across the user's life regardless of project & Family, long-term partners \\
+\texttt{\{cross-hub\_preferences\}} & Rules that apply in every hub & Don't perform caution; no emojis; design preferences \\
+\bottomrule
+\end{tabularx}
+
+
+\subsubsection{Minimum (day one)}
+
+
+\begin{lstlisting}
+USER.md
+├── Identity (1-3 paragraphs)
+├── Working style (bulleted rules)
+├── Decision lens (optional, may be empty)
+├── People (optional, may be empty)
+├── Cross-hub preferences (optional, may be empty)
+└── Scope note
+
+memory/
+├── MEMORY.md   # index with section headers, no populated entries
+└── (empty, Claude will populate as it learns)
+\end{lstlisting}
+
+
+\texttt{USER.md} needs at minimum the Identity and Working style sections populated, plus the scope note. The rest can accumulate. \texttt{memory/} starts with just the index skeleton.
+
+\subsubsection{Expansion}
+
+
+\begin{itemize}
+  \item \textbf{Promote proven preferences} from \texttt{memory/} up into \texttt{USER.md} when patterns emerge (Section 8)
+  \item \textbf{Grow \texttt{memory/}} per-hub as feedback and domain-specific observations accumulate
+  \item \textbf{Split \texttt{USER.md}} into multiple files if it crosses \textasciitilde{}2000 words (one per canonical section)
+  \item \textbf{Add domain-specific sections to \texttt{USER.md}} only if they're cross-hub (e.g., "Investment lens" applies to every hub that touches money)
+\end{itemize}
+
+\subsubsection{Example (chiefofstaff → Gabriel's \texttt{USER.md})}
+
+
+See Section 5.6 for a fully worked example of a populated \texttt{USER.md}.
+
+\subsubsection{Anti-patterns}
+
+
+\begin{itemize}
+  \item \textbf{USER.md bloat.} Hub-specific project memories get stuffed into \texttt{USER.md} because they felt important. Now \texttt{USER.md} is a single-hub journal instead of a user anchor. Fix: project memories go in Layer 4 vault.
+  \item \textbf{Auto-memory as permanent storage.} \texttt{memory/} grows without promotion, becomes an unstructured soup of user-scoped and hub-scoped content mixed together. Fix: \texttt{memory/} is a staging area; promotion rules (Section 8) move entries out to their canonical home.
+  \item \textbf{Teaching the same thing twice.} User re-teaches a preference in hub \#2 that was already learned in hub \#1 because it was left in hub \#1's \texttt{memory/} instead of promoted to \texttt{USER.md}. Fix: promote proven preferences immediately.
+  \item \textbf{Hub-specific rules in USER.md.} A rule like "don't mutate Shopify directly" ends up in \texttt{USER.md}. But a webdesign hub doesn't have Shopify. Fix: Layer 1 never list for hub-specific rules; \texttt{USER.md} only for cross-hub ones. The general principle ("never pass mutation credentials to subagents") goes in \texttt{USER.md}; the specific application ("no direct Shopify writes") goes in the hub's never list.
+  \item \textbf{Split auto-memory.} Same rule written in both \texttt{USER.md} and \texttt{memory/}. Drifts. Fix: one canonical location.
+  \item \textbf{USER.md written by Claude.} \texttt{USER.md} is human-curated. Claude proposes promotions but the user approves them. Fix: \texttt{memory/} is where Claude writes freely; \texttt{USER.md} changes go through explicit promotion.
+\end{itemize}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\subsection{Semantic Memory (Vault) \emph{[user-scoped]}}
+
+
+\subsubsection{Purpose}
+
+
+The vault is the hub's \textbf{semantic memory} — the layer that holds \emph{what things mean} rather than \emph{how the system behaves}. Concepts, characters, philosophies, rationales, named lessons, the people in the domain's orbit as full figures rather than routing targets. Everything outside the vault is procedural / structural memory: routines, rules, routing, state snapshots, credentials, hooks, task mechanics. Together they form a two-layer memory system that maps onto the classical cognitive-science distinction between \emph{procedural memory} (know-how) and \emph{semantic memory} (know-what).
+
+Under this framing, the same entity returns different payloads from each layer. Query \texttt{Black Rabbit Games} from the procedural layers (\texttt{OVERVIEW.md}, \texttt{CLAUDE.md}, \texttt{ops/}, \texttt{kanban/}) and you get routing rules, state, task mechanics — \emph{how the system is behaving toward Black Rabbit}. Query it from the vault and you get the manifesto, the philosophy, the people in its orbit, the decisions that shaped it, the lessons it has taught — \emph{what Black Rabbit means}. Two genuinely different kinds of recall. Neither is reducible to the other; a hub needs both.
+
+The vault is what makes a hub \textbf{wise} as opposed to merely \textbf{functional}. A hub without semantic memory can execute but cannot explain. A hub with it can trace any decision back to its reasoning, any pattern back to its origin incident, and any project back to the philosophy that motivates it.
+
+\subsubsection{The retrieval test}
+
+
+The test for whether a piece of information belongs in the vault or outside it is a \emph{retrieval test}, not a write test: \textbf{"Am I looking up mechanics or meaning?"}
+
+\begin{itemize}
+  \item \textbf{Mechanics} — how the system behaves, what state is live, what to do next, who executes, which credentials apply → procedural layers (State, Coordinator, Ops, Safety, Integration, Cadence)
+  \item \textbf{Meaning} — what a thing \emph{is} abstractly, why it exists, why a decision was made, what a pattern is called, who a person is beyond their routing role → Layer 4 (vault)
+\end{itemize}
+
+The test generalizes the old "would I need this to DO something / UNDERSTAND something" rule of thumb without discarding it. "Do" is mechanics; "understand" is meaning. The new vocabulary is sharper because it names the memory type directly instead of gesturing at usage.
+
+Sharp distinctions (see Section 3.2 canonicality table):
+\begin{itemize}
+  \item \textbf{Vault vs State (Layer 2):} state is the procedural snapshot of what is currently true; vault is the semantic layer of what things mean. A pricing decision's \emph{status} (live, blocked, pending) is mechanics → state. Its \emph{rationale} (why this price, what it compounds toward) is meaning → vault.
+  \item \textbf{Vault vs Auto-memory (Layer 3):} both are user-scoped, but they hold different kinds of memory. Layer 3 (\texttt{USER.md} + \texttt{memory/}) is the user's \emph{procedural} layer — working style, decision lens, cross-hub preferences, rules the user has taught. Layer 4 (vault) is the user's \emph{semantic} layer — concepts, lessons, characters, decisions-with-reasoning. If the entry is a rule the system follows, it's procedural (Layer 3). If the entry is a concept the system understands, it's semantic (Layer 4).
+  \item \textbf{Vault vs Coordinator (Layer 1):} CLAUDE.md is the operating spec (procedural — how the coordinator behaves); vault is semantic (what the coordinator has come to understand). CLAUDE.md can reference vault pages by name but never duplicates their content.
+\end{itemize}
+
+\subsubsection{Scope: user-scoped by nature}
+
+
+Layer 4 is \textbf{user-scoped}, not by convention but by the nature of semantic memory. Concepts about \texttt{[[Alex]]} as a character don't care which hub is currently coordinating work with him; the manifesto of \texttt{[[Black Rabbit Games]]} is the same idea whether it's being read from a consulting hub or a ventures hub. Semantic knowledge about an entity is inherently indifferent to which procedural layer is querying it.
+
+The practical consequence: a shared \texttt{\textasciitilde{}/thehub/vault/} at the user namespace is the correct home. Per-hub vaults would fragment the wikilink graph and lose most of its value — \texttt{[[Alex]]} should link from every project Alex touches regardless of which hub coordinates it, and that link is only possible if all those projects write into the same graph.
+
+Layer 3 (auto-memory) and Layer 4 (vault) are therefore the two user-scoped layers in hub-os. They are not redundant: they cover genuinely different memory types (procedural preferences vs semantic knowledge), and the "why two user-scoped layers" question answers itself once the memory-type distinction is explicit.
+
+\subsubsection{Files}
+
+
+\texttt{vault/wiki/} with canonical subfolders (modeled on the chiefofstaff vault scaffolded 2026-04-11):
+
+\begin{itemize}
+  \item \textbf{\texttt{hot.md}} — recent context cache, \textasciitilde{}500 words, \textbf{complete overwrite each session-end}. What the coordinator reads first at session start to get caught up without loading the full index.
+  \item \textbf{\texttt{index.md}} — catalog of everything in the vault. Maintained as the vault grows. Coordinator reads this when \texttt{hot.md} isn't enough.
+  \item \textbf{\texttt{log.md}} — \textbf{append-only} session log. Newest entries at top, never edit past entries. Diachronic record of what happened across sessions.
+  \item \textbf{\texttt{decisions/}} — per-decision markdown files. Each contains: title, date, context, options considered, choice, rationale, wikilinks to affected people/projects.
+  \item \textbf{\texttt{lessons/}} — per-lesson markdown files. Each contains: name, what-it-is, when-safe, when-unsafe, how-to-apply. Named patterns extracted from experience.
+  \item \textbf{\texttt{people/}} — per-person markdown files. Domain actors: clients, collaborators, counterparties, suppliers. (Contrast with Layer 3 \texttt{USER.md} People section, which lists people who recur \emph{across all} the user's hubs.)
+  \item \textbf{\texttt{projects/}} — per-project markdown files. Initiatives, ventures, ongoing work streams within this hub.
+  \item \textbf{\texttt{clients/}} \emph{(appears when the domain has clients)} — per-client agent-oriented briefs with strategy, constraints, standing rules, cross-agent notes.
+  \item \textbf{\texttt{timeline/}} \emph{(appears when briefs overflow)} — archived history. "Client Name — YEAR.md" files preserved verbatim, newest at top.
+\end{itemize}
+
+\subsubsection{The wikilink graph — the vault's whole value}
+
+
+The vault's value is not the individual notes. It is the \textbf{graph they form when cross-referenced.} A decision written as a bare note is half a decision. The same decision written with links to \texttt{[[Person]]}, \texttt{[[Project]]}, \texttt{[[Lesson]]} becomes queryable from any of those nodes. A month later, when the coordinator is reading a person's page, the decision surfaces automatically because it was linked.
+
+\textbf{Rule: every decision and lesson must wikilink every affected person and project.} Without links the graph stays flat and the vault loses most of its value. This is the single non-negotiable vault rule.
+
+Corollary: \textbf{no orphans.} A note that nothing links to and that links to nothing is effectively invisible. At session end, check for orphans; either link them in or delete them.
+
+\subsubsection{Slots}
+
+
+\begin{tabularx}{\linewidth}{L L L}
+\toprule
+\textbf{Slot} & \textbf{What fills it} & \textbf{Example (chiefofstaff)} \\
+\midrule
+\texttt{\{domain\_actors\}} & People types that matter in the domain & Clients, suppliers, partners, family \\
+\texttt{\{project\_types\}} & What counts as a "project" in this domain & Ventures, campaigns, research threads \\
+\texttt{\{lesson\_naming\}} & How lessons are titled & "Boring Empire philosophy," "Turn-boundary hot-patch" \\
+\texttt{\{counterparty\_folder\}} & What the domain calls its clients & \texttt{clients/}, \texttt{customers/}, \texttt{collaborators/}, \texttt{subjects/} (research) \\
+\bottomrule
+\end{tabularx}
+
+
+\subsubsection{Minimum (day one)}
+
+
+\begin{lstlisting}
+vault/wiki/
+├── hot.md           # 1-line seed or empty
+├── index.md         # skeleton with section headers, no entries
+├── log.md           # empty, ready for first append
+├── decisions/       # empty folder
+├── lessons/         # empty folder
+├── people/          # empty folder
+├── projects/        # empty folder
+└── clients/         # empty folder (or renamed per domain)
+\end{lstlisting}
+
+
+A day-one vault is just the skeleton. No decisions yet, no lessons yet. The coordinator starts filing the first entries the moment real work happens.
+
+\subsubsection{Expansion}
+
+
+\begin{itemize}
+  \item \textbf{Populate \texttt{decisions/}} after the first non-trivial decision
+  \item \textbf{Populate \texttt{lessons/}} when a reusable pattern emerges and deserves a name
+  \item \textbf{Populate \texttt{people/}} when a new domain actor enters the hub's world
+  \item \textbf{Populate \texttt{projects/}} when an initiative crosses from "task" to "project"
+  \item \textbf{Add \texttt{clients/}} (or its domain-specific rename) when the domain has counterparties
+  \item \textbf{Add \texttt{timeline/}} when a client brief's cross-agent notes section overflows (\textasciitilde{}10 entries)
+  \item \textbf{Add domain-specific subfolders} — \texttt{experiments/} for a research hub, \texttt{drafts/} for a writing hub, \texttt{campaigns/} for a marketing hub
+\end{itemize}
+
+\subsubsection{Rituals (owned by Layer 8)}
+
+
+Vault reads and writes happen on a schedule owned by Layer 8 (Cadence). The specific ritual steps — what gets read on session start, what gets written on session end, timeline rotation, cross-agent notes promotion — are canonically declared in Section 4.8. This subsection exists only to note that the vault \emph{participates} in rituals; the rituals themselves live in Layer 8. Duplicating them here would be an R-008 violation.
+
+\subsubsection{Obsidian syntax convention}
+
+
+The vault is designed around Obsidian Flavored Markdown conventions because they make the wikilink graph queryable without custom tooling. Files in \texttt{vault/wiki/} use:
+
+\begin{itemize}
+  \item Wikilinks as \texttt{[[Note Name]]} (filenames unique, no paths)
+  \item Embeds as \texttt{![[file]]}
+  \item Properties as YAML frontmatter
+  \item Callouts as \texttt{\textgreater{} [!type] Title}
+  \item Tags as \texttt{\#tag}
+\end{itemize}
+
+Not mandatory for hub-os to work, but strongly recommended — it lets the user open the vault in Obsidian for visual graph traversal, and it keeps the syntax consistent across every hub.
+
+\subsubsection{Example (chiefofstaff)}
+
+
+\begin{itemize}
+  \item \textbf{\texttt{hot.md}} — maintained every session with recent decisions, active threads, agent signals
+  \item \textbf{\texttt{decisions/}} — every non-trivial decision as its own file with wikilinks to affected people/projects
+  \item \textbf{\texttt{lessons/}} — "Boring Empire philosophy," "Turn-boundary hot-patch capability," "Human-frame cost estimation bias"
+  \item \textbf{\texttt{people/}} — Alex, Robin, Sam, Casey, Devon, Quinn, Morgan, River, and others as they arrive
+  \item \textbf{\texttt{projects/}} — Omarsson Consulting, AGAAS, Black Rabbit, STRATAVON, each active venture
+  \item \textbf{\texttt{clients/}} — agent-oriented briefs for each paying client with strategy, constraints, cross-agent notes
+  \item \textbf{\texttt{timeline/}} — "Hackit — 2026.md" type archives when briefs overflow
+\end{itemize}
+
+\subsubsection{Anti-patterns}
+
+
+\begin{itemize}
+  \item \textbf{State in vault.} User files current status notes here because it felt reflective. Next session's coordinator reads OVERVIEW.md and misses half the state. Fix: mechanics goes in Layer 2, vault is for meaning only.
+  \item \textbf{Vault as scratch pad.} Dumping session notes with no wikilinks. Graph stays flat. Fix: every entry links affected people/projects. No links = no entry.
+  \item \textbf{Orphan pages.} A note exists but nothing links to it, and it links to nothing. Effectively invisible. Fix: session-end ritual checks for orphans; link them in or delete.
+  \item \textbf{hot.md accumulating history.} User adds to \texttt{hot.md} instead of overwriting. It grows to 3000 words and stops being a hot cache. Fix: \texttt{hot.md} is overwrite-only, \textasciitilde{}500 words, history goes in \texttt{log.md}.
+  \item \textbf{Vault without rituals.} The vault exists but nothing is written to it because there's no enforced session-end trigger. Fix: Layer 8 session-end must name vault writes as non-negotiable when real work happened.
+  \item \textbf{Everything is a decision.} User files every minor choice as a decision file. Decisions folder becomes noise. Fix: decisions are non-trivial; small choices don't need vault entries.
+  \item \textbf{Lesson with no name.} User files patterns without distinctive names. They can't be referenced elsewhere. Fix: every lesson gets a memorable name so it can appear in cross-references.
+  \item \textbf{Procedural content in vault.} A routing rule, credential pattern, or cron config gets filed in the vault because it feels like "accumulated wisdom." Apply the retrieval test: \emph{mechanics or meaning?} Routing rules are mechanics → Layer 5 ops; credential patterns are mechanics → Layer 6 safety; cron configs are mechanics → Layer 8 cadence. Only the \emph{rationale} for those mechanics belongs in the vault.
+  \item \textbf{Semantic content forced into procedural layers.} The opposite failure: a project's philosophy or a person's character gets jammed into an ops \texttt{CONTEXT.md} or a routing comment because "it was relevant to the mechanics." Fix: mechanics references the meaning by wikilink, it does not absorb it. \texttt{ops/seo-agent/CONTEXT.md} may link \texttt{[[Nomods]]}; it does not copy the Nomods manifesto.
+  \item \textbf{Duplicate with auto-memory (Layer 3).} The same content appears in both \texttt{vault/wiki/} and \texttt{memory/MEMORY.md}. Because both are user-scoped this is easy to get wrong. Fix: apply the procedural-vs-semantic split. Procedural rule the user taught → Layer 3. Semantic concept the hub has come to understand → Layer 4. Section 3.2's canonicality table governs.
+  \item \textbf{Per-hub vault fragmentation.} User creates a separate \texttt{vault/} inside a new hub directory instead of pointing at the shared \texttt{\textasciitilde{}/thehub/vault/}. The graph splits; cross-hub wikilinks become impossible. Fix: there is one vault per user, not one per hub. New hubs point at the existing vault.
+  \item \textbf{Duplicate with CLAUDE.md.} Coordinator's CLAUDE.md starts quoting vault content inline. Drifts. Fix: CLAUDE.md can reference vault pages by name but never duplicates their content.
+\end{itemize}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\subsection{Ops (Delegation) \emph{[hub-scoped]}}
+
+
+\subsubsection{Purpose}
+
+
+Ops is where \textbf{specialist work lives}. A coordinator that tries to do everything directly loses altitude; a coordinator that delegates keeps altitude while specialists keep domain depth. Layer 5 is the folder where specialists live and the routing that maps work to them.
+
+A specialist is a \textbf{mini-coordinator for a narrower domain}. It has its own CLAUDE.md (its own archetype if warranted, its own mandate, its own rules, its own safety boundaries), its own context files, and its own credentials if it needs mutation capability. The top-level coordinator delegates to specialists via the routing table in Layer 1.
+
+The core invariant: \textbf{the coordinator routes, the specialists execute.} A specialist doing specialist work is healthy. A coordinator doing specialist work is a Layer 5 failure.
+
+Sharp distinctions:
+\begin{itemize}
+  \item \textbf{Ops vs Coordinator (Layer 1):} Layer 1 is the thinking layer that \emph{decides what should happen}; Layer 5 is the execution layer that \emph{does the thing}. The routing table in Layer 1 is the bridge.
+  \item \textbf{Ops vs Safety (Layer 6):} Layer 5 is the \emph{structure} that makes delegation possible; Layer 6 is what \emph{prevents the structure from being bypassed}. Without Layer 6, a coordinator under time pressure will shortcut past a specialist, and that shortcut is how incidents happen.
+\end{itemize}
+
+\subsubsection{Files}
+
+
+\begin{itemize}
+  \item \textbf{\texttt{ops/}} directory at hub root
+  \item \textbf{\texttt{ops/\_template/CLAUDE.md}} — template for new roles. Exists from day one even when no roles are populated, so adding the first role is a copy-and-fill operation.
+  \item \textbf{\texttt{ops/\{role\}/CLAUDE.md}} — per-role operating spec. Same structure as Layer 1 CLAUDE.md but narrower: role's archetype (if distinct), mandate, tools, per-role never list, credentialed surfaces.
+  \item \textbf{\texttt{ops/\{role\}/CONTEXT.md}} \emph{(appears when cross-role signals matter)} — living context the coordinator updates with signals from one role that another needs
+  \item \textbf{\texttt{ops/\{role\}/decisions.md}} \emph{(appears when a role makes recurring decisions)} — per-role decision log
+  \item \textbf{Routing table} lives in Layer 1's CLAUDE.md, mapping task → role, referencing \texttt{../ops/\{role\}/} directories. The routing table is \emph{shared between Layer 1 and Layer 5}; it's declared in Layer 1 but describes the Layer 5 roster.
+\end{itemize}
+
+\subsubsection{The role-naming rule}
+
+
+Roles are named after the \textbf{verb of their work}, not the tool they use. "Store Manager" not "Shopify Agent." "Translation Agent" not "Lokalise Integration." "SEO Agent" not "Ahrefs Operator."
+
+Tools change; verbs don't. A role named after a verb survives tool swaps. A role named after a tool becomes noise the moment you change tools — and worse, its CLAUDE.md starts to read like a tool manual instead of a domain operating spec.
+
+The verb-naming test: \textbf{"If we replaced every tool this role uses with a different tool tomorrow, would the role's name still make sense?"} If yes, the name is right. If no, rename.
+
+\subsubsection{The coordinator delegation rule}
+
+
+The coordinator \textbf{does not pass mutation credentials to dispatched subagents.} If a specialist needs write access, one of:
+
+\begin{enumerate}
+  \item \textbf{The coordinator performs the mutation itself after user approval.} Credentials stay loaded in \emph{its own} context; the coordinator can do this directly under the specialist's direction, or after a subagent has done the read-phase research and analysis.
+  \item \textbf{The specialist runs as a subprocess with its own credential environment.} Credentials are loaded via the subprocess's own env vars, not passed down the prompt chain.
+\end{enumerate}
+
+Subagents spun up by the coordinator \textbf{never} receive write tokens as dispatch arguments. This is the 2026-03-27 reflex (R-002), hard-wired into every hub-os hub.
+
+\subsubsection{Slots}
+
+
+\begin{tabularx}{\linewidth}{L L L}
+\toprule
+\textbf{Slot} & \textbf{What fills it} & \textbf{Example (chiefofstaff)} \\
+\midrule
+\texttt{\{role\_roster\}} & Named specialists in this hub & Store Manager, SEO, Ads, Translation, Image, Accounting \\
+\texttt{\{role\_naming\}} & Verb-based naming convention & "Store Manager" (manages stores), "SEO Agent" (optimizes discovery) \\
+\texttt{\{credentialed\_roles\}} & Roles that need mutation capability & Store Manager, Ads, Translation, Accounting \\
+\texttt{\{shared\_context\_files\}} & Common per-role context & \texttt{CONTEXT.md}, \texttt{decisions.md} \\
+\bottomrule
+\end{tabularx}
+
+
+\subsubsection{Minimum (day one)}
+
+
+\begin{lstlisting}
+ops/
+└── _template/
+    └── CLAUDE.md       # role template with required sections
+
+# Layer 1 CLAUDE.md routing table:
+| Task | Role | Directory |
+|------|------|-----------|
+| (empty — populated as roles are added)
+\end{lstlisting}
+
+
+Day-one Layer 5 is an empty \texttt{ops/} folder with one template file. The routing table in Layer 1 exists as a table with column headers and no rows. This is legitimate — a hub with one kind of work and one actor doesn't need populated specialists yet. The \textbf{structure is present waiting to be filled}; what's minimal is the population, not the layer.
+
+\subsubsection{Expansion}
+
+
+\begin{itemize}
+  \item \textbf{Add a role} when the coordinator finds itself doing recurring specialist work that would benefit from its own mini-coordinator, its own archetype, or its own safety boundaries
+  \item \textbf{Populate the routing table} every time a role is added — never leave a role in \texttt{ops/} unreferenced from the routing table
+  \item \textbf{Add \texttt{CONTEXT.md}} to a role when cross-role signals start mattering
+  \item \textbf{Add \texttt{decisions.md}} when a role makes recurring decisions worth tracking per-role
+\end{itemize}
+
+\textbf{Rule of thumb: don't create roles preemptively.} A hub with zero populated roles is healthy. Creating an empty role folder "just in case" is worse than no role because it creates a delegation path with no substance behind it.
+
+\subsubsection{Example (chiefofstaff)}
+
+
+Six roles in \texttt{ops/}, each verb-named: \textbf{Store Manager} (manages Shopify stores), \textbf{SEO Agent} (optimizes discovery), \textbf{Translation Agent} (manages locales), \textbf{Ads Agent} (runs Meta campaigns), \textbf{Image Agent} (produces visuals), \textbf{Accounting Agent} (manages invoicing and MVA). Each has its own CLAUDE.md with domain-specific rules, credentials, and safety boundaries. Munger (Layer 1) never touches Shopify or Meta directly; every mutation flows through the relevant ops role after approval.
+
+The 2026-03-27 incident happened specifically because a coordinator session bypassed this layer and spun up ad-hoc subagents with raw credentials. The routing table and the never list were added the next day.
+
+\subsubsection{Anti-patterns}
+
+
+\begin{itemize}
+  \item \textbf{Tool-named roles.} "Shopify Agent" instead of "Store Manager." Fix: name after the verb, not the tool.
+  \item \textbf{Coordinator executing specialist work.} Layer 1 CLAUDE.md grows long sections of domain-specific execution rules, or session logs show the coordinator calling tools instead of routing. Fix: promote execution to a specialist, strip it from Layer 1.
+  \item \textbf{Pre-populated empty roles.} Creating 10 role folders on day one "just in case." Fix: add roles under pressure, not preemptively.
+  \item \textbf{Credentials passed to subagents.} Coordinator dispatches a subagent with write tokens in the prompt. Fix: credentials stay in the coordinator's context; specialists run as subprocesses or the coordinator performs the mutation.
+  \item \textbf{Role with no CLAUDE.md.} A folder exists in \texttt{ops/} but has no operating spec. Fix: every role has a CLAUDE.md, even if minimal.
+  \item \textbf{Role CLAUDE.md duplicates top-level.} A role's spec repeats identity/working-style content that belongs in Layer 1 or \texttt{USER.md}. Fix: role spec inherits by reference and stays narrow and specific.
+  \item \textbf{Silent bypass.} Coordinator decides "I'll just do this specialist task directly because it's quick." This is how incidents happen. Fix: routing table entries are non-negotiable; if a task is in the table, the coordinator routes it, period.
+  \item \textbf{Orphan role.} A role folder exists but nothing in the routing table points to it. Dead code. Fix: every role is either in the routing table or deleted.
+\end{itemize}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\subsection{Safety (Enforcement) \emph{[hub-scoped]}}
+
+
+\subsubsection{Purpose}
+
+
+Safety is where the hub enforces \textbf{hard lines that instructions alone cannot hold}.
+
+Layer 1's never list is \emph{written down}; Layer 6 is what makes it \emph{enforceable}. The difference matters: a never list without enforcement is a note on the fridge. A never list with hooks behind it is a physical barrier. Instructions work 95\% of the time. Hooks work 100\% of the time. Anything whose violation would constitute an incident must be enforced by a hook, not just written in a CLAUDE.md section.
+
+Every hub needs Layer 6 from day one, even tiny read-only ones — the minimum is the never list seeded from the reflex card. Hubs that can mutate live state need more: credential separation, hooks, subagent isolation, CRITICAL-rule enforcement.
+
+Sharp distinctions:
+\begin{itemize}
+  \item \textbf{Safety vs Coordinator (Layer 1):} Layer 1 \emph{declares} the rules (the never list is a Layer 1 section); Layer 6 \emph{guarantees} them (hooks, credential architecture, subagent isolation). The declaration and the enforcement are split across layers on purpose — the declaration is readable by humans and Claude, the enforcement is mechanical.
+  \item \textbf{Safety vs Ops (Layer 5):} Layer 5 is the \emph{structure} that makes delegation possible. Layer 6 is what \emph{prevents delegation from being bypassed}. Without Layer 6, a coordinator under time pressure will shortcut past Layer 5.
+\end{itemize}
+
+\subsubsection{The hooks-over-instructions principle}
+
+
+The single most important Layer 6 principle is: \textbf{rules that matter cannot rely solely on instructions.}
+
+A CRITICAL rule written in CLAUDE.md without a backing hook is a wish. Claude follows instructions most of the time, but "most of the time" is exactly wrong for rules whose violation constitutes an incident. If a rule is important enough to be CRITICAL, it is important enough to be enforced mechanically.
+
+The test: \textbf{"If this rule is violated, is it an incident?"} If yes → hook. If no → CLAUDE.md is enough.
+
+(This is R-004 in Section 7, the meta-reflex that governs how other reflexes should be enforced.)
+
+\subsubsection{Files}
+
+
+\begin{itemize}
+  \item \textbf{Never list} — lives in Layer 1 CLAUDE.md (declaration), backed by Layer 6 enforcement. The split is deliberate.
+  \item \textbf{\texttt{.claude/settings.json}} — Claude Code's built-in hook configuration. Every hook-capable hub uses this.
+  \item \textbf{\texttt{hooks/}} directory \emph{(appears during expansion)} — shell scripts or supplementary hook configs when more than one or two hooks exist and they need version control separate from \texttt{.claude/settings.json}
+  \item \textbf{Credential layout} — convention for separating read-only and write credentials. Universal pattern, domain-specific implementation.
+  \item \textbf{Reflex card reference} — Section 7 of this document; every hub's never list seeds from it on day one.
+\end{itemize}
+
+\subsubsection{The credential separation pattern}
+
+
+Any mutation-capable integration has a \textbf{read-default, write-approved} split:
+
+\begin{itemize}
+  \item Read credentials load automatically on session start; reading is cheap and safe
+  \item Write credentials never auto-load; they require explicit user approval in the current session before being read into context
+  \item Write credentials live in a separate file the coordinator's auto-loading does not touch
+  \item The split is enforced by the credential-loading code, not by discipline
+\end{itemize}
+
+In chiefofstaff this is:
+\begin{itemize}
+  \item \texttt{ops/sites/\{store\}/read-credentials.env} — auto-loaded
+  \item \texttt{ops/sites/\{store\}/write-credentials.env} — explicitly loaded only on approval
+  \item \texttt{load\_store(slug)} = read-only by default
+  \item \texttt{load\_store(slug, write=True)} = loads write credentials, requires explicit session approval
+\end{itemize}
+
+The \emph{pattern} (read-default, write-approved) is universal. The \emph{implementation} (which files, which functions) is domain-specific. A webdesign hub with a Figma integration would have \texttt{figma-read.env} vs \texttt{figma-write.env} with the same pattern.
+
+\subsubsection{Slots}
+
+
+\begin{tabularx}{\linewidth}{L L L}
+\toprule
+\textbf{Slot} & \textbf{What fills it} & \textbf{Example (chiefofstaff)} \\
+\midrule
+\texttt{\{credentialed\_surfaces\}} & Things the hub can mutate & Shopify stores, Meta ad accounts, Notion databases \\
+\texttt{\{read\_vs\_write\_layout\}} & How credentials are split on disk & \texttt{read-credentials.env} vs \texttt{write-credentials.env} per store \\
+\texttt{\{enforceable\_never\_list\}} & Rules important enough to warrant hooks & No direct Shopify writes; no subagent credential passing \\
+\texttt{\{hook\_triggers\}} & What events hooks fire on & Tool use, file write, subagent dispatch, credential load \\
+\bottomrule
+\end{tabularx}
+
+
+\subsubsection{Minimum (day one)}
+
+
+\begin{lstlisting}
+Layer 1 CLAUDE.md:
+└── Never list (seeded from reflex card, minimum 2-3 entries)
+    └── Every entry either:
+        - Is enforced by a hook (for CRITICAL rules)
+        - Or is explicitly noted as "discipline-only" (for preferences)
+
+.claude/settings.json:
+└── Minimal hook config (may be empty if no hooks yet)
+
+Credential separation pattern:
+└── Declared in CLAUDE.md even if no credentials exist yet
+    └── "Mutation credentials, when they exist, follow read-default-write-approved"
+
+hooks/:
+└── Empty or absent (appears during expansion)
+\end{lstlisting}
+
+
+Day-one Layer 6 is: a non-empty never list (seeded from Section 7), a declaration of the credential separation pattern even without credentials yet, and whatever minimal hook config Claude Code ships with. \textbf{The never list is the non-negotiable minimum} — every hub, even read-only reflection hubs, has one.
+
+\subsubsection{Expansion}
+
+
+\begin{itemize}
+  \item \textbf{Add the first hook} the first time an incident almost happens or actually happens that instruction-level rules didn't prevent. Every hook has an incident of origin.
+  \item \textbf{Implement credential separation} the first time a mutation-capable tool is added to the hub
+  \item \textbf{Extend the never list} whenever a new incident surfaces; after extending, check whether the new rule is universal and promote it to the reflex card (Section 7)
+  \item \textbf{Split out \texttt{hooks/}} as its own directory when there are more than one or two hooks and they need version control
+  \item \textbf{Add enforcement for routing} when a coordinator has been caught bypassing a specialist role
+\end{itemize}
+
+\subsubsection{Example (chiefofstaff)}
+
+
+\begin{itemize}
+  \item \textbf{Never list:} no direct Shopify writes, no subagent credential passing, no bypass of named ops roles. All three seeded from the 2026-03-27 incident.
+  \item \textbf{Credential separation:} implemented 2026-04-01. Read and write credentials live in separate env files. Auto-loading touches only read. Write requires \texttt{load\_store(write=True)} with session approval.
+  \item \textbf{Hooks:} Claude Code hooks configured in \texttt{.claude/settings.json} for sensitive tool use.
+  \item \textbf{Subagent rule:} coordinator never dispatches a subagent with write tokens in its prompt. Enforced by convention plus the credential separation (write tokens are not in the coordinator's auto-loaded context, so there's nothing to pass).
+\end{itemize}
+
+On 2026-03-27 a Munger session bypassed the ops routing, spun up ad-hoc subagents with raw Shopify credentials, and published 12 unauthorized blog articles to a live client store. Layer 6 as it exists in chiefofstaff today is the direct product of that incident.
+
+\subsubsection{Anti-patterns}
+
+
+\begin{itemize}
+  \item \textbf{Rules without enforcement.} A CRITICAL rule lives in CLAUDE.md with no hook backing it. Works until it doesn't. Fix: every CRITICAL rule has a hook. The test is "would violation be an incident?"
+  \item \textbf{Empty never list.} Layer 6 section is blank because "no incidents yet." This is how you get your first incident. Fix: seed from the reflex card (Section 7) on day one.
+  \item \textbf{Unified credentials.} Read and write share one env file that auto-loads with write capability every session. One misstep is an incident. Fix: split read-default, write-approved.
+  \item \textbf{Subagent credential passing.} Coordinator dispatches a subagent with write tokens in the prompt. The 2026-03-27 incident in one sentence. Fix: credentials never leave the coordinator's context as prompt arguments.
+  \item \textbf{Performative never list.} Rules are worded as suggestions. "Try to avoid direct writes." Fix: hard language. "Coordinator does not mutate store data directly. Period."
+  \item \textbf{Hooks that can be disabled casually.} \texttt{--no-verify} culture where hooks are bypassed on a whim. Fix: hooks that matter cannot be skipped; if a hook fails, investigate and fix the root cause rather than bypassing.
+  \item \textbf{Safety treated as optional.} User declines to populate the never list because "this is a simple hub." Fix: Layer 6 is present from day one; the reflex card provides universal seeds.
+  \item \textbf{Documentation-only enforcement.} "We have a rule against X" — and the rule is in a markdown file nobody reads at the moment of temptation. Fix: put the rule where it can't be ignored, which is a hook that fires on the offending action.
+  \item \textbf{Split declaration and enforcement drift.} Layer 1 never list says one thing, Layer 6 hook enforces something slightly different. Fix: hooks reference the declared rules by name; when you change one you change both together.
+\end{itemize}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\subsection{Integration \emph{[hub-scoped]}}
+
+
+\subsubsection{Purpose}
+
+
+Integration is where \textbf{external tools meet the hub}. MCP servers, APIs, CLIs, SDKs, file-system conventions, anything Claude reaches outside its own context to interact with. Layer 7 is the layer that documents \emph{what tools exist, how to use them, and what their quirks are}.
+
+The core value of Layer 7 is \textbf{accumulated tool wisdom}. First time you use an API, you discover its quirks the hard way. Second time, you discover them again unless you wrote them down. Layer 7 is where you write them down so the third, fourth, and fiftieth time are frictionless. Without it, every new session re-learns the same gotchas and wastes the same tokens.
+
+Sharp distinctions:
+\begin{itemize}
+  \item \textbf{Integration vs Safety (Layer 6):} Layer 7 documents \emph{how} tools are used; Layer 6 enforces \emph{rules about what tools can be used for}. The Shopify API quirks go in Layer 7; the rule "don't mutate Shopify without approval" goes in Layer 6.
+  \item \textbf{Integration vs Ops (Layer 5):} Layer 5 defines specialists who \emph{use} tools; Layer 7 defines the tools themselves. The Store Manager (Layer 5) uses the Shopify API (Layer 7). The Shopify contract doesn't belong in Store Manager's CLAUDE.md — it belongs in Layer 7 so every role that uses Shopify can reference the same canonical contract.
+\end{itemize}
+
+\subsubsection{Files}
+
+
+\begin{itemize}
+  \item \textbf{Layer 1 CLAUDE.md has a "Tools available" section} — the index. Short references, one line per tool, not full contracts.
+  \item \textbf{\texttt{integrations/}} directory \emph{(appears during expansion)} — per-tool markdown files with full contracts when "Tools available" crosses \textasciitilde{}10 lines or any single tool needs more than \textasciitilde{}3 lines of documentation.
+  \item \textbf{\texttt{integrations/\{tool\}.md}} — per-tool contract: purpose, auth pointer, docs pointer, known quirks, examples, failure modes, rate limits, first-call rules.
+  \item \textbf{\texttt{.claude/mcp.json}} (or framework equivalent) — MCP server configuration, the native Claude Code file for MCP integrations.
+  \item \textbf{Environment variable conventions} — declared either in CLAUDE.md or per-tool, with credential layout cross-referencing Layer 6.
+\end{itemize}
+
+\subsubsection{What belongs in a tool contract}
+
+
+A Layer 7 tool contract is not a tutorial. Official vendor docs are better at tutorials and they stay fresher. A tool contract documents only the things vendor docs don't:
+
+\begin{itemize}
+  \item \textbf{Hub-specific conventions} — how \emph{this} hub uses the tool, what env vars, what helper functions exist
+  \item \textbf{Non-obvious parameter quirks} — "use \texttt{keywords} param, not \texttt{terms}"
+  \item \textbf{Known failure modes} — how it fails and how to recognize the failure
+  \item \textbf{First-call rules} — "always call \texttt{doc} first for any new Ahrefs endpoint"
+  \item \textbf{Rate-limit surprises} — the ones you only learn by hitting them
+  \item \textbf{Pointer to canonical docs} — vendor URL or Context7 library ID
+\end{itemize}
+
+Everything else defers to vendor docs via pointer. If a future session needs the full API reference, it fetches from the vendor or Context7; Layer 7 only carries the accumulated hub-specific wisdom.
+
+\subsubsection{Slots}
+
+
+\begin{tabularx}{\linewidth}{L L L}
+\toprule
+\textbf{Slot} & \textbf{What fills it} & \textbf{Example (chiefofstaff)} \\
+\midrule
+\texttt{\{tool\_roster\}} & MCP servers, APIs, CLIs the hub uses & Ahrefs MCP, Shopify Admin API, Meta Marketing API, Notion, Tripletex \\
+\texttt{\{tool\_contracts\}} & Per-tool quirks worth documenting & Ahrefs \texttt{keywords-explorer-matching-terms} param quirk \\
+\texttt{\{auth\_setup\}} & How each tool authenticates & API keys, OAuth, session tokens (layout in Layer 6) \\
+\texttt{\{first\_call\_rules\}} & Gotchas to prevent before first use & "Call \texttt{doc} first for any new Ahrefs endpoint" \\
+\texttt{\{canonical\_docs\_pointers\}} & Where to fetch latest docs & Context7 library IDs, vendor URLs \\
+\bottomrule
+\end{tabularx}
+
+
+\subsubsection{Minimum (day one)}
+
+
+\begin{lstlisting}
+Layer 1 CLAUDE.md:
+└── Tools Available section (may list what Claude Code ships with, or be near-empty)
+
+.claude/mcp.json (or equivalent):
+└── Whatever MCP servers the hub needs, possibly empty
+\end{lstlisting}
+
+
+Day-one Layer 7 is the "Tools Available" section in CLAUDE.md. It may be near-empty. The \emph{slot} exists from day one so tool contracts have a home the moment the first tool is added.
+
+\subsubsection{Expansion}
+
+
+\begin{itemize}
+  \item \textbf{Add a tool contract} the first time a tool has a non-obvious quirk worth documenting. The first instance of the quirk \emph{is} the trigger.
+  \item \textbf{Split to \texttt{integrations/}} when "Tools available" crosses \textasciitilde{}10 lines or any single tool needs more than \textasciitilde{}3 lines
+  \item \textbf{Add environment variable documentation} when credentials are involved (coordinating with Layer 6's credential pattern)
+  \item \textbf{Add canonical-docs pointers} when tool docs are external and change frequently
+  \item \textbf{Add first-call rules} when misuse is likely or expensive
+\end{itemize}
+
+\subsubsection{Example (chiefofstaff)}
+
+
+\begin{itemize}
+  \item \textbf{Ahrefs MCP} — with the specific \texttt{keywords-explorer-matching-terms} param note (\texttt{keywords} not \texttt{terms}) and the "always call \texttt{doc} first for any new endpoint" first-call rule.
+  \item \textbf{Shopify Admin API} — accessed via \texttt{load\_store()} with the read/write split; contract cross-references Layer 6's credential pattern.
+  \item \textbf{Meta Marketing API} — integrated for Hackit ad management.
+  \item \textbf{Notion API/MCP} — command center, task databases.
+  \item \textbf{Tripletex API} — invoicing, with webhooks/checksum and fields-param optimization notes.
+\end{itemize}
+
+Most of chiefofstaff's tool contracts are currently one-line references in CLAUDE.md's "Tools Available" section. None have been split to \texttt{integrations/} yet. That's appropriate for the current tool surface — the expansion trigger hasn't fired.
+
+\subsubsection{Anti-patterns}
+
+
+\begin{itemize}
+  \item \textbf{Tool wisdom scattered across roles.} Shopify quirks duplicated in Store Manager's CLAUDE.md and Ads Agent's CLAUDE.md, slightly different in each. Drifts. Fix: one canonical home in Layer 7; roles reference by pointer.
+  \item \textbf{No first-call rule.} User learns tool quirks the hard way repeatedly across sessions. Fix: document the quirk the first time it bites.
+  \item \textbf{Hardcoded endpoints in prose.} CLAUDE.md contains URLs and endpoint paths inline. These rot when the vendor changes API versions. Fix: reference canonical docs via Context7 or vendor URLs; fetch latest when needed.
+  \item \textbf{Tool contract as tutorial.} "How to use the API" rewritten from scratch when official docs exist. Fix: point to official docs, document only the hub-specific quirks.
+  \item \textbf{Credential info mixed into tool contract.} Authentication secrets or credential layouts documented inside Layer 7 files. Fix: credential layout is Layer 6; tool contract is Layer 7; they cross-reference, they don't merge.
+  \item \textbf{Over-eager MCP installation.} User adds every MCP server they can find "just in case." Context bloat. Fix: add tools when triggered by real need.
+  \item \textbf{Missing failure mode notes.} Tool fails in a specific way and the failure mode isn't documented. Fix: every known failure mode gets a line in the contract.
+  \item \textbf{Contract without an owner.} A tool's contract exists but no Layer 5 role actually uses it, or the tool is used but no contract exists. Fix: every tool in the contract list is used; every tool used is in the list.
+\end{itemize}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\subsection{Cadence (Rituals) \emph{[hub-scoped]}}
+
+
+\subsubsection{Purpose}
+
+
+Cadence is where the hub's \textbf{rhythms} live. Session rituals, scheduled automation, reconciliation loops, daily/weekly/monthly reviews — anything that happens on a \emph{timing}, whether that timing is "every session" or "every Monday" or "after the first Saturday of the month."
+
+\textbf{A hub without explicit cadence is a filing cabinet. A hub with cadence is a system.} The difference: filing cabinets accumulate; systems process. State drifts without session-end reconciliation. Vaults rot without session-end writes. Auto-memory leaks without promotion cycles. Layer 8 is what keeps the other seven layers alive over time.
+
+This is why the minimum non-trivial cadence is required day-one for every hub. Without session rituals, the whole layered structure decays within a week. With them, each session leaves the hub slightly more organized than it started.
+
+Sharp distinctions:
+\begin{itemize}
+  \item \textbf{Cadence vs Coordinator (Layer 1):} Layer 1 is the spec for \emph{what the coordinator does}; Layer 8 is the spec for \emph{when it does each thing}. "Read OVERVIEW.md on session start" is a cadence rule; "read OVERVIEW.md" without the timing qualifier is homeless.
+  \item \textbf{Cadence vs Auto-memory (Layer 3):} cadence sometimes gets put in auto-memory because both are "cross-session," but they're different. Auto-memory is \emph{user preferences that persist across sessions}; cadence is \emph{hub operations that happen on a schedule}. The session-start routine is cadence, not memory.
+\end{itemize}
+
+\subsubsection{The minimum non-trivial cadence}
+
+
+Every hub has, at minimum, two rituals:
+
+\begin{enumerate}
+  \item \textbf{Session start.} Coordinator reads state (OVERVIEW.md, \texttt{kanban/proposals/pending.yaml}) and, if Layer 4 is populated, \texttt{vault/wiki/hot.md}. Checks in with the user on what's changed since last session.
+\end{enumerate}
+
+\begin{enumerate}
+  \item \textbf{Session end (when real work was done).} Coordinator reconciles work against open proposals, overwrites OVERVIEW.md, marks resolved proposals. If Layer 4 is populated: updates \texttt{hot.md}, files new decisions/lessons as needed, appends to \texttt{log.md}. Runs promotion checks (Section 8).
+\end{enumerate}
+
+These two are declared in Layer 1 CLAUDE.md at day one. Without them, state and memory go stale within a week.
+
+\subsubsection{Files}
+
+
+\begin{itemize}
+  \item \textbf{Layer 1 CLAUDE.md has a "Rituals" or "Session routine" section} — declares the rituals inline so the coordinator reads them at every session start. This is the declaration half of cadence and is required day one.
+  \item \textbf{\texttt{cadence/}} directory \emph{(appears during expansion)} — for scheduled automation scripts, cron configs, and rhythm documentation that outgrows CLAUDE.md
+  \item \textbf{\texttt{cadence/session-start.md}} and \textbf{\texttt{cadence/session-end.md}} \emph{(during expansion)} — canonical forms when rituals grow past what fits inline in CLAUDE.md
+  \item \textbf{Scheduled task configs} — cron, Windows Task Scheduler, GitHub Actions, launchd, whatever the host OS provides
+  \item \textbf{\texttt{kanban/reports/}} \emph{(lives in Layer 2, but populated by Layer 8)} — canonical destination for scheduled-run outputs
+\end{itemize}
+
+\subsubsection{Slots}
+
+
+\begin{tabularx}{\linewidth}{L L L}
+\toprule
+\textbf{Slot} & \textbf{What fills it} & \textbf{Example (chiefofstaff)} \\
+\midrule
+\texttt{\{session\_start\_steps\}} & What the coordinator reads at every session start & OVERVIEW → vault hot.md → check in \\
+\texttt{\{session\_end\_steps\}} & What the coordinator writes at session end & Reconcile pending.yaml → overwrite OVERVIEW → update hot.md → append log.md \\
+\texttt{\{scheduled\_tasks\}} & Recurring automation beyond sessions & Daily health checks, weekly briefs, calendar sync, ad monitoring \\
+\texttt{\{reconciliation\_loops\}} & Recurring checks that close open items & pending.yaml reconciliation, cross-agent signal review, timeline rotation \\
+\texttt{\{promotion\_triggers\}} & When to check for promotion & At session end if patterns emerged \\
+\bottomrule
+\end{tabularx}
+
+
+\subsubsection{Minimum (day one)}
+
+
+\begin{lstlisting}
+Layer 1 CLAUDE.md:
+└── Session rituals section
+    ├── Session start:
+    │   1. Read OVERVIEW.md
+    │   2. Read kanban/proposals/pending.yaml
+    │   3. (If vault populated) Read vault/wiki/hot.md
+    │   4. Check in with user
+    └── Session end (when real work was done):
+        1. Reconcile kanban/proposals/pending.yaml
+        2. Overwrite OVERVIEW.md with current state
+        3. (If vault populated) Update hot.md, append log.md, file decisions/lessons
+        4. Run promotion checks
+
+cadence/:  # appears during expansion, absent on day one
+\end{lstlisting}
+
+
+Day-one Layer 8 is a pair of short bulleted lists in CLAUDE.md. No scripts, no cron, no directory. The two rituals are \emph{declared}, which is enough to make the coordinator perform them every session.
+
+\subsubsection{Expansion}
+
+
+\begin{itemize}
+  \item \textbf{Add scheduled automation} when recurring tasks emerge and deserve to run on a clock. Every scheduled task has a \emph{reason it exists} — not "weekly reviews sound responsible."
+  \item \textbf{Split rituals to \texttt{cadence/}} when session-start or session-end procedures grow past \textasciitilde{}5 steps each
+  \item \textbf{Activate \texttt{kanban/reports/}} in Layer 2 when scheduled runs start producing outputs
+  \item \textbf{Add reconciliation loops} for domain-specific recurring checks
+  \item \textbf{Add explicit promotion cycles} in session-end when the framework is living (cf. Section 8)
+  \item \textbf{Add timeline rotation} when archival overflow is likely
+\end{itemize}
+
+\subsubsection{Example (chiefofstaff)}
+
+
+\begin{itemize}
+  \item \textbf{Session start:} read OVERVIEW.md, read \texttt{\textasciitilde{}/Thehub/vault/wiki/hot.md}, check in with Gabriel on what's changed, offer COO check-in if ops agents have been used since last session
+  \item \textbf{Session end:} reconcile \texttt{kanban/proposals/pending.yaml}, overwrite OVERVIEW.md, update vault \texttt{hot.md}, append to \texttt{log.md}, file decisions/lessons if any, review cross-agent notes in touched client briefs, promote important signals to \texttt{hot.md}'s agent signals section, timeline rotation if any brief overflows
+  \item \textbf{Scheduled automation (built 2026-03-14):} daily store health checks, proposal resurfacing, calendar sync, ad monitoring, weekly briefs. Runs on Windows Task Scheduler. Outputs land in \texttt{kanban/reports/}.
+  \item \textbf{Reconciliation loop:} \texttt{pending.yaml} reconciliation named as non-negotiable in CLAUDE.md.
+\end{itemize}
+
+\subsubsection{Anti-patterns}
+
+
+\begin{itemize}
+  \item \textbf{Implicit cadence.} Rituals exist in the user's head but aren't declared in CLAUDE.md. Coordinator doesn't know when to do what. Fix: declare rituals explicitly in Layer 1 so they're read every session.
+  \item \textbf{Cadence in auto-memory.} User puts session rituals in \texttt{memory/MEMORY.md} because "it's cross-session." Canonicality violation. Fix: rituals are Layer 8 and declared in Layer 1 CLAUDE.md under a rituals section.
+  \item \textbf{Drift between declared and actual.} CLAUDE.md says "reconcile pending.yaml at session end" but coordinator skips it. Fix: rule is non-negotiable or isn't a rule; if skipping happens, add hook enforcement via Layer 6 or remove the declaration.
+  \item \textbf{Scheduled automation with no output home.} Cron runs produce files but there's no canonical \texttt{kanban/reports/} destination, so outputs scatter. Fix: Layer 8 automation writes to Layer 2's \texttt{kanban/reports/} by convention.
+  \item \textbf{Over-scheduled.} User adds daily/weekly/monthly reviews that nobody reads. Bureaucracy. Fix: every scheduled task exists because a real need produced it.
+  \item \textbf{Session-end skipped.} Real work is done but session-end reconciliation is skipped because "I'll get it next time." State drifts, vault rots. Fix: this is exactly the kind of rule Layer 6 should enforce via hook.
+  \item \textbf{Rituals as prose essay.} Session-start routine is described as flowing narrative. Unreadable under time pressure. Fix: bulleted, numbered, actionable steps.
+  \item \textbf{Rituals too long.} Session-start routine grows to 20 steps and the coordinator quietly skips half. Fix: short enough to always be performed, or split into sub-routines that run conditionally.
+\end{itemize}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\section{The User-Scoped Layer — \texttt{USER.md}}
+
+
+\subsection{Purpose}
+
+
+\texttt{USER.md} is the \textbf{single anchor of user-scoped wisdom} that every hub inherits. It's the reason hub \#2 starts smart instead of naive. Without it, every new hub has to re-learn the user's working style, decision lens, cross-hub preferences, and recurring people — and the user has to pay the teaching cost over and over again.
+
+\texttt{USER.md} is the reference implementation of Layer 3. The user writes it once, maintains it rarely, and every future hub's Layer 1 CLAUDE.md imports it automatically.
+
+**\texttt{USER.md} is the \emph{procedural} user-scoped file.** It holds rules, preferences, working style, decision lens, and collaboration mechanics — everything about \emph{how the user wants to work}. Its sibling at the user scope is Layer 4 (vault), the \emph{semantic} user-scoped layer, which holds concepts, lessons, people-as-characters, and decisions-with-reasoning — everything about \emph{what the user's hubs have come to understand about the world}. Same scope, different memory type. A rule goes in \texttt{USER.md}; a concept goes in the vault. When the distinction is unclear, apply the Section 4.4 retrieval test: \emph{mechanics or meaning?}
+
+One-sentence version: \textbf{If you removed the current hub tomorrow and built a new one for a completely different domain, \texttt{USER.md} would still be true. Everything else in the hub would not.}
+
+\subsection{Location}
+
+
+Provisional location: \texttt{\textasciitilde{}/thehub/USER.md}, sibling to every hub directory. This is flagged for reflection — see Section 1 preamble for the three open angles (thehub namespace vs user namespace; single file vs split; relationship to Claude Code auto-memory).
+
+\subsection{Canonical sections}
+
+
+\texttt{USER.md} has six canonical sections. Every hub expects to find them in this order:
+
+\begin{lstlisting}
+USER.md
+├── 1. Identity
+├── 2. Working style
+├── 3. Decision lens
+├── 4. People
+├── 5. Cross-hub preferences
+└── 6. Scope note
+\end{lstlisting}
+
+
+\subsubsection{Identity}
+
+
+Who the user is \emph{operationally}. Role, background, capacity, constraints, relevant personality markers. This is the section that tells Claude how to frame advice — a senior engineer gets a different explanation than a student learning to code.
+
+Good identity sections include:
+\begin{itemize}
+  \item Professional role and domain
+  \item Relevant personality traits (Enneagram, Big Five, MBTI — whichever the user finds useful)
+  \item Cognitive patterns that affect collaboration
+  \item Operational constraints (time, attention, energy)
+  \item What the user is optimizing for at a life level
+\end{itemize}
+
+Bad identity sections: generic résumé content, aspirational self-descriptions, lists of tools the user knows.
+
+\subsubsection{Working style}
+
+
+How the user wants to be collaborated with. This is the section that controls how Claude talks, pushes back, and paces responses. It's the single highest-impact section for daily experience.
+
+Good working style sections include:
+\begin{itemize}
+  \item Directness preference (hedging vs. blunt)
+  \item Detail preference (concise vs. expansive)
+  \item Pushback tolerance (yes-man vs. devil's advocate)
+  \item When to extract-before-solution vs. jump to answers
+  \item How to handle ambiguous requests
+  \item What the user doesn't want Claude to do
+\end{itemize}
+
+\subsubsection{Decision lens}
+
+
+How the user weighs tradeoffs. This is the section that shapes \emph{recommendations} across every hub. A framework-agnostic rubric the user applies when deciding what's worth doing.
+
+Good decision lens sections include:
+\begin{itemize}
+  \item Named decision philosophies the user has committed to
+  \item Filters the user applies
+  \item Explicit anti-patterns the user has learned to avoid
+  \item The user's time horizon and risk posture
+\end{itemize}
+
+This section is the closest thing the user has to a \emph{written philosophy of their own work}. Most people don't have this written down anywhere. Forcing it into \texttt{USER.md} is one of the highest-leverage moves in the entire framework.
+
+\subsubsection{People}
+
+
+Humans who recur \textbf{across} the user's hubs, not within a single one. Family, long-term business partners, regular collaborators, key advisors. Per-hub people (a specific client, a specific counterparty in one domain) belong in that hub's \texttt{vault/wiki/people/}, not here.
+
+The test: \emph{"Will this person still matter in a hub I build three years from now for a different domain?"} If yes, \texttt{USER.md}. If no, hub-specific vault.
+
+\subsubsection{Cross-hub preferences}
+
+
+Rules that apply in every hub the user will ever build. Not domain-specific, not client-specific. The universal slice of the user's preferences.
+
+Examples of what belongs here:
+\begin{itemize}
+  \item Design preferences
+  \item Communication preferences
+  \item Meta-rules the user has taught Claude through feedback
+  \item Cross-tool conventions the user always uses
+\end{itemize}
+
+Examples of what does \emph{not} belong here:
+\begin{itemize}
+  \item Hub-specific rules (e.g., "don't mutate Shopify without approval" — lives in the relevant hub's never list)
+  \item Domain-specific practices (e.g., "always pull GSC alongside Ahrefs" — lives in the SEO ops role's CLAUDE.md)
+\end{itemize}
+
+\subsubsection{Scope note}
+
+
+A short closing section that tells future Claude sessions \emph{what this file is not for}. Critical because without it, \texttt{USER.md} bloats — every piece of reflection starts to look like it belongs here, and suddenly the file is 10,000 words of mixed hub-scoped and user-scoped content.
+
+A good scope note names the canonical alternatives and ends with the default test: \emph{"Would this still be true in a completely different hub?"}
+
+\subsection{Import pattern}
+
+
+Every hub's Layer 1 CLAUDE.md imports \texttt{USER.md} by \textbf{reference}, not by copying.
+
+\begin{lstlisting}
+## Working style
+
+See `~/thehub/USER.md` for full user profile, working style, decision lens, and cross-hub preferences.
+
+Key reminders in this hub's context:
+- [1-3 lines of hub-specific reinforcement, if needed]
+\end{lstlisting}
+
+
+This does two things:
+\begin{enumerate}
+  \item \textbf{Prevents drift.} There is one canonical copy. Updates to \texttt{USER.md} propagate to every hub on the next session start.
+  \item \textbf{Keeps each hub's CLAUDE.md short.} Layer 1 doesn't need to repeat identity/working-style content; it just points.
+\end{enumerate}
+
+\subsection{What goes in vs. what doesn't}
+
+
+\begin{tabularx}{\linewidth}{L L}
+\toprule
+\textbf{Belongs in \texttt{USER.md}} & \textbf{Belongs elsewhere} \\
+\midrule
+How the user thinks & Hub-specific current status (→ OVERVIEW.md) \\
+How the user wants to collaborate & Per-client briefs (→ hub \texttt{vault/wiki/clients/}) \\
+Decision lens the user applies everywhere & Hub-specific decisions (→ hub \texttt{vault/wiki/decisions/}) \\
+People who recur across every hub & People specific to one hub's domain (→ hub \texttt{vault/wiki/people/}) \\
+Cross-hub preferences ("no emojis") & Hub-specific rules ("no Shopify writes") → hub never list \\
+Cross-tool conventions & Tool-specific quirks → hub Layer 7 contracts \\
+Named lessons the user has accepted as universal & Hub-specific lessons (→ hub \texttt{vault/wiki/lessons/}) \\
+\bottomrule
+\end{tabularx}
+
+
+The core test, repeated: \textbf{"Will this still be true in a totally different hub I build three years from now?"} If yes, \texttt{USER.md}. If not, hub-specific.
+
+\subsection{Worked example}
+
+
+Below is a fleshed-out example showing what a real, populated \texttt{USER.md} looks like. Specific to one user; any user's version would be equally specific to them.
+
+\begin{lstlisting}
+# USER.md
+
+Canonical user profile shared by every hub I build. Imported by each hub's Layer 1
+CLAUDE.md by reference, not by copy.
+
+---
+
+## 1. Identity
+
+I'm Gabriel, an independent operator based in Bergen, Norway. I build and run things —
+ecommerce ventures, consulting work, software, design. My default mode is systems
+thinking: I see problems as interactions, not isolated parts, and I tend to build
+infrastructure I can reuse across work rather than one-off solutions.
+
+**Operational style:** ENK (single-person company) by legal structure, solo operator by
+choice, but I collaborate deeply with a small number of people.
+
+**Personality markers that matter for collaboration:**
+- Enneagram 3w4 — "The Professional." Core drive: build things that work AND that are
+  authentically mine. Under stress I equate productivity with self-worth and launch new
+  things because starting feels like progress.
+- Big Five highlights:
+  - Neuroticism: 48 (low) with Immoderation 13 (high) — calm under pressure, but impulse
+    control is my weak spot
+  - Extraversion: 99 with Gregariousness 11 — energized by people, deeply assertive, but
+    I want depth not crowds
+  - Openness: 88 with Intellect 20, Liberalism 11 — love ideas intensely, respect proven
+    structures
+  - Agreeableness: 90 with Altruism 18 — high trust, over-gives to people I care about
+  - Conscientiousness: ~95 with Achievement-Striving 20, Self-Discipline 18, but
+    **Orderliness 6** — I push relentlessly but cannot maintain tidy systems. This is
+    why Claude exists in my workflow.
+- ENTJ — commander type. Strategy and delegation natural; impatient with inefficiency.
+
+**Patterns to watch for:**
+1. Starting new things as a substitute for finishing current things
+2. Doing free work for people I care about when overextended
+3. Information scattered everywhere because I can't maintain organizational systems
+4. Mistaking motion for traction
+
+---
+
+## 2. Working style
+
+- **Be direct.** No hedging, no corporate speak. If I'm wrong, say so. If a priority is
+  misaligned, push back. I hired you to think, not to agree.
+- **Extract before solving.** When I dump a wall of context at you, your first job is to
+  extract what actually matters and reflect it back before jumping to solutions.
+- **Meet me in systems.** Don't give me isolated advice — show me how things connect.
+- **Let me talk through things.** I sometimes need to talk through something before I
+  know what I'm actually asking. Make space for that, then help me land on the real
+  question.
+- **Be the counterweight.** When I'm spinning up something new while existing things are
+  unfinished, say so directly.
+- **Don't perform caution.** Pick the right answer and defend it. Stop recommending the
+  lighter option, suggesting session close, or hedging as "your call."
+- **No human-frame cost bias.** Don't project human fatigue onto agent work. Name which
+  agent-scale cost drives any "defer/lighter" recommendation.
+- **Short responses default.** Terse is better than complete.
+
+---
+
+## 3. Decision lens
+
+**Boring Empire philosophy.** No dramatic single bets. Build scalable, systematic,
+repeatable infrastructure. Compound small advantages. This came from a past failure
+(dropshipping → wholesale commitment → tax debt → wind down). Lesson: no hero bets.
+
+**Investment lens.** Peter Lynch concentrated approach — invest in what I understand.
+I think about "wisdom layer" companies — businesses where deep institutional knowledge
+is the moat.
+
+**When weighing tradeoffs, apply these filters:**
+1. Does this compound, or is it a one-off?
+2. Does this build infrastructure I can reuse?
+3. Am I the bottleneck? If so, how do we unblock?
+4. What's the cost of *not* deciding right now?
+
+**Anti-patterns I've learned to watch for:**
+- Premature abstraction — three similar lines is better than a wrong framework
+- Starting new things as a form of progress theater
+- Over-giving time to friends/family at the expense of paying work
+- Confusing activity with traction
+
+---
+
+## 4. People
+
+People who recur across every hub I build, regardless of domain:
+
+- **Alex** — my father. Enterprise systems architect. Highly capable but I struggle to
+  delegate to him effectively.
+- **Robin** — long-term business partner. Co-founder of multiple ventures. Capable
+  salesperson.
+- **Sam** — business partner. Co-founder. The vision guy; sees the big picture.
+- **Quinn** — girlfriend.
+
+(Per-domain people live in each hub's `vault/wiki/people/`, not here.)
+
+---
+
+## 5. Cross-hub preferences
+
+- **Credential safety:** never pass write credentials to dispatched subagents. Mutation
+  tokens stay in the coordinator's context and require session-level approval.
+- **Hooks over instructions:** CRITICAL rules need hook enforcement, not just CLAUDE.md
+  prose.
+- **Design preferences:** no AI clutter (eyebrow text, trust badges, heavy borders, emoji
+  lists, "revolutionary" copy). Iterate via hotter/colder.
+- **Pricing research rule:** never anchor to one data point. Separate math from strategy.
+  Cross-reference parallel research.
+- **Bidirectional ops updates:** when using ops agents, push status DOWN to their context
+  files, don't just read from them.
+- **No emoji in files unless explicitly requested.**
+- **Obsidian flavored markdown** in any vault-adjacent content.
+- **Decision records with wikilinks** — every non-trivial decision links affected people
+  and projects.
+
+---
+
+## 6. Scope note
+
+This file is user-scoped. Things it is **not** for:
+
+- **Current operational state** → hub's `OVERVIEW.md` (Layer 2)
+- **Hub-specific decisions and rationales** → hub's `vault/wiki/decisions/` (Layer 4)
+- **Per-client context** → hub's `vault/wiki/clients/` (Layer 4)
+- **Per-project context** → hub's `vault/wiki/projects/` (Layer 4)
+- **Hub-specific rules** → hub's Layer 1 never list
+- **Hub-specific tool contracts** → hub's Layer 7 integration notes
+- **Session rituals** → hub's Layer 1 CLAUDE.md rituals section (Layer 8)
+- **Cross-session agent behavior context** → Claude auto-memory per-hub
+
+**Default test:** *"Would this still be true in a completely different hub I build three
+years from now?"* If yes, it belongs here. If no, it goes in the hub.
+\end{lstlisting}
+
+
+\subsection{Maintenance}
+
+
+\begin{itemize}
+  \item \textbf{Human-curated.} \texttt{USER.md} is written and edited by the user, not auto-written by Claude. Claude \emph{proposes} promotions (see Section 8); the user \emph{approves} them.
+  \item \textbf{Rarely edited.} If \texttt{USER.md} is changing weekly, something is wrong — probably hub-specific content is sneaking in. Monthly edits are healthy; daily edits are a smell.
+  \item \textbf{Session-end promotion check.} Layer 8's session-end ritual includes "check whether any feedback memories from this session are universal enough to promote to \texttt{USER.md}" — but the check only \emph{proposes}, never auto-writes.
+  \item \textbf{Split when it grows.} When \texttt{USER.md} crosses \textasciitilde{}2000 words, split into section files: \texttt{USER/identity.md}, \texttt{USER/working-style.md}, etc.
+\end{itemize}
+
+\subsection{Anti-patterns}
+
+
+\begin{itemize}
+  \item \textbf{Bloat.} Hub-specific content sneaks in because it felt important. Fix: scope note + "would this be true in a different hub?" test.
+  \item \textbf{Auto-written by Claude.} Claude writes to \texttt{USER.md} directly during a session. Drifts, duplicates, loses the human-curated discipline. Fix: Claude proposes, user approves.
+  \item \textbf{Split too early.} User splits \texttt{USER.md} into five files on day one. Fragmented, hard to maintain. Fix: single file until it crosses \textasciitilde{}2000 words.
+  \item \textbf{Canonicality violation with auto-memory.} Same rule written in both \texttt{USER.md} and \texttt{memory/MEMORY.md}. Drifts. Fix: \texttt{memory/} is staging; \texttt{USER.md} is the canonical home for promoted rules.
+  \item \textbf{No scope note.} \texttt{USER.md} grows indefinitely because there's no reminder of what it's \emph{not} for. Fix: section 6 is non-optional; write it day one.
+  \item \textbf{Working-style section too short.} "Be direct" and nothing else. Produces generic collaboration. Fix: populate with the feedback you've actually given Claude over time.
+  \item \textbf{Identity section as résumé.} "I know TypeScript and Python." Useless for collaboration. Fix: identity is \emph{how you think and operate}, not \emph{what skills you have}.
+\end{itemize}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\section{Instantiation Playbook}
+
+
+This section is the \textbf{step-by-step guide for turning hub-os from a skeleton into a live hub}. It assumes you have already built at least one hub (or are working from a reference hub like chiefofstaff) and understand the eight layers in principle. If not, read Sections 3 and 4 first.
+
+\subsection{The golden rule of instantiation}
+
+
+\textbf{Do the interview before you touch any files.} The failure mode hub-os is most vulnerable to is \emph{cargo culting} — copying the chiefofstaff directory, renaming Munger to some other name, deleting the parts that look unfamiliar, and shipping. Cargo-culted hubs feel functional for a week and then collapse because the slots were filled without the reasoning that justifies the fillings.
+
+The interview is a conversation between the user and Claude that answers a specific set of questions \emph{before} any file gets written. If you skip it, you will build the wrong hub. If you do it properly, the file operations that follow are mechanical.
+
+\subsection{The pre-instantiation interview}
+
+
+These are the questions the interview must answer. Don't start file operations until all of them have real answers — not placeholders.
+
+\subsubsection{Domain questions}
+
+
+\begin{enumerate}
+  \item \textbf{What domain does this hub coordinate?} One sentence. If the answer needs more than one sentence, the domain is too broad — split it.
+  \item \textbf{What does this domain punish?} What kinds of decisions go wrong? What failure modes recur? This is the single most important input to archetype selection.
+  \item \textbf{What does this domain reward?} What patterns compound? What reflexes pay off over time?
+  \item **Is this hub the user's \emph{only} hub, or one of several?** If one of several, a \texttt{USER.md} already exists to inherit from. If it's the first, \texttt{USER.md} needs to be built as part of this instantiation.
+\end{enumerate}
+
+\subsubsection{Archetype questions}
+
+
+\begin{enumerate}
+  \item \textbf{Given the punishments and rewards, what archetype's native reflexes match?} Pick a real named figure (Section 4.1 rules). Write 1–2 paragraphs on \emph{why this archetype for this domain}.
+  \item \textbf{Does this archetype contrast with the user's weaknesses, or amplify them?} If amplify, pick a different one.
+  \item \textbf{Does the user respect this archetype enough for its pushback to land, but disagree with it sometimes?} If always agreement, pick a different one.
+\end{enumerate}
+
+\subsubsection{Structure questions}
+
+
+\begin{enumerate}
+  \item \textbf{What is the mandate?} 1–3 sentences. The coordinator's job in plain language.
+  \item \textbf{Who is the primary user?} Just confirm — should be the same user \texttt{USER.md} describes.
+  \item \textbf{What domains of work does the hub coordinate?} The domain map. Bulleted.
+  \item \textbf{Do any specialist roles need to exist from day one?} Often the answer is \emph{no}. If yes, name them with verb-based names (not tool-based) and answer questions 12–14 for each.
+  \item \textbf{For each day-one role: what does it do, what tools does it use, and does it have mutation capability?}
+  \item \textbf{What credentialed surfaces exist?} Anything the hub can mutate — APIs, databases, external services, file systems with write access.
+  \item \textbf{Which of those surfaces auto-load on session start, and which require explicit approval?} Answer should always be: read auto-loads, write requires approval.
+\end{enumerate}
+
+\subsubsection{Cadence questions}
+
+
+\begin{enumerate}
+  \item \textbf{What session-start ritual makes sense?} Minimum: read OVERVIEW + pending.yaml. Add hot.md if Layer 4 is populated.
+  \item \textbf{What session-end ritual makes sense?} Minimum: reconcile pending.yaml + overwrite OVERVIEW. Add vault writes, promotion checks, and reconciliation loops as needed.
+  \item \textbf{Are there any scheduled tasks that should exist from day one?} Usually no. If yes, name them and their cadences.
+\end{enumerate}
+
+\subsubsection{Integration questions}
+
+
+\begin{enumerate}
+  \item \textbf{What external tools does the hub need?} MCP servers, APIs, CLIs.
+  \item \textbf{For each: what's the minimum contract?} At least: purpose, auth pointer, docs pointer.
+\end{enumerate}
+
+\subsubsection{Reflex questions}
+
+
+\begin{enumerate}
+  \item \textbf{Which reflexes from the reflex card (Section 7) apply to this hub?} Usually most of them — they're universal by design.
+  \item \textbf{Are there any known failure modes specific to this domain that aren't in the reflex card?} Write them down now. They become this hub's own seed entries in Layer 6.
+\end{enumerate}
+
+When every question has a real answer, the interview is done. Save the answers somewhere — you'll reference them during file operations.
+
+\subsection{File operations (in order)}
+
+
+Now that the interview is done, the file operations are mechanical. Do them in this order.
+
+\subsubsection{Step 1 — Create the hub directory}
+
+
+Sibling to other hubs. Name the directory after the domain, not the archetype (chiefofstaff, not munger).
+
+\subsubsection{Step 2 — Ensure \texttt{USER.md} exists}
+
+
+If this is not the user's first hub, \texttt{USER.md} already exists. Verify the path is right and you can import it. If this \emph{is} the first hub:
+
+\begin{enumerate}
+  \item Draft \texttt{USER.md} using the Section 5.3 canonical six-section structure.
+  \item Fill in real content for at least Identity, Working style, and the Scope note.
+  \item Decision lens, People, and Cross-hub preferences can start partial and grow.
+  \item Save to the chosen location (default: \texttt{\textasciitilde{}/thehub/USER.md}).
+\end{enumerate}
+
+\subsubsection{Step 3 — Create Layer 1 (\texttt{CLAUDE.md})}
+
+
+Copy the hub-os CLAUDE.md template into the new hub directory. Fill the slots from the interview answers:
+
+\begin{itemize}
+  \item Identity (archetype + 1–2 paragraph fit from Q5–7)
+  \item Working style (reference to \texttt{USER.md})
+  \item Mandate (from Q8)
+  \item Domain map (from Q10)
+  \item Routing table (from Q11; empty table with headers if no day-one roles)
+  \item Never list (seeded from reflex card + any domain-specific additions from Q21)
+  \item Current status (pointer to \texttt{OVERVIEW.md})
+  \item Tools available (from Q18–19)
+  \item Rituals section (from Q15–16)
+\end{itemize}
+
+\subsubsection{Step 4 — Create Layer 2 (state)}
+
+
+\begin{lstlisting}
+OVERVIEW.md                        # four canonical sections, mostly empty
+kanban/
+└── proposals/
+    └── pending.yaml               # empty array
+\end{lstlisting}
+
+
+\subsubsection{Step 5 — Verify Layer 3 is wired up}
+
+
+Layer 3 is the only user-scoped required layer and its two sub-locations have different lifecycles:
+
+\begin{itemize}
+  \item \textbf{\texttt{USER.md}} — verify it's in place at its chosen location (\texttt{\textasciitilde{}/thehub/USER.md} by default) and that Layer 1 CLAUDE.md imports it by reference. This is the day-one work.
+  \item \textbf{\texttt{memory/}} — Claude Code's auto-memory lives at \texttt{\textasciitilde{}/.claude/projects/\{hub-path\}/memory/}, \emph{not} inside the hub directory. Claude Code creates this directory automatically on first session. No day-one scaffolding required; it populates itself as sessions accumulate. If this is the user's first hub ever, Claude Code may need one session to create the initial \texttt{MEMORY.md} index — that happens naturally, not as part of instantiation.
+\end{itemize}
+
+\subsubsection{Step 6 — Create Layer 4 (vault)}
+
+
+\begin{lstlisting}
+vault/wiki/
+├── hot.md                         # 1-line seed, ~50 words
+├── index.md                       # section headers, no entries yet
+├── log.md                         # empty, ready for first append
+├── decisions/
+├── lessons/
+├── people/
+├── projects/
+└── clients/                       # rename per domain if needed
+\end{lstlisting}
+
+
+\subsubsection{Step 7 — Create Layer 5 skeleton}
+
+
+\begin{lstlisting}
+ops/
+└── _template/
+    └── CLAUDE.md                  # role template
+\end{lstlisting}
+
+
+If the interview named day-one roles, create each one with its own CLAUDE.md and CONTEXT.md. Update the routing table in Layer 1 CLAUDE.md to point at them.
+
+\subsubsection{Step 8 — Declare Layer 6 patterns}
+
+
+Layer 6 doesn't usually get its own files on day one. Instead:
+
+\begin{enumerate}
+  \item Never list in Layer 1 CLAUDE.md is non-empty (seeded in Step 3)
+  \item Credential separation pattern is \textbf{declared} in CLAUDE.md, even if no credentials exist yet
+  \item If credentialed surfaces already exist (Q13–14), set up the actual read/write credential split
+\end{enumerate}
+
+\subsubsection{Step 9 — Declare Layer 7 tools}
+
+
+"Tools available" section in Layer 1 CLAUDE.md populated from Q18–19. One line per tool, with a pointer to canonical docs.
+
+\subsubsection{Step 10 — Declare Layer 8 rituals}
+
+
+"Rituals" or "Session routine" section in Layer 1 CLAUDE.md populated from Q15–16.
+
+\subsubsection{Step 11 — (Optional) Create \texttt{reflexes.md} for tracked inheritance}
+
+
+If you want to make reflex inheritance visible, create \texttt{hub/reflexes.md} listing which reflex IDs from Section 7 are active in this hub.
+
+\subsection{Day-one verification}
+
+
+Before running the first real session, verify the hub is structurally sound:
+
+\begin{itemize}
+  \item [ ] \texttt{CLAUDE.md} exists at the hub root with all required sections
+  \item [ ] \texttt{CLAUDE.md} references \texttt{USER.md} by import path, not by copy
+  \item [ ] \texttt{USER.md} exists at its expected location and is readable
+  \item [ ] \texttt{OVERVIEW.md} exists with the four canonical sections
+  \item [ ] \texttt{kanban/proposals/pending.yaml} exists (even if empty)
+  \item [ ] \texttt{vault/wiki/} exists with all canonical subfolders and \texttt{hot.md}, \texttt{index.md}, \texttt{log.md}
+  \item [ ] \texttt{ops/\_template/CLAUDE.md} exists
+  \item [ ] Never list in \texttt{CLAUDE.md} is non-empty (has at least the inherited reflexes)
+  \item [ ] Tools available section declared
+  \item [ ] Rituals section declared with session start and session end
+  \item [ ] If credentialed surfaces exist: read and write credentials are in separate files
+  \item [ ] No top-level \texttt{memory/MEMORY.md} contains hub-scoped or ritual content (canonicality check)
+\end{itemize}
+
+\subsection{First session}
+
+
+\begin{enumerate}
+  \item Read \texttt{CLAUDE.md}, which imports \texttt{USER.md}
+  \item Execute the session-start ritual from Layer 8
+  \item Notice that everything is mostly empty — this is expected on day one
+  \item Check in with the user to confirm the archetype feels right, the mandate makes sense, and the interview answers match reality
+\end{enumerate}
+
+If any interview answer turned out to be wrong, fix it \textbf{now} — day one is the cheapest time to revise.
+
+Then do one small piece of real work in the hub. File the first vault entry. Reconcile pending.yaml. Overwrite \texttt{OVERVIEW.md}. Update \texttt{hot.md}. Append to \texttt{log.md}. Close the session.
+
+\subsection{Common instantiation mistakes}
+
+
+\begin{itemize}
+  \item \textbf{Skipping the interview.} Produces a hub that feels almost right and silently fails.
+  \item \textbf{Wrong archetype because it sounded cool.} Apply the punishment/reward test and the contrast test.
+  \item \textbf{Over-populated ops on day one.} Start with zero populated roles.
+  \item \textbf{Copying \texttt{USER.md} contents into \texttt{CLAUDE.md}.} Breaks inheritance.
+  \item \textbf{Empty never list} because "no incidents yet." Seed from the reflex card.
+  \item \textbf{Skipping credential declaration} because "no credentials yet." Declare the pattern as policy.
+  \item \textbf{Putting session rituals in memory} instead of CLAUDE.md. Canonicality violation.
+  \item \textbf{Starting the first session without reading \texttt{CLAUDE.md} yourself.}
+\end{itemize}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\section{The Reflex Card}
+
+
+\subsection{Purpose}
+
+
+The reflex card is \textbf{inherited scar tissue}. Every rule in it exists because something broke somewhere — in \texttt{chiefofstaff}, in another hub-os hub, or in a pre-framework project — and the rule was added to prevent the same break from happening again. Rather than making every new hub earn its own scars from scratch, the reflex card lets new hubs inherit the rules and skip the incidents.
+
+A day-one hub with zero reflexes is naive: it has a never list section but nothing in it, and the first time a mutation-capable tool gets added, the coordinator has no standing instructions against misusing it. A day-one hub seeded from the reflex card starts with a non-empty never list, declared safety patterns, and awareness of the failure modes that have already bitten other hubs.
+
+The reflex card is therefore \textbf{load-bearing for day-one Layer 6.}
+
+\subsection{Schema}
+
+
+Each reflex entry has the following fields:
+
+\begin{itemize}
+  \item \textbf{id} — \texttt{R-XXX}, sequential
+  \item \textbf{incident} — One-sentence description of what broke
+  \item \textbf{rule} — The rule that was added in response (hard language, imperative)
+  \item \textbf{why} — The causal link — why this rule prevents this kind of incident
+  \item \textbf{layer} — Which hub-os layer the rule affects
+  \item \textbf{date} — When the reflex entered the card (YYYY-MM-DD)
+  \item \textbf{source\_hub} — Which hub surfaced it
+  \item \textbf{enforcement} — \texttt{discipline-only} | \texttt{hook} | \texttt{architecture}
+\end{itemize}
+
+Reflex entries are rendered as markdown tables in Section 7.4 for readability.
+
+\textbf{Enforcement values:}
+\begin{itemize}
+  \item \textbf{discipline-only} — the rule is prose in CLAUDE.md; depends on Claude following instructions
+  \item \textbf{hook} — the rule is enforced by a Claude Code hook that fires mechanically
+  \item \textbf{architecture} — the rule is enforced by the file/credential layout
+\end{itemize}
+
+Architecture enforcement is strongest; hook is second; discipline-only is weakest. Every reflex should aim for the strongest enforcement its nature allows.
+
+\subsection{How new hubs use the reflex card}
+
+
+Day-one instantiation flow:
+
+\begin{enumerate}
+  \item \textbf{Read the reflex card} (this section).
+  \item \textbf{Filter for universal reflexes} — any entry that isn't domain-specific. Most are.
+  \item \textbf{Seed Layer 1 never list} with the rules from those reflexes. Each never-list entry references its reflex ID.
+  \item \textbf{Seed Layer 6 enforcement patterns} — credential separation, subagent rules, hook principles.
+  \item \textbf{Optionally seed a \texttt{hub/reflexes.md} file} listing which reflex IDs are active in this hub.
+\end{enumerate}
+
+A day-one hub should have \textbf{all eight reflexes active} by default — they are universal by design. R-001 through R-004 are the \textbf{safety-critical core} (incident-preventing rules about delegation, credentials, and enforcement); R-005 through R-008 are equally universal but address \textbf{operational hygiene} (state discipline, bidirectional ops flow, cost framing, canonicality). The only reason to drop a reflex during instantiation is if the domain genuinely doesn't exercise it — e.g., a read-only research hub has no mutation-capable surfaces and R-003 is a no-op until one appears. When in doubt, keep all eight.
+
+\subsection{The reflex card (v0.2)}
+
+
+\textbf{R-001 — Coordinator routes, coordinator does not execute}
+
+\begin{tabularx}{\linewidth}{L L}
+\toprule
+\textbf{Field} & \textbf{Value} \\
+\midrule
+incident & 2026-03-27: A top-level Munger session in \texttt{chiefofstaff} bypassed the ops routing layer, spun up ad-hoc subagents with raw Shopify credentials, and published 12 unauthorized blog articles to a live client store. The named ops roles (SEO, Translation, Store Manager) were never consulted. \\
+rule & The coordinator delegates specialist work to named ops roles and does not execute specialist work directly. If a task has a specialist in the routing table, the coordinator routes to that specialist — the coordinator never shortcuts around it. \\
+why & Specialists carry domain-specific safety rules in their own CLAUDE.md files. When the coordinator bypasses them, those rules never get enforced. The coordinator has altitude; specialists have depth. Losing depth under time pressure is how incidents happen. \\
+layer & 1 (declared in never list) + 5 (enforced via routing table) \\
+date & 2026-03-27 \\
+source\_hub & chiefofstaff \\
+enforcement & discipline-only (can be upgraded to hook) \\
+\bottomrule
+\end{tabularx}
+
+
+\textbf{R-002 — No subagent credential passing}
+
+\begin{tabularx}{\linewidth}{L L}
+\toprule
+\textbf{Field} & \textbf{Value} \\
+\midrule
+incident & Same session as R-001: ad-hoc subagents were dispatched with raw Shopify access tokens in their prompts, giving them write capability outside the coordinator's oversight. \\
+rule & The coordinator never dispatches a subagent with mutation credentials as prompt arguments. If a subagent needs write access, either the coordinator performs the mutation itself under the subagent's direction, or the subagent runs as a subprocess with its own credential environment. \\
+why & Credentials passed down the prompt chain lose the approval surface. The coordinator can't enforce "ask the user before writing" on a subagent that already has the token. Keeping credentials in the coordinator's own context forces every mutation through the approval gate. \\
+layer & 5 (ops delegation rule) + 6 (credential architecture) \\
+date & 2026-03-27 \\
+source\_hub & chiefofstaff \\
+enforcement & architecture \\
+\bottomrule
+\end{tabularx}
+
+
+\textbf{R-003 — Read-default, write-approved credential separation}
+
+\begin{tabularx}{\linewidth}{L L}
+\toprule
+\textbf{Field} & \textbf{Value} \\
+\midrule
+incident & 2026-04-01 response to R-001 and R-002: unified credential files meant that every session had latent write capability, and a single mistake could activate it. \\
+rule & Any mutation-capable integration separates read and write credentials into different files. Read credentials auto-load on session start. Write credentials never auto-load — they require explicit session approval before being read into context. \\
+why & The window for mistakes is the window in which write capability is live. Minimize that window by making write capability opt-in per session, not on by default. A session that never calls the write-enabling function cannot write to the surface, period. \\
+layer & 6 (safety architecture) \\
+date & 2026-04-01 \\
+source\_hub & chiefofstaff \\
+enforcement & architecture \\
+\bottomrule
+\end{tabularx}
+
+
+\textbf{R-004 — Hooks over instructions for CRITICAL rules}
+
+\begin{tabularx}{\linewidth}{L L}
+\toprule
+\textbf{Field} & \textbf{Value} \\
+\midrule
+incident & Several chiefofstaff feedback cycles where CRITICAL/NEVER rules declared in CLAUDE.md were followed \emph{most} of the time but violated under pressure. The violations produced real incidents. \\
+rule & If a rule's violation would constitute an incident, the rule must be enforced by a mechanical hook (Claude Code hook or architecture), not by CLAUDE.md prose alone. Instructions are for preferences; hooks are for CRITICAL rules. \\
+why & Claude follows instructions most of the time, but "most of the time" is exactly wrong for rules whose violation is an incident. The test: \emph{"if this rule is violated, is it an incident?"} → if yes, hook; if no, CLAUDE.md is enough. \\
+layer & 6 (enforcement principle, meta-reflex) \\
+date & 2026-04 \\
+source\_hub & chiefofstaff \\
+enforcement & meta-reflex \\
+\bottomrule
+\end{tabularx}
+
+
+\textbf{R-005 — State must be overwrite-only; history goes to vault}
+
+\begin{tabularx}{\linewidth}{L L}
+\toprule
+\textbf{Field} & \textbf{Value} \\
+\midrule
+incident & Multiple chiefofstaff sessions where \texttt{OVERVIEW.md} accumulated stale entries or \texttt{pending.yaml} filled with resolved proposals left as open. Coordinator started operating from memory instead of the file because the file had become unreadable. Stale proposals describing finished work eroded trust in the entire state layer. \\
+rule & Layer 2 (state) is overwrite-only. \texttt{OVERVIEW.md} is completely rewritten every session where work happened. Resolved proposals are marked \texttt{resolved} with a note and then deleted or archived to vault within one cycle. History lives in \texttt{vault/wiki/log.md}, not in state. \\
+why & State is \emph{what is true now}. The moment state includes things that are no longer true, the coordinator can't trust state at all, and the whole hub loses its ground. Overwrite discipline is what keeps state usable as a reference. \\
+layer & 2 (state) + 8 (cadence ritual) \\
+date & 2026-04 \\
+source\_hub & chiefofstaff \\
+enforcement & discipline-only \\
+\bottomrule
+\end{tabularx}
+
+
+\textbf{R-006 — Bidirectional ops updates}
+
+\begin{tabularx}{\linewidth}{L L}
+\toprule
+\textbf{Field} & \textbf{Value} \\
+\midrule
+incident & Chiefofstaff sessions where the coordinator read from ops agent context files but never wrote back. Over time, ops agents' own context files drifted out of sync with what the coordinator knew, and downstream sessions invoking those ops agents operated on stale context. \\
+rule & When the coordinator uses an ops role, it must push any new relevant signals back \emph{down} into that role's \texttt{CONTEXT.md} — not just read from the role's files. Ops context flows both directions. \\
+why & Ops roles are mini-coordinators. Their CONTEXT.md is \emph{their} state layer. If the top-level coordinator never updates it, the ops role's state rots the same way a neglected \texttt{OVERVIEW.md} rots. Bidirectional flow is how the whole structure stays coherent. \\
+layer & 5 (ops) + 8 (cadence, session-end ritual) \\
+date & 2026-04 \\
+source\_hub & chiefofstaff \\
+enforcement & discipline-only \\
+\bottomrule
+\end{tabularx}
+
+
+\textbf{R-007 — Reason about agent-scale costs, not human-scale costs}
+
+\begin{tabularx}{\linewidth}{L L}
+\toprule
+\textbf{Field} & \textbf{Value} \\
+\midrule
+incident & Chiefofstaff sessions where the coordinator recommended "let's defer this" or "do the lighter version" based on projected human fatigue — except the work would be performed by agents, not by the human. The recommendations were systematically biased toward smaller scope because the coordinator was modeling human effort. \\
+rule & When estimating the cost of a piece of work, reason about agent-scale costs explicitly — tokens consumed, tool calls required, context window pressure, session continuity, credential surface — rather than projecting human fatigue. If a defer/lighter recommendation is being made, name which of the four agent-scale costs drives it. \\
+why & Agents don't get tired; the economics of "defer for later" are different when the executor is an agent. Recommendations that silently assume human constraints misallocate work and confuse the user about what's actually expensive. \\
+layer & 1 (coordinator reasoning) \\
+date & 2026-04 \\
+source\_hub & chiefofstaff \\
+enforcement & discipline-only \\
+\bottomrule
+\end{tabularx}
+
+
+\textbf{R-008 — Canonicality: every piece of information has exactly one home}
+
+\begin{tabularx}{\linewidth}{L L}
+\toprule
+\textbf{Field} & \textbf{Value} \\
+\midrule
+incident & Chiefofstaff's \texttt{memory/MEMORY.md} accumulated a mix of user-scoped (working style, preferences) and hub-scoped (project status, current clients) content. The same information started appearing in two layers and drifted out of sync. Trust in both layers degraded. \\
+rule & Every piece of information has exactly one canonical location. No piece is stored in two layers. When it looks like a piece could belong in two layers, apply the Section 3.2 canonicality decision table and pick one. \\
+why & Duplication is how frameworks rot. When the same fact appears in two places, the two places drift, the user stops knowing which is authoritative, and eventually both are ignored. Single-source discipline is what keeps the layer graph honest. \\
+layer & All (cross-cutting meta-rule) \\
+date & 2026-04-13 (surfaced during hub-os extraction) \\
+source\_hub & chiefofstaff \\
+enforcement & discipline-only (reinforced by Section 3.2) \\
+\bottomrule
+\end{tabularx}
+
+
+\subsection{Maintenance}
+
+
+\begin{itemize}
+  \item \textbf{New reflexes are added when incidents happen.} A real incident + a rule that would have prevented it = a new reflex card entry. No speculative reflexes.
+  \item \textbf{Universality check before adding.} Before a hub-specific reflex gets promoted into this card, it must pass the \emph{"would this rule matter in a totally different hub?"} test. Hub-specific reflexes stay in the hub's own never list.
+  \item \textbf{Enforcement upgrades over time.} A discipline-only reflex that keeps getting violated gets upgraded — first to a hook, then to architecture enforcement if possible.
+  \item \textbf{Deprecation.} If a reflex turns out to be wrong, it gets marked deprecated rather than deleted, with a note on what replaced it. The deprecation record preserves the learning.
+  \item \textbf{Version the card.} The reflex card has a version number (currently v0.2). Each version change is logged in Section 11.
+\end{itemize}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\section{Promotion Rules}
+
+
+\subsection{Purpose}
+
+
+Promotion is the mechanism that keeps hub-os \textbf{living} rather than frozen. Without it, lessons learned in one hub stay trapped there, the framework never improves, and \texttt{USER.md} never accumulates the wisdom that would make hub \#3 start smarter than hub \#2.
+
+Promotion is the upward flow from specific to general. A lesson learned in one session becomes a rule in one hub, becomes a cross-hub preference in \texttt{USER.md}, becomes (if universal enough) a reflex in the framework doc. Each step up raises the bar and widens the blast radius.
+
+\subsection{The three promotion paths}
+
+
+\subsubsection{Path A — Staging (\texttt{memory/}) → \texttt{USER.md}}
+
+
+\textbf{What flows:} user-scoped preferences that have proven stable
+\textbf{Scope:} one user, across every hub they build
+\textbf{Authority:} Claude proposes, user approves
+\textbf{Trigger:} session-end check + periodic review
+
+\subsubsection{Path B — Staging (\texttt{memory/}) → Vault (Layer 4)}
+
+
+\textbf{What flows:} semantic entries the session produced — decisions with reasoning, named lessons, domain actors as characters, project/client reflections. Content originates from work done inside one hub, but lands in the \emph{user-scoped} vault because semantic memory is shared across every hub the user owns.
+\textbf{Scope:} written once, visible to every hub at the user scope. A client brief filed from the consulting hub is still there when a future hub references the same client.
+\textbf{Authority:} Claude can write directly (Layer 4 is designed to accumulate; the graph is strengthened, not compromised, by session-end writes).
+\textbf{Trigger:} session-end when real work produced a vault-worthy entry.
+
+\emph{Note:} Path B is for \emph{semantic} content only. Hub-specific procedural notes — a routing rule a specific ops role needs to remember, a mechanics-only CONTEXT.md update — do not flow through Path B. They go to Layer 5 (\texttt{ops/\{role\}/}), which remains hub-scoped. The retrieval test decides: if the entry is mechanics, it does not belong in the vault regardless of how "reflective" it feels.
+
+\subsubsection{Path C — Hub reflex → Framework (this document)}
+
+
+\textbf{What flows:} reflexes that started as hub-specific rules but prove universal across domains
+\textbf{Scope:} every hub-os instance, current and future
+\textbf{Authority:} requires explicit user decision — highest bar
+\textbf{Trigger:} pattern recognition when a new reflex is added to a hub, or when the same reflex surfaces in a second hub
+
+The three paths have different blast radii. Path B affects one hub's future. Path A affects one user's every hub. Path C affects every user's every hub. \textbf{The bar scales with the blast radius.}
+
+\subsection{Triggers — when to check for promotion}
+
+
+\begin{tabularx}{\linewidth}{L L L}
+\toprule
+\textbf{Trigger} & \textbf{What to check} & \textbf{Who decides} \\
+\midrule
+\textbf{Every session end (when real work was done)} & Did anything this session belong in the vault (Path B)? & Claude can file directly \\
+\textbf{Every session end} & Did the user teach Claude something this session that might apply cross-hub (Path A)? & Claude proposes; user approves \\
+\textbf{Monthly review} (or when building a new hub) & Is there anything in \texttt{memory/} that has been stable long enough to promote to \texttt{USER.md}? & Claude proposes; user approves \\
+\textbf{When a new reflex is added to a hub's never list} & Is this reflex universal enough to promote to the framework (Path C)? & User decides explicitly \\
+\textbf{When instantiating a new hub} & Does anything in the current hub's never list or vault lessons belong in the framework or \texttt{USER.md}? & User decides explicitly \\
+\bottomrule
+\end{tabularx}
+
+
+\subsection{Bars and tests}
+
+
+\subsubsection{Path A bar: the cross-hub test}
+
+
+\textbf{"Would this preference still matter in a completely different hub I build three years from now for a different domain?"}
+
+\begin{itemize}
+  \item Yes → promote to \texttt{USER.md} cross-hub preferences section
+  \item No → it stays hub-scoped
+  \item Mixed → usually stays hub-scoped; promote only if you can state a \emph{universal} version of the rule
+\end{itemize}
+
+\subsubsection{Path B bar: the vault entry test}
+
+
+\textbf{"Is this a decision with a rationale, a named pattern, a domain actor, a project, or cross-cutting reflection?"}
+
+\begin{itemize}
+  \item Yes → Claude can file directly in the appropriate vault subfolder
+  \item No → don't file; it's either operational state (Layer 2) or ephemeral
+\end{itemize}
+
+Path B has the lowest bar because the vault is designed to accumulate.
+
+\subsubsection{Path C bar: the universality test}
+
+
+\textbf{"Would this reflex matter in a hub for web design? For research? For writing? For bookkeeping? In a hub for a totally different user?"}
+
+\begin{itemize}
+  \item Yes to most → candidate for framework promotion
+  \item Yes to some → candidate for \texttt{USER.md} (Path A), not framework
+  \item Only this domain → stays hub-scoped
+\end{itemize}
+
+\textbf{Additional Path C test — the source diversity check:} if a reflex has only been surfaced by one hub, be suspicious. Wait until it shows up in a second hub (or until the user explicitly states it's general) before promoting.
+
+\subsection{The session-end promotion check}
+
+
+What the coordinator does at session end when real work happened:
+
+\begin{enumerate}
+  \item \textbf{Path B check.} Scan the session's work for vault-worthy entries — decisions made, lessons named, new people/projects mentioned. File them directly in the appropriate vault subfolder with wikilinks.
+  \item \textbf{Path A proposal.} Scan for anything the user taught Claude this session that smells cross-hub. If found, \emph{propose} to the user: \emph{"Based on [feedback X], I'd propose adding this to your \texttt{USER.md} cross-hub preferences: [exact wording]. Approve, revise, or reject?"} Do not auto-write.
+  \item \textbf{Path C surfacing.} If a new reflex was added to the hub's never list this session, ask: \emph{"This new reflex is domain-specific as written. Is there a universal version of it that should go in the hub-os reflex card?"} Defer to user judgment.
+\end{enumerate}
+
+\subsection{What \emph{not} to promote}
+
+
+\begin{itemize}
+  \item \textbf{Anything still unstable.} If a rule has only been taught once, wait.
+  \item \textbf{Ephemera.} "I was frustrated this session" is a mood, not a cross-hub preference.
+  \item \textbf{Domain knowledge as preferences.} "In ecommerce, MVA deadlines matter" is domain knowledge, not a user preference.
+  \item \textbf{Hub-specific tools as universal tools.} "Use Ahrefs for keyword research" is domain-specific.
+  \item \textbf{Reflexes without incidents.} "We should have a rule against X" spoken speculatively is not a reflex.
+  \item \textbf{Anything the user hasn't explicitly approved (Path A and C).}
+\end{itemize}
+
+\subsection{Demotion and retraction}
+
+
+\begin{itemize}
+  \item \textbf{Demotion path:} framework → hub-scoped (the reflex turns out to be domain-specific after all)
+  \item \textbf{Retraction path:} \texttt{USER.md} → removed (the preference turns out to be wrong or was taught under stress)
+  \item \textbf{Reflex card deprecation:} entries get marked \texttt{deprecated} with a replacement pointer; they are not deleted
+\end{itemize}
+
+Retractions and deprecations are logged in Section 11 the same way promotions are.
+
+\subsection{Anti-patterns}
+
+
+\begin{itemize}
+  \item \textbf{Silent auto-promotion to \texttt{USER.md}.} Claude writes to \texttt{USER.md} without user approval. Fix: Claude proposes, user approves.
+  \item \textbf{Never promoting.} User avoids promotion because "it's not quite ready." Fix: monthly review trigger.
+  \item \textbf{Promoting without recording origin.} Rule appears with no incident trail. Fix: every framework reflex has an incident, date, and source hub.
+  \item \textbf{Promoting hub-specific rules as universal.} "Never mutate Shopify without approval" gets promoted to the framework. But the framework doesn't know about Shopify. Fix: the \emph{general} version is what's universal; the specific application stays in the hub.
+  \item \textbf{Using promotion as praise.} Promoting something because it feels like a compliment rather than because it's universal. Fix: apply the universality test with actual rigor.
+  \item \textbf{Mixing staging and canonical.} Leaving promoted content in \texttt{memory/} after it's been added to \texttt{USER.md}. Canonicality violation. Fix: after promotion, clean up the staging area.
+\end{itemize}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\section{Canonicality Rules}
+
+
+\emph{See Section 3.2 for the canonicality decision table. Canonicality is foundational enough that it lives in the architecture section, not as a back-of-book reference.}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\section{Anti-patterns}
+
+
+\emph{Anti-patterns are distributed across the per-layer sections in Section 4. See the "Anti-patterns" subsection inside each layer (4.1–4.8), plus \texttt{USER.md} anti-patterns in Section 5.8, instantiation mistakes in Section 6.6, and promotion anti-patterns in Section 8.8.}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\section{Evolution Log}
+
+
+Append-only changelog for the framework itself. Newest entries at top. Never edit past entries.
+
+Every change gets one entry: a date, a version number, and a short note. Changes include: new reflexes promoted to Section 7, reflexes deprecated, layer definitions revised, new sections added, sections merged or split, structural rewrites, location conventions changing (e.g., if \texttt{USER.md} moves from \texttt{\textasciitilde{}/thehub/} to \texttt{\textasciitilde{}/.claude/}).
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\subsection{2026-04-14 — v0.3.0 (Layer 4 rewritten as semantic memory, user-scoped)}
+
+
+Dedicated session executing the vault rehaul parked in v0.2.4. Layer 4's framing was loose in v0.2.x — it used a WHY/WHAT test and called the layer "Metacognition (Vault)," which gestured at the right thing without naming it. This version replaces that framing with the \textbf{procedural / semantic memory} distinction from classical cognitive science, and propagates the consequences across the affected sections.
+
+\textbf{Core reframe.} The vault is the hub's semantic memory — it holds \emph{what things mean}. Everything outside the vault is procedural / structural memory — it holds \emph{how the system behaves}. The same entity (a person, a project, a decision) returns different payloads when queried from the two layers: from the procedural side you get routing, state, and mechanics; from the semantic side you get concepts, characters, rationales, and the lessons the system has accumulated. Both memory types are necessary; neither is reducible to the other.
+
+\textbf{Why this framing beat WHY/WHAT.} The old framing said Layer 4 holds "why decisions were made and what was learned," which is a \emph{subset} of semantic memory. It missed concepts-about-projects, people-as-characters, domain philosophies, and cross-cutting reflection — all of which were already accumulating in chiefofstaff's vault without theoretical backing. The procedural/semantic vocabulary covers everything the old framing covered and the content the old framing left homeless. It also makes the canonicality decision table populate itself: \emph{"mechanics or meaning?"} is sharper than \emph{"state or rationale?"}
+
+\textbf{Layer 4 renamed: Metacognition (Vault) → Semantic Memory (Vault).} Alternatives considered: pure "Semantic Memory" (rejected because "Vault" is load-bearing shorthand across file paths, rituals, and file-casual references; dropping it would have rippled through \textasciitilde{}60 occurrences with no semantic benefit) and "Knowledge Substrate" (rejected because it breaks the cognitive-science parallel with Layer 3 Auto-memory, and the parallel is doing real explanatory work). The parenthetical form preserves "Vault" as the short label everywhere else in the doc while making the memory-type framing primary in the section header.
+
+\textbf{Layer 4 scope changed: \texttt{hub} → \texttt{user}.} This was the original contradiction surfaced during the v0.2.4 skeleton walk: Section 3.1 said Layer 4 was hub-scoped, but the skeleton CLAUDE.md and chiefofstaff's actual vault both live at \texttt{\textasciitilde{}/thehub/vault/} — user-scoped. Under the semantic-memory framing, the scope flip is inevitable. Semantic knowledge about an entity doesn't care which hub is currently querying it, so a shared \texttt{\textasciitilde{}/thehub/vault/} is the natural home and per-hub vaults would fragment the wikilink graph. The framework text now matches the reference implementation's actual behavior.
+
+\textbf{Two user-scoped layers, explained.} Layers 3 and 4 are now both user-scoped. This would look redundant under the old framing but is correct under the new one: they cover different \emph{memory types}. Layer 3 (\texttt{USER.md} + \texttt{memory/}) is the user's procedural layer — rules, preferences, working style, decision lens, rituals the user wants followed. Layer 4 (vault) is the user's semantic layer — concepts, lessons, characters, decisions-with-reasoning. A rule goes in Layer 3; a concept goes in Layer 4. Section 3.1 now carries a footnote pairing them explicitly.
+
+\textbf{Sections edited:}
+
+\begin{enumerate}
+  \item \textbf{Section 3.1 scope table} — Layer 3 purpose updated to name "procedural user preferences"; Layer 4 row renamed, scope changed to user, purpose rewritten around semantic memory; new footnote pairs L3 and L4 as procedural vs semantic user-scoped layers.
+  \item \textbf{Section 3.2 canonicality table} — rewritten around the retrieval test (\emph{mechanics or meaning?}). Every row referencing the vault revised; added a new paired-row for "actor as character (vault)" vs "actor as routing target (ops)" to make the split concrete. Trailing rule-of-thumb replaced with the retrieval test verbatim.
+  \item \textbf{Section 4.1 line 260} — the rhythm sentence "state is what's true, vault is why…" softened to "state is what's currently true, vault holds what things mean…" — preserves the rhythm in the new vocabulary.
+  \item \textbf{Section 4.2 State} — sharp distinction against Layer 4 rewritten as "state is procedural (mechanics of what is live); vault is semantic (what things mean, including why)." History paragraph clarified: procedural history → \texttt{log.md}, semantic history → \texttt{decisions/} or \texttt{lessons/}.
+  \item \textbf{Section 4.3 Auto-memory} — Purpose paragraph rewritten to name Layer 3 as the user's procedural layer and position Layer 4 as the user's semantic sibling. Sharp distinction against Layer 4 rewritten around the procedural/semantic split. Added a closing paragraph naming the common failure mode (semantic entries jammed into \texttt{USER.md}; procedural rules jammed into the vault) and pointing at the retrieval test.
+  \item \textbf{Section 4.4 Semantic Memory (Vault)} — full rewrite. New Purpose opens with the procedural/semantic distinction in two paragraphs and keeps the "wise vs functional" sentence as the third beat. New "Retrieval test" subsection replaces the implicit WHY test with the explicit \emph{mechanics or meaning?} question. Sharp distinctions section updated against L2/L3/L1 in the new vocabulary. New "Scope: user-scoped by nature" subsection explains the scope flip as a consequence of the memory type, not a convention. Files, Slots, Minimum, Expansion, Example kept structurally intact with content references unchanged (the vault's sub-structure is still correct; only the framing around it was wrong). Anti-patterns updated: two new entries for "procedural content in vault" and "semantic content forced into procedural layers"; the auto-memory duplication anti-pattern rewritten to apply the procedural/semantic test; new anti-pattern for "per-hub vault fragmentation."
+  \item \textbf{Section 5.1 USER.md Purpose} — new paragraph naming \texttt{USER.md} as the \emph{procedural} user-scoped file and the vault as its semantic sibling. Resolves the "why two user-scoped layers" question that v0.2.x dodged.
+  \item \textbf{Section 8.2 Path B} — header relabeled from "Hub vault (Layer 4)" to "Vault (Layer 4)." Scope line rewritten: content is hub-originated but lands in the user-scoped vault. New clarifying note: Path B is for semantic content only; hub-specific procedural notes flow to Layer 5, not through Path B. This is the non-obvious side effect of the scope flip — it had to be resolved as part of the rewrite because the old Path B definition silently contradicted the new Layer 4 scope.
+  \item \textbf{Section 11} — this entry.
+\end{enumerate}
+
+\textbf{Label ripple (Pass 2):}
+\begin{itemize}
+  \item Table of contents: \texttt{4.4 Metacognition (Vault)} → \texttt{4.4 Semantic Memory (Vault)}
+  \item Section 3.4 minimum table Layer 4 row label updated
+  \item Header version \texttt{v0.2.4} → \texttt{v0.3.0}; footer "End of FRAMEWORK.md v0.2.4" → "v0.3.0"
+  \item \texttt{README.md} version label updated to v0.3.0
+  \item \texttt{skeleton/CLAUDE.md} section title \texttt{\#\# THEHUB Vault — metacognition layer} updated to \texttt{\#\# Vault — semantic memory layer} (the shared user-scoped nature was already correctly described at line 120; only the phrase "metacognition layer" was stale). The layer enumeration at line 134 updated to say "semantic memory layer" instead of "metacognition (vault)."
+\end{itemize}
+
+\textbf{What was deliberately not done.} No vault content migration — chiefofstaff's vault was already user-scoped in practice, so no files moved. No \texttt{USER.md} creation — still deferred. No propagation of the retrieval test into Section 4.5 / 4.6 / 4.7 / 4.8, even though those sections use procedural language without naming it — they don't need the explicit vocabulary because they're unambiguously procedural, and adding the word would be theatrical. No new reflex card entries. No restructuring of the eight-layer model itself; the procedural/semantic split is a \emph{framing} of Layer 4 and its neighbors, not a ninth layer.
+
+\textbf{Trade-offs.} The biggest one: the framework now assumes readers can hold "two user-scoped layers, different memory types" in their head. That's a harder concept than "one user-scoped layer, everything else hub-scoped." Accepted the extra load because the old framing was producing real confusion (the scope contradiction was itself evidence of that) and the cognitive-science vocabulary is well-established enough to be learnable. Second trade-off: keeping "Vault" in parentheses rather than removing it preserves legacy shorthand across file paths and casual references, but it also means the rename is visually soft — readers skimming might still think of the layer as "the vault" rather than "semantic memory." Accepted this because the heavy edit is the \emph{concept}, not the label, and forcing a hard rename everywhere would have been expensive with minimal concept gain.
+
+\textbf{Origin.} The v0.2.4 skeleton walk surfaced the scope contradiction. Munger proposed three shallow options (per-hub, user-scoped, two-vault hybrid). Gabriel cut past them with a deeper framing: \emph{the vault is semantic memory; everything else is procedural memory}. The concept was filed to \texttt{vault/wiki/lessons/Vault is semantic memory.md} in parallel with the v0.2.4 entry, parked for a dedicated session, and executed here. See that lesson page for the full distinction, retrieval test, and worked example.
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\subsection{2026-04-14 — v0.2.4 (skeleton walk + vault rehaul parked)}
+
+
+First end-to-end walk of \texttt{skeleton/} against the framework spec. Four fixes applied. One architectural question surfaced that is too large for this pass and has been parked for a dedicated future session.
+
+\textbf{Skeleton fixes applied:}
+
+\begin{enumerate}
+  \item \textbf{\texttt{skeleton/memory/MEMORY.md} moved out of the skeleton.} The v0.2.2 fix to Section 4.3 clarified that Claude Code auto-memory lives at \texttt{\textasciitilde{}/.claude/projects/\{hub-path\}/memory/}, not inside the hub directory itself. But \texttt{skeleton/memory/MEMORY.md} still existed — meaning a fresh \texttt{cp -r skeleton/ \textasciitilde{}/thehub/newhub/} would create \texttt{\textasciitilde{}/thehub/newhub/memory/MEMORY.md} at the wrong physical location, contradicting the framework. The file's content (a template showing what a populated MEMORY.md index should look like) is valuable enough to preserve, so it was relocated to \texttt{hub-os/MEMORY.md.reference} with a reference-mode header explicitly telling readers not to copy it. README.md updated to reflect the new file.
+\end{enumerate}
+
+\begin{enumerate}
+  \item \textbf{CLAUDE.md section order in Section 4.1 updated to match skeleton + chiefofstaff reality.} The framework prescribed \texttt{Identity → Working style → Mandate → Domain map → Routing table → Never list → Current status → Tools available → Session rituals} (session rituals at position 9, the bottom). The skeleton CLAUDE.md and chiefofstaff's real CLAUDE.md both place session rituals at position 3 (right after working style). The skeleton-and-real order is better: session rituals are foundational and need to be in the first screenful of the file, not buried at the bottom where they'll be skipped on quick reads. Updated Section 4.1 Files list and Minimum code block to put Session rituals at position 3 and added a one-line justification for the placement in the Files list.
+\end{enumerate}
+
+\begin{enumerate}
+  \item \textbf{README.md version label updated} from v0.2.1 to v0.2.4.
+\end{enumerate}
+
+\begin{enumerate}
+  \item \textbf{README.md "Source" paragraph rewritten.} The prior version said \emph{"the first application of the framework back to chiefofstaff (2026-04-14) surfaced an R-008 violation inside the framework doc itself — see v0.2.1 in the evolution log for that story."} Same narrator-voice tone as the v0.2.1 "Proof of the living loop" bullet we rewrote in v0.2.3. Replaced with a factual one-line pointer to Section 11 for change history. Going-forward rule from v0.2.3 holds: facts stay, evaluation goes.
+\end{enumerate}
+
+\textbf{Parked for a dedicated session — vault scope + Layer 4 conceptual framing:}
+
+The skeleton walk surfaced an architectural contradiction: Section 3.1's scope table labels Layer 4 (vault) as \texttt{hub}-scoped, but the skeleton CLAUDE.md uses absolute \texttt{\textasciitilde{}/thehub/vault/} paths and describes the vault as \emph{"shared across all this user's hubs."} Chiefofstaff's actual vault also lives at \texttt{\textasciitilde{}/Thehub/vault/}, not inside the chiefofstaff hub directory. The framework's stated scope and the reference implementation's real scope disagree.
+
+In-session discussion with the user produced a deeper framing than the scope question itself. The user's intuition: \textbf{the vault is semantic memory; everything outside the vault is procedural/structural memory.} When you query \texttt{Black Rabbit Games} from the procedural layers (\texttt{OVERVIEW.md}, \texttt{CLAUDE.md}, \texttt{ops/}, \texttt{kanban/}), you get routing rules, state snapshots, and task mechanics — \emph{how things hang together}. When you query it from the vault, you get concepts, manifesto, philosophy, the people in its orbit, the decisions that shaped it — \emph{what the thing means}. These are two genuinely different kinds of recall, mapping onto the classical cognitive-science distinction between procedural memory (know-how) and semantic memory (know-what).
+
+Under that framing, the scope question becomes downstream. Semantic memory about "Black Rabbit as an idea" is inherently user-scoped — the concept doesn't care which hub you're working in — so a shared \texttt{\textasciitilde{}/thehub/vault/} is the natural home and hub-scoped per-hub vaults fragment the graph and lose most of the value. But this is a Section 4.4 rewrite, not a drive-by fix: Layer 4 probably wants to be renamed (current: "Metacognition (Vault)"; candidate: "Semantic Memory" or "Knowledge Substrate"), Section 3.1's scope table needs updating, Section 4.4's retrieval test needs to be rewritten in terms of mechanics-vs-meaning, and the whole "what goes where" boundary between vault and outside-vault layers deserves to be re-derived from the procedural/semantic distinction rather than from the WHY/WHAT distinction currently in use.
+
+Parked as a \textbf{planned v0.3.0 revision} with a dedicated session. See the corresponding note in the vault's \texttt{hot.md} Active Threads and the concept page \texttt{vault/wiki/lessons/Vault is semantic memory.md} filed in parallel with this entry.
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\subsection{2026-04-14 — v0.2.3 (judgment-call cleanup from second review pass)}
+
+
+Applied the four judgment-call findings that v0.2.2 deferred. Each is recorded here with the reasoning so the user can challenge any of them on a later pass.
+
+\begin{enumerate}
+  \item \textbf{Section 7.2 reflex schema reformatted} — was a YAML block, but Section 7.4 renders entries as markdown tables, so the schema format didn't match the actual format of the thing it was describing. Rewrote 7.2 as a field list (not a YAML block, not a table) and added a closing note that the fields are rendered as markdown tables in 7.4. \emph{Why this shape rather than converting 7.4 to YAML:} markdown tables are strictly more readable for humans reading the doc top-to-bottom, and nothing is parsing this file as structured data. The schema is descriptive, not executable. Decoupling the field definition from the rendering format keeps the schema abstract — a future change to how entries render in 7.4 doesn't require editing 7.2.
+\end{enumerate}
+
+\begin{enumerate}
+  \item \textbf{Section 4.5 coordinator-delegation options collapsed from 3 to 2.} Options 1 ("coordinator performs the mutation under the specialist's direction") and 3 ("work is broken into read phase via subagent + write phase by coordinator") both placed the mutation on the coordinator post-approval — they were the same pattern with or without a read-phase subagent in front of it. Folded them into a single option 1 that names both variants. Option 2 (specialist runs as subprocess with its own credential environment) was left intact because it is the genuinely distinct alternative — it's the only path where mutation credentials actually exist outside the coordinator's context. \emph{Why this matters:} three apparently-distinct options that are really two-plus-one is confusing when the reader is trying to implement the rule. Two genuinely distinct patterns are clearer than three overlapping ones.
+\end{enumerate}
+
+\begin{enumerate}
+  \item \textbf{Section 4.1 archetype-selection rules 3 and 4 folded into one.} Rule 3 ("character contrast") and rule 4 ("respects but would disagree with") were the same idea approached from two angles — contrast necessarily implies occasional disagreement, and disagreement without contrast is just noise. Merged into a single rule that names both the contrast principle and the respect/disagreement test together. Renumbered rule 5 ("Write the fit") to rule 4. The archetype selection list now has 4 rules instead of 5. \emph{Why collapse rather than keep both:} rule lists where two adjacent items cover the same ground make readers wonder what the distinction is, which wastes attention. A single rule that names both faces of the same principle is more load-bearing than two rules that feel almost-but-not-quite redundant.
+\end{enumerate}
+
+\begin{enumerate}
+  \item \textbf{Section 11 v0.2.1 "Proof of the living loop" bullet rewritten in dry factual voice.} Was written in narrator voice — "confirms the loop closes," "three iterations of the same principle in 24 hours," "not aspirational anymore" — which broke the evolution-log tone the rest of the doc maintains (and that the v0.2.2 entry explicitly established). Replaced with a factual statement of what was found and what was done ("Section 4.4 was duplicating Section 4.8's session-end ritual content — an R-008 canonicality violation in the framework doc itself. Replaced with a pointer to Section 4.8."). \emph{Why rewrite rather than delete:} the fact itself is worth preserving — the framework doc violated its own rule, it got caught, it got fixed. Deleting the bullet would erase a real event. Rewriting it lets the fact stay while removing the editorializing. \emph{Judgment call explicitly not made:} I did not rewrite any other bullets in the v0.2.1 entry, even though some have mild narrator voice. The rule going forward is: facts stay, evaluation goes. Past entries are only edited when they have obvious tone violations; new entries are written in the dry voice from the start.
+\end{enumerate}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\subsection{2026-04-14 — v0.2.2 (second review pass — residual fixes)}
+
+
+A second end-to-end read of the framework found four residual issues the v0.2.1 pass had missed:
+
+\begin{enumerate}
+  \item \textbf{Section 4.3 still carried the wrong description of where \texttt{memory/} lives.} The v0.2.1 pass fixed Section 6.3 Step 5 (the instantiation how-to) but left Section 4.3 (the layer definition) saying \texttt{memory/} is "inside each hub directory" with a parenthetical self-contradicting that claim. Rewrote 4.3 to state the correct path (\texttt{\textasciitilde{}/.claude/projects/\{hub-path\}/memory/}) and to name the mangled-path-as-folder-name convention Claude Code uses to identify hubs. The fix-the-symptom-miss-the-cause pattern here is itself an R-008 lesson: a bad mental model duplicated across two sections only got fixed in one.
+  \item \textbf{Section 4.1 required-sections list was missing Session Rituals.} Section 4.8 explicitly requires a Session Rituals section in Layer 1 CLAUDE.md day-one, and Section 6.3 Step 10 confirms it, but Section 4.1 itself listed only 8 sections. Added Session Rituals as the 9th required section in both the Files sub-list and the Minimum code block, with a pointer to Section 4.8.
+  \item \textbf{Section 3.2 canonicality table row 5 used an ambiguous "or".} The row read \texttt{Layer 1 (never list) or Layer 6 (hook)} as if they were alternatives, contradicting Section 4.6's explicit statement that the declaration-and-enforcement split is deliberate. Rewrote to \texttt{Layer 1 declaration (never list) + Layer 6 enforcement (hook/architecture)}.
+  \item \textbf{Footer version label was stale.} Said \texttt{v0.2} while the header said \texttt{v0.2.1}. Updated footer to \texttt{v0.2.2} to match this entry's header.
+\end{enumerate}
+
+Four additional findings from the same review pass are \textbf{deferred} pending user judgment — they involve restructuring content the user wrote and should not be auto-patched:
+\begin{itemize}
+  \item Section 7.2 reflex schema declares YAML but Section 7.4 uses markdown tables (format inconsistency, not a correctness bug)
+  \item Section 4.5 coordinator-delegation options 1 and 3 overlap (both place the mutation on the coordinator post-approval; could collapse to two options)
+  \item Section 4.1 archetype-selection rules 3 and 4 both describe contrast/disagreement from slightly different angles (could fold into one rule)
+  \item Section 11 v0.2.1 entry's "Proof of the living loop" bullet is written in narrator voice rather than the dry factual tone of the rest of the evolution log
+\end{itemize}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\subsection{2026-04-14 — v0.2.1 (review pass + first source-hub application)}
+
+
+\begin{itemize}
+  \item \textbf{Review pass} — read FRAMEWORK.md end-to-end and applied seven fixes:
+\begin{enumerate}
+  \item Section 4.3 grammar: "is a naive bot on day one, has to be re-taught" → "starts as a naive bot on day one and has to be re-taught".
+  \item Section 3.3 visual diagram: L7/L8 box widths were mismatched (\texttt{Integration} 13 chars, \texttt{Cadence} 12 chars). Both widened to 15 chars so the boxes align.
+  \item Section 4.4 "Rituals (owned by Layer 8)" was a \textbf{live R-008 violation} — it contained the session-end numbered ritual steps that are canonically declared in Section 4.8. Replaced the duplicate with a pointer, explicitly citing R-008. The framework doc now complies with its own canonicality rule.
+  \item Section 6.3 Step 5 conflated Claude Code's auto-memory (\texttt{\textasciitilde{}/.claude/projects/\{hub-path\}/memory/}) with a fictitious in-hub \texttt{memory/} directory. Rewrote the step to explain that Layer 3 has two sub-locations with different lifecycles and that \texttt{memory/} is auto-created by Claude Code, not instantiation-time work.
+  \item Section 3.4 Layer 5 row: "\texttt{ops/} folder with \texttt{\_template/CLAUDE.md} reference" → "\texttt{ops/} folder containing \texttt{\_template/CLAUDE.md}".
+  \item Section 7.3 "minimum R-001 through R-004" was misleading — all eight reflexes are universal and day-one. Replaced with a safety-critical-core vs. operational-hygiene framing that tells instantiators to keep all eight unless the domain explicitly doesn't exercise one.
+  \item Section 7.4 R-008 layer field: "All (meta-rule, governs the framework itself)" → "All (cross-cutting meta-rule)" for consistency with other entries' format.
+\end{enumerate}
+  \item \textbf{First real application of the framework back to its source hub} (\texttt{chiefofstaff}). Two canonicality violations fixed: (1) session rituals duplicated across \texttt{CLAUDE.md} and \texttt{memory/MEMORY.md} → consolidated into a new \texttt{\#\# Session Rituals} section in \texttt{CLAUDE.md} as the canonical home. (2) State-scoped "Open Questions" items living in \texttt{memory/MEMORY.md} with decaying countdowns → migrated to \texttt{OVERVIEW.md} per R-005. Full decision record at \texttt{\textasciitilde{}/thehub/vault/wiki/decisions/Memory canonicality fixes applied from hub-os framework.md}. Phase 2 of the source-hub cleanup (16 hub-scoped project entries still in \texttt{memory/MEMORY.md}) and Phase 3 (creating \texttt{USER.md} for real) are deferred.
+  \item \textbf{Self-application of R-008.} Section 4.4 was duplicating Section 4.8's session-end ritual content — an R-008 canonicality violation in the framework doc itself. Replaced with a pointer to Section 4.8. Same rule surfaced during the v0.2 extraction; this pass applied it to the doc that defines it.
+  \item \textbf{Skeleton scaffolded.} After the patch pass, the \texttt{hub-os/skeleton/} directory was created with all 13 canonical subdirectories and 16 template files populated from the framework spec: \texttt{README.md} (quick-start guide), \texttt{USER.md.template} (user-scoped anchor template with 6 canonical sections), \texttt{skeleton/CLAUDE.md} (Layer 1 coordinator template with all required sections, all 8 reflex-card entries pre-seeded in the never list), \texttt{skeleton/OVERVIEW.md} (4 canonical state sections), \texttt{skeleton/kanban/proposals/pending.yaml} (schema-documented empty array), \texttt{skeleton/vault/wiki/\{hot,index,log\}.md} (frontmatter-seeded stubs), 5 \texttt{.gitkeep} marker files in the empty vault subfolders (each documenting what belongs in its directory), \texttt{skeleton/ops/\_template/CLAUDE.md} (per-role template), and \texttt{skeleton/memory/MEMORY.md} (Layer 3 staging-ground template with the canonicality rules and what-doesn't-belong-here section baked in). First external instantiation can now proceed by copying \texttt{skeleton/} to a new hub directory and filling slots from the interview.
+\end{itemize}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\subsection{2026-04-13 — v0.2 (initial snapshot)}
+
+
+\begin{itemize}
+  \item \textbf{Extracted from \texttt{chiefofstaff} hub.} First formal externalization of the hub pattern that had evolved inside chiefofstaff since 2026-03 and earlier.
+  \item \textbf{8 layers defined} with "all layers always present, minimum vs. expansion" framing (replaced an earlier "3 required + 5 optional" draft that proved dishonest during the extraction — see notes below).
+  \item \textbf{Canonicality rules folded into Section 3.2} rather than living in a back-of-book Section 9. The reference placeholder in Section 9 points forward.
+  \item \textbf{Anti-patterns distributed} across per-layer sections rather than collected in Section 10. The reference placeholder in Section 10 points forward.
+  \item \textbf{Reflex card seeded with 8 entries} (R-001 through R-008), all surfaced from \texttt{chiefofstaff} incidents:
+\begin{itemize}
+  \item R-001 through R-003 from the 2026-03-27 credential-bypass incident
+  \item R-004 as the meta-reflex governing enforcement discipline
+  \item R-005 and R-006 from operational drift observations
+  \item R-007 from the human-frame cost estimation feedback
+  \item R-008 surfaced \emph{during} the extraction itself (the \texttt{chiefofstaff} \texttt{memory/MEMORY.md} was mixing user-scoped and hub-scoped content, and the canonicality rule needed to be explicit)
+\end{itemize}
+  \item \textbf{\texttt{USER.md} specification drafted in Section 5} with six canonical sections, a worked example for Gabriel's profile, and the provisional location \texttt{\textasciitilde{}/thehub/USER.md} (flagged for reflection).
+  \item \textbf{Instantiation playbook drafted in Section 6} with 21 interview questions + 11 file-operation steps + day-one verification checklist.
+  \item \textbf{Three-path promotion model drafted in Section 8} (memory → USER.md, memory → vault, hub → framework) with bar-scales-with-blast-radius principle.
+  \item \textbf{Notes on the extraction itself:}
+\begin{itemize}
+  \item The "3 required + 5 optional" framing was explicitly dropped in favor of "8 always-present layers, each with minimum + expansion." The old framing was trying to honor Gall's Law but conflated "whether a layer exists" with "how developed it is." The organism metaphor (every hub has all the organs; some are rudimentary) is more accurate.
+  \item The never list moved from "appears when Layer 6 activates" to "required day-one, seeded from reflex card." Layer 6 is no longer optional at its minimum.
+  \item The reflex card upgraded from "reference material" to "load-bearing source of day-one Layer 6 content." Without it, new hubs start with empty never lists.
+  \item The \texttt{USER.md} / hub-scoped split is identified as the single biggest leverage point in the framework — the reason hub \#2 can start smart.
+\end{itemize}
+\end{itemize}
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
+\emph{End of FRAMEWORK.md v0.3.0}
+
+\end{document}
