@@ -1,3 +1,5 @@
+# ACTUALL START -> OPEN CLAUDE INSIDE. PROMPT -> READ the readme. output some bullshit then prompt "LETS GO BABY"
+
 # hub-os
 
 Framework for building **cognitive-operational hubs** — Claude Code projects that hold the full picture of a complex, multi-threaded domain of work and coordinate it without dropping context.
