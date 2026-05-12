@@ -1,4 +1,7 @@
-# ACTUALL START -> OPEN CLAUDE INSIDE. PROMPT -> READ the readme. output some bullshit then prompt "LETS GO BABY"
+# ACTUALL START -> OPEN CLAUDE INSIDE.
+
+## 1. PROMPT: READ THE README
+## 2. PROMPT: LETS GO BABY
 
 # hub-os
 
