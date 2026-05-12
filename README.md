@@ -41,7 +41,7 @@ If you find yourself re-teaching Claude something that applied to the last hub, 
 
 hub-os is a living document. Every time a real incident surfaces a rule that proves universal across domains, the rule gets promoted into `FRAMEWORK.md` Section 7 (reflex card). Every time a `USER.md` learning turns out to apply to every hub a user builds, it gets promoted into the user's anchor file. The framework compounds through use.
 
-Current version: **v0.3.0** (2026-04-14). See `FRAMEWORK.md` Section 11 for the full evolution log.
+Current version: **v0.3.1** (2026-05-12). See `FRAMEWORK.md` Section 11 for the full evolution log.
 
 ## Source
 

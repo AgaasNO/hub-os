@@ -18,7 +18,9 @@ You are **{archetype_name}**, {primary_user}'s {coordinator_title}. {archetype_c
 
 *(For operational session rituals — what to read on session start, what to reconcile on session end — see the **Session Rituals** section below. This section covers collaboration style, not timing.)*
 
-See `~/thehub/USER.md` for the full user profile, working style, decision lens, and cross-hub preferences. All hubs this user builds inherit from that file — do not duplicate its contents here.
+@~/thehub/USER.md
+
+The line above auto-imports the full user profile using Claude Code's `@`-import syntax. The content lives canonically at `~/thehub/USER.md` and is shared across every hub this user builds — do not duplicate its contents here. See FRAMEWORK.md Section 5.4 for the import pattern and the textual-reference fallback.
 
 {Optional: 1–3 lines of hub-specific collaboration reinforcement that wouldn't apply in a different hub. Most hubs will leave this empty and rely entirely on `USER.md`.}
 

@@ -1,6 +1,6 @@
 # hub-os — Framework for Cognitive-Operational Hubs
 
-*Version 0.3.0 — snapshot extracted from chiefofstaff hub 2026-04-13, reviewed and patched 2026-04-14, Layer 4 rewritten as semantic memory 2026-04-14*
+*Version 0.3.1 — snapshot extracted from chiefofstaff hub 2026-04-13, reviewed and patched 2026-04-14, Layer 4 rewritten as semantic memory 2026-04-14, USER.md `@`-import promoted 2026-05-12*
 
 ---
 
@@ -1121,18 +1121,31 @@ A good scope note names the canonical alternatives and ends with the default tes
 
 Every hub's Layer 1 CLAUDE.md imports `USER.md` by **reference**, not by copying.
 
+The recommended mechanism is Claude Code's `@`-import syntax, which inlines the referenced file's content into the system prompt at session start:
+
 ```markdown
 ## Working style
 
-See `~/thehub/USER.md` for full user profile, working style, decision lens, and cross-hub preferences.
+@~/thehub/USER.md
 
 Key reminders in this hub's context:
 - [1-3 lines of hub-specific reinforcement, if needed]
 ```
 
-This does two things:
+This does three things:
 1. **Prevents drift.** There is one canonical copy. Updates to `USER.md` propagate to every hub on the next session start.
 2. **Keeps each hub's CLAUDE.md short.** Layer 1 doesn't need to repeat identity/working-style content; it just points.
+3. **Guarantees the profile is loaded.** Unlike textual reference, `@`-import does not depend on Claude choosing to call Read on the file when a turn happens to be relevant — the content is always in context.
+
+**Fallback — textual reference.** If `@`-import is unavailable in the runtime, a plain textual reference works as a softer alternative:
+
+```markdown
+## Working style
+
+See `~/thehub/USER.md` for full user profile, working style, decision lens, and cross-hub preferences.
+```
+
+Same canonicality property (one source of truth, no duplication), but the model has to fetch `USER.md` on demand. This works most of the time but has a real failure mode: short single-turn interactions can complete without the profile ever being read. Use textual reference only when forced; prefer `@`-import.
 
 ### 5.5 What goes in vs. what doesn't
 
@@ -1778,6 +1791,24 @@ Every change gets one entry: a date, a version number, and a short note. Changes
 
 ---
 
+### 2026-05-12 — v0.3.1 (USER.md import via `@`-syntax)
+
+Section 5.4 specified textual reference for `USER.md` import — the CLAUDE.md text says *"See `~/thehub/USER.md`"* and relies on Claude to call Read on it when relevant. The pattern works most of the time but has a real failure mode: short single-turn interactions can complete without the profile ever being read, especially when the coordinator jumps straight into a task without a grounding step. The framework's intent — one canonical `USER.md`, no content duplication — is preserved by either textual reference *or* Claude Code's `@`-import syntax (`@~/thehub/USER.md`), but the latter inlines the content into the system prompt at session start rather than relying on demand-fetch. The semantic guarantee is the same; the loading guarantee is stronger.
+
+**Section edited:**
+
+1. **Section 5.4 Import pattern** — `@`-import (`@~/thehub/USER.md`) named as the recommended primary mechanism. Textual reference retained as a documented fallback for runtimes where `@`-import is unavailable, with a note that it depends on Claude reading the file on demand and is therefore softer. Numbered benefits list extended from two to three to call out the new loading guarantee explicitly.
+
+**Skeleton ripple.** `skeleton/CLAUDE.md` line 21 updated from textual reference to `@`-import to match the recommended pattern. README version label updated to v0.3.1.
+
+**Origin.** Surfaced during the first hub-os v0.3.0 instantiation — `laptop` hub at `~/thehub/laptop/`, 2026-05-12. After scaffolding, the user asked whether `USER.md` would actually be utilized given it sits one directory level above the hub. The honest answer under v0.3.0 was *"yes, but softly — Claude has to choose to read it."* That softness was a real gap, especially for a personal hub where the user-scoped content (Judge complex framing, voice register) is load-bearing for register-correct first responses. The laptop hub was patched to `@`-import on the spot; the lesson was promoted up to the framework here.
+
+**What was deliberately not done.** No change to Layer 3 scope or content rules. No change to the vault import mechanism — vault files have to be read fresh each session because their content changes, so `@`-import would be wrong there. No retroactive update to any existing hub other than the one that surfaced the change. No new reflex card entries.
+
+**Trade-offs.** The `@`-import is Claude-Code-specific syntax. The framework is opinionated about being built for Claude Code (Section 1) and the existing `skeleton/CLAUDE.md` already assumes Claude Code conventions, so this is not a new coupling — but it does mean the textual-reference fallback has to remain documented for anyone running the pattern in a different harness.
+
+---
+
 ### 2026-04-14 — v0.3.0 (Layer 4 rewritten as semantic memory, user-scoped)
 
 Dedicated session executing the vault rehaul parked in v0.2.4. Layer 4's framing was loose in v0.2.x — it used a WHY/WHAT test and called the layer "Metacognition (Vault)," which gestured at the right thing without naming it. This version replaces that framing with the **procedural / semantic memory** distinction from classical cognitive science, and propagates the consequences across the affected sections.
@@ -1915,4 +1946,4 @@ Four additional findings from the same review pass are **deferred** pending user
 
 ---
 
-*End of FRAMEWORK.md v0.3.0*
+*End of FRAMEWORK.md v0.3.1*
