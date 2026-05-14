@@ -173,11 +173,11 @@ split**. Procedural information — mechanics, rules, state, routing,
 schedules, credentials — belongs to one set of layers. Semantic
 information — meaning, rationales, named patterns, characters — belongs
 to another. The same actor can be referenced by both sides. *Alex* as a
-person — his background, his strengths, the reason he is hard to delegate
-to — lives once in semantic memory. *omar* as a routing target — which
-roles dispatch to him, which mechanics carry his work — lives in ops. The
-semantic page links to the procedural file; the procedural file links back
-to the semantic page; nothing is duplicated.
+person — background, strengths, the reason delegation is harder than it
+should be — lives once in semantic memory. *alex* as a routing target —
+which roles dispatch to Alex, which mechanics carry the work — lives in
+ops. The semantic page links to the procedural file; the procedural file
+links back to the semantic page; nothing is duplicated.
 
 The retrieval test is short enough to keep in the coordinator's head:
 **am I looking up mechanics or meaning?** *Mechanics* — what is live, who

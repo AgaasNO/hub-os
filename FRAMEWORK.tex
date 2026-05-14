@@ -109,7 +109,7 @@
 \newpage
 
 
-\emph{Version 0.3.0 — snapshot extracted from chiefofstaff hub 2026-04-13, reviewed and patched 2026-04-14, Layer 4 rewritten as semantic memory 2026-04-14}
+\emph{Version 0.3.1 — snapshot extracted from chiefofstaff hub 2026-04-13, reviewed and patched 2026-04-14, Layer 4 rewritten as semantic memory 2026-04-14, USER.md \texttt{@}-import promoted 2026-05-12}
 
 \medskip\noindent\rule{\linewidth}{0.3pt}\medskip
 
@@ -313,7 +313,7 @@ The rule of thumb when unsure — the retrieval test from Section 4.4:
   \item \textbf{Meaning} (what a thing is abstractly, why a decision was made, what a pattern is called, who a person is as a character) → Layer 4 (vault).
 \end{itemize}
 
-The row pair "actor as character" vs "actor as routing target" is the clearest worked example of the split. \texttt{[[Alex]]} as a character — his background, his strengths, the reason he's hard to delegate to — lives once in \texttt{vault/wiki/people/Alex.md}. \texttt{omar} as an ops routing target — which roles dispatch to him, which CONTEXT.md carries his mechanics — lives in \texttt{ops/}. The vault page links to the ops file; the ops file links back to the vault page; nothing is duplicated.
+The row pair "actor as character" vs "actor as routing target" is the clearest worked example of the split. \texttt{[[Alex]]} as a character — Alex's background, strengths, the reason delegation is harder than it should be — lives once in \texttt{vault/wiki/people/Alex.md}. \texttt{alex} as an ops routing target — which roles dispatch to Alex, which CONTEXT.md carries the mechanics — lives in \texttt{ops/}. The vault page links to the ops file; the ops file links back to the vault page; nothing is duplicated.
 
 \subsection{Visual}
 
@@ -784,7 +784,7 @@ Sharp distinctions (see Section 3.2 canonicality table):
 \subsubsection{Scope: user-scoped by nature}
 
 
-Layer 4 is \textbf{user-scoped}, not by convention but by the nature of semantic memory. Concepts about \texttt{[[Alex]]} as a character don't care which hub is currently coordinating work with him; the manifesto of \texttt{[[Black Rabbit Games]]} is the same idea whether it's being read from a consulting hub or a ventures hub. Semantic knowledge about an entity is inherently indifferent to which procedural layer is querying it.
+Layer 4 is \textbf{user-scoped}, not by convention but by the nature of semantic memory. Concepts about \texttt{[[Alex]]} as a character don't care which hub is currently coordinating work with Alex; the manifesto of a venture is the same idea whether it's being read from a consulting hub or a ventures hub. Semantic knowledge about an entity is inherently indifferent to which procedural layer is querying it.
 
 The practical consequence: a shared \texttt{\textasciitilde{}/thehub/vault/} at the user namespace is the correct home. Per-hub vaults would fragment the wikilink graph and lose most of its value — \texttt{[[Alex]]} should link from every project Alex touches regardless of which hub coordinates it, and that link is only possible if all those projects write into the same graph.
 
@@ -1532,21 +1532,35 @@ A good scope note names the canonical alternatives and ends with the default tes
 
 Every hub's Layer 1 CLAUDE.md imports \texttt{USER.md} by \textbf{reference}, not by copying.
 
+The recommended mechanism is Claude Code's \texttt{@}-import syntax, which inlines the referenced file's content into the system prompt at session start:
+
 \begin{lstlisting}
 ## Working style
 
-See `~/thehub/USER.md` for full user profile, working style, decision lens, and cross-hub preferences.
+@~/thehub/USER.md
 
 Key reminders in this hub's context:
 - [1-3 lines of hub-specific reinforcement, if needed]
 \end{lstlisting}
 
 
-This does two things:
+This does three things:
 \begin{enumerate}
   \item \textbf{Prevents drift.} There is one canonical copy. Updates to \texttt{USER.md} propagate to every hub on the next session start.
   \item \textbf{Keeps each hub's CLAUDE.md short.} Layer 1 doesn't need to repeat identity/working-style content; it just points.
+  \item \textbf{Guarantees the profile is loaded.} Unlike textual reference, \texttt{@}-import does not depend on Claude choosing to call Read on the file when a turn happens to be relevant — the content is always in context.
 \end{enumerate}
+
+\textbf{Fallback — textual reference.} If \texttt{@}-import is unavailable in the runtime, a plain textual reference works as a softer alternative:
+
+\begin{lstlisting}
+## Working style
+
+See `~/thehub/USER.md` for full user profile, working style, decision lens, and cross-hub preferences.
+\end{lstlisting}
+
+
+Same canonicality property (one source of truth, no duplication), but the model has to fetch \texttt{USER.md} on demand. This works most of the time but has a real failure mode: short single-turn interactions can complete without the profile ever being read. Use textual reference only when forced; prefer \texttt{@}-import.
 
 \subsection{What goes in vs. what doesn't}
 
@@ -1664,12 +1678,12 @@ is the moat.
 
 People who recur across every hub I build, regardless of domain:
 
-- **Alex** — my father. Enterprise systems architect. Highly capable but I struggle to
-  delegate to him effectively.
+- **Alex** — parent. Enterprise systems architect. Highly capable but delegation is
+  harder than it should be.
 - **Robin** — long-term business partner. Co-founder of multiple ventures. Capable
   salesperson.
-- **Sam** — business partner. Co-founder. The vision guy; sees the big picture.
-- **Quinn** — girlfriend.
+- **Sam** — business partner. Co-founder. The vision-and-direction one; sees the big picture.
+- **Quinn** — domestic partner.
 
 (Per-domain people live in each hub's `vault/wiki/people/`, not here.)
 
@@ -2357,6 +2371,28 @@ Every change gets one entry: a date, a version number, and a short note. Changes
 \medskip\noindent\rule{\linewidth}{0.3pt}\medskip
 
 
+\subsection{2026-05-12 — v0.3.1 (USER.md import via \texttt{@}-syntax)}
+
+
+Section 5.4 specified textual reference for \texttt{USER.md} import — the CLAUDE.md text says \emph{"See \texttt{\textasciitilde{}/thehub/USER.md}"} and relies on Claude to call Read on it when relevant. The pattern works most of the time but has a real failure mode: short single-turn interactions can complete without the profile ever being read, especially when the coordinator jumps straight into a task without a grounding step. The framework's intent — one canonical \texttt{USER.md}, no content duplication — is preserved by either textual reference \emph{or} Claude Code's \texttt{@}-import syntax (\texttt{@\textasciitilde{}/thehub/USER.md}), but the latter inlines the content into the system prompt at session start rather than relying on demand-fetch. The semantic guarantee is the same; the loading guarantee is stronger.
+
+\textbf{Section edited:}
+
+\begin{enumerate}
+  \item \textbf{Section 5.4 Import pattern} — \texttt{@}-import (\texttt{@\textasciitilde{}/thehub/USER.md}) named as the recommended primary mechanism. Textual reference retained as a documented fallback for runtimes where \texttt{@}-import is unavailable, with a note that it depends on Claude reading the file on demand and is therefore softer. Numbered benefits list extended from two to three to call out the new loading guarantee explicitly.
+\end{enumerate}
+
+\textbf{Skeleton ripple.} \texttt{skeleton/CLAUDE.md} line 21 updated from textual reference to \texttt{@}-import to match the recommended pattern. README version label updated to v0.3.1.
+
+\textbf{Origin.} Surfaced during the first hub-os v0.3.0 instantiation — \texttt{laptop} hub at \texttt{\textasciitilde{}/thehub/laptop/}, 2026-05-12. After scaffolding, the user asked whether \texttt{USER.md} would actually be utilized given it sits one directory level above the hub. The honest answer under v0.3.0 was \emph{"yes, but softly — Claude has to choose to read it."} That softness was a real gap, especially for a personal hub where the user-scoped content (Judge complex framing, voice register) is load-bearing for register-correct first responses. The laptop hub was patched to \texttt{@}-import on the spot; the lesson was promoted up to the framework here.
+
+\textbf{What was deliberately not done.} No change to Layer 3 scope or content rules. No change to the vault import mechanism — vault files have to be read fresh each session because their content changes, so \texttt{@}-import would be wrong there. No retroactive update to any existing hub other than the one that surfaced the change. No new reflex card entries.
+
+\textbf{Trade-offs.} The \texttt{@}-import is Claude-Code-specific syntax. The framework is opinionated about being built for Claude Code (Section 1) and the existing \texttt{skeleton/CLAUDE.md} already assumes Claude Code conventions, so this is not a new coupling — but it does mean the textual-reference fallback has to remain documented for anyone running the pattern in a different harness.
+
+\medskip\noindent\rule{\linewidth}{0.3pt}\medskip
+
+
 \subsection{2026-04-14 — v0.3.0 (Layer 4 rewritten as semantic memory, user-scoped)}
 
 
@@ -2540,6 +2576,6 @@ Four additional findings from the same review pass are \textbf{deferred} pending
 \medskip\noindent\rule{\linewidth}{0.3pt}\medskip
 
 
-\emph{End of FRAMEWORK.md v0.3.0}
+\emph{End of FRAMEWORK.md v0.3.1}
 
 \end{document}

@@ -22,8 +22,9 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-SRC = Path(r"FRAMEWORK.md")
-DST = Path(r"FRAMEWORK.tex")
+HERE = Path(__file__).parent
+SRC = HERE / "FRAMEWORK.md"
+DST = HERE / "FRAMEWORK.tex"
 
 
 # ---------------------------------------------------------------------------

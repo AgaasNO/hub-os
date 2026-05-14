@@ -188,7 +188,7 @@ The rule of thumb when unsure — the retrieval test from Section 4.4:
 - **Mechanics** (how the system behaves, what is live, who executes, what rule applies) → procedural layers: 1, 2, 5, 6, 7, 8. If the mechanics are about the user rather than the hub → Layer 3.
 - **Meaning** (what a thing is abstractly, why a decision was made, what a pattern is called, who a person is as a character) → Layer 4 (vault).
 
-The row pair "actor as character" vs "actor as routing target" is the clearest worked example of the split. `[[Alex]]` as a character — his background, his strengths, the reason he's hard to delegate to — lives once in `vault/wiki/people/Alex.md`. `omar` as an ops routing target — which roles dispatch to him, which CONTEXT.md carries his mechanics — lives in `ops/`. The vault page links to the ops file; the ops file links back to the vault page; nothing is duplicated.
+The row pair "actor as character" vs "actor as routing target" is the clearest worked example of the split. `[[Alex]]` as a character — Alex's background, strengths, the reason delegation is harder than it should be — lives once in `vault/wiki/people/Alex.md`. `alex` as an ops routing target — which roles dispatch to Alex, which CONTEXT.md carries the mechanics — lives in `ops/`. The vault page links to the ops file; the ops file links back to the vault page; nothing is duplicated.
 
 ### 3.3 Visual
 
@@ -537,7 +537,7 @@ Sharp distinctions (see Section 3.2 canonicality table):
 
 #### Scope: user-scoped by nature
 
-Layer 4 is **user-scoped**, not by convention but by the nature of semantic memory. Concepts about `[[Alex]]` as a character don't care which hub is currently coordinating work with him; the manifesto of `[[Black Rabbit Games]]` is the same idea whether it's being read from a consulting hub or a ventures hub. Semantic knowledge about an entity is inherently indifferent to which procedural layer is querying it.
+Layer 4 is **user-scoped**, not by convention but by the nature of semantic memory. Concepts about `[[Alex]]` as a character don't care which hub is currently coordinating work with Alex; the manifesto of a venture is the same idea whether it's being read from a consulting hub or a ventures hub. Semantic knowledge about an entity is inherently indifferent to which procedural layer is querying it.
 
 The practical consequence: a shared `~/thehub/vault/` at the user namespace is the correct home. Per-hub vaults would fragment the wikilink graph and lose most of its value — `[[Alex]]` should link from every project Alex touches regardless of which hub coordinates it, and that link is only possible if all those projects write into the same graph.
 
@@ -1256,12 +1256,12 @@ is the moat.
 
 People who recur across every hub I build, regardless of domain:
 
-- **Alex** — my father. Enterprise systems architect. Highly capable but I struggle to
-  delegate to him effectively.
+- **Alex** — parent. Enterprise systems architect. Highly capable but delegation is
+  harder than it should be.
 - **Robin** — long-term business partner. Co-founder of multiple ventures. Capable
   salesperson.
-- **Sam** — business partner. Co-founder. The vision guy; sees the big picture.
-- **Quinn** — girlfriend.
+- **Sam** — business partner. Co-founder. The vision-and-direction one; sees the big picture.
+- **Quinn** — domestic partner.
 
 (Per-domain people live in each hub's `vault/wiki/people/`, not here.)
 
