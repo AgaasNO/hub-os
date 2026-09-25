@@ -1,6 +1,6 @@
 # Contributing
 
-This repo is part of the collaborative core. Read [`hub-map`](https://github.com/gabriellindberg-png/hub-map) first if you haven't.
+This repo is part of the collaborative core. Read [`hub-map`](https://github.com/AgaasNO/hub-map) first if you haven't.
 
 ## Workflow
 

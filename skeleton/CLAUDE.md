@@ -32,6 +32,7 @@ The operational rhythm that keeps the hub alive between sessions. These rituals 
 
 ### Session start (every session)
 
+0. **The hub instrument runs on a hook, not on your memory.** `.claude/hooks/session-start.py` fires at every session start. It stays silent when the queue is healthy and puts a short warning into your context when it isn't (self-feeding, deferral, unreconciled). If it speaks, deal with that before starting new work. *This step is a hook on purpose (FRAMEWORK.md R-009). If a ritual step below keeps getting skipped, move it into the hook; don't add another line here.*
 1. **Read `OVERVIEW.md`** for current state, active priorities, decisions needed, and things falling through the cracks.
 2. **Read `~/thehub/vault/wiki/hot.md`** for recent context cache (~500 words).
 3. If you need more vault context, read `~/thehub/vault/wiki/index.md` and drill into specific pages via wikilink.
