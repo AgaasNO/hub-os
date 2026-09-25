@@ -1,6 +1,6 @@
 # hub-os — Framework for Cognitive-Operational Hubs
 
-*Version 0.3.1 — snapshot extracted from chiefofstaff hub 2026-04-13, reviewed and patched 2026-04-14, Layer 4 rewritten as semantic memory 2026-04-14, USER.md `@`-import promoted 2026-05-12*
+*Version 0.4.0 — snapshot extracted from chiefofstaff hub 2026-04-13, reviewed and patched 2026-04-14, Layer 4 rewritten as semantic memory 2026-04-14, USER.md `@`-import promoted 2026-05-12, cadence enforcement / peers / many-hub operation / semantic operations promoted 2026-09-25*
 
 ---
 
@@ -14,6 +14,7 @@
    - 3.3 Visual
    - 3.4 Minimum vs. expansion
    - 3.5 Growth triggers
+   - 3.6 Many hubs — the fleet
 4. Layer Reference
    - 4.1 Coordinator
    - 4.2 State
@@ -106,6 +107,14 @@ Every coordinator has:
 
 The coordinator's personality is load-bearing, not decoration. Wrong archetype = wrong reflexes at every decision point = hub feels permanently off.
 
+### Peer
+
+An agent that sits *beside* the coordinator rather than below it. A peer has its own hub-shaped directory and its own archetype, takes strategic context from the coordinator, and takes direction from the **user**, not from the coordinator. Typical peers: a quality/audit function, a research function, a client-facing writer, a design lead. The distinction from an ops role (Layer 5) is who owns the peer's direction: ops roles are dispatched by the coordinator; peers are not. See Section 4.5 for when a function should be a peer rather than a role.
+
+### Instrument
+
+A read-only, mechanical measurement of a hub's health that runs without anyone deciding to run it (usually through a hook or a scheduled task) and says nothing when there is nothing to say. Instruments are how a hub notices its own drift without relying on the coordinator's discipline. See Sections 3.6 and 4.8.
+
 ### Layer (organ)
 
 A faculty every hub exercises, implemented as a set of files with a common purpose. There are 8 layers total. No layer is optional — but each has a defined **minimum implementation** and an **expansion path**. Some minimums are substantive (Layer 1 coordinator, Layer 2 state). Some are near-empty stubs (Layer 5 ops with no roles yet, Layer 7 integration with no tools yet).
@@ -178,7 +187,7 @@ The deep structure of the table is the **procedural / semantic split**. Procedur
 | A cross-hub concept the user has internalized (semantic, about the world) | Layer 4 (`vault/wiki/lessons/` or `people/`) | Layer 3 `USER.md` |
 | Per-role execution rules (mechanics) | Layer 5 (`ops/{role}/CLAUDE.md`) | Layer 1 top-level CLAUDE.md |
 | Tool contracts and quirks (mechanics) | Layer 7 ("Tools available" in CLAUDE.md or dedicated integration notes) | Inline where the tool is used |
-| Session rituals and scheduled rhythms (mechanics) | Layer 8 (declared in Layer 1 CLAUDE.md rituals section) | Layer 3 memory/, Layer 4 vault |
+| Session rituals and scheduled rhythms (mechanics) | Layer 8 (declared in Layer 1 CLAUDE.md rituals section; critical steps enforced by hooks, see 4.8) | Layer 3 memory/, Layer 4 vault |
 | An incident that produced a rule (the rule is procedural; the story is semantic) | Section 7 reflex card (rule) + Layer 4 `decisions/` (story with wikilinks) | Duplicated in Layer 1 |
 | Recent context cache (what just happened — meaning as priority) | Layer 4 (`vault/wiki/hot.md`) | Layer 2 state |
 
@@ -252,6 +261,20 @@ Expansion happens under pressure, not on schedule. These are the signals that a 
 | 8 Cadence | Informal rituals emerge and want to be codified; scheduled automation becomes useful |
 
 When a trigger fires, grow that layer. When it doesn't, leave it at its current depth. A hub that tries to grow every layer at once collapses under the bureaucracy.
+
+### 3.6 Many hubs — the fleet
+
+The framework was extracted from one hub. By its first half-year the source user was running roughly ten. Most of the framework holds unchanged at that scale — each hub is still an organism with 8 layers — but four things only appear once there is more than one hub, and none of them can be seen from inside a single hub.
+
+**1. Shared user-scoped layers stay shared.** Layers 3 and 4 remain one per user (Sections 4.3, 4.4). A new hub imports `USER.md` and points at the existing vault; it does not start its own. The one open exception is recorded as a promotion candidate in Section 8.9.
+
+**2. No coordinator audits its own hub.** A coordinator reporting on its own hub's health is grading its own homework — the same discipline that skipped the ritual is the discipline asked to notice the skip. Cross-hub health is owned by a **peer** (Section 2) with a quality/audit mandate, working from **instruments** rather than from each coordinator's self-report.
+
+**3. The fleet needs an instrument, and the instrument must name what it cannot see.** The minimum fleet instrument is read-only, runs over every hub, and reports only what fires. It must also print the hubs it *could not* measure — a hub with no proposal queue, no git history, or a state layer in an unexpected shape. *Absence of an instrument is not absence of a problem.* A fleet report that silently skips unmeasurable hubs reads as "all clear" over exactly the hubs nobody is watching. (In the source fleet, every hub that was neither a client store nor an ops role was invisible to every review path for months, because no path was defined for "a hub".)
+
+**4. An instrument that can only fail quietly in the reassuring direction will not be corrected by being run.** The source fleet's instrument read "zero resolved, tripwire clear" over its healthiest hub for nineteen days. That hub had started archiving resolved proposals to a second file, and the instrument read only the first. It was run every session through a hook and never questioned, because its errors all looked like good news. Two design rules follow: every count prints the files it was taken from, and the instrument refuses to print "clear" over a reading it cannot justify (for example, a hub with commits but zero resolved rows). See R-010.
+
+**When to add the fleet layer.** At the second hub, declare which peer owns cross-hub health. At the third, build the instrument. Before that it is bureaucracy; after that, hubs drift in ways only a view from outside will catch.
 
 ---
 
@@ -402,6 +425,7 @@ That's the whole minimum. Briefs and reports appear later when expansion trigger
 - **Add `reports/`** when Layer 8 cadence grows scheduled runs that produce outputs
 - **Add custom subfolders** when the domain has a natural unit that isn't a proposal (drafts in a writing hub, campaigns in an ads hub, research threads in a research hub)
 - **Extend the proposal schema** with domain-specific fields when triage needs them. Resist over-fielding.
+- **Archive resolved rows to a second file** (e.g. `kanban/proposals/archive.yaml`) when `pending.yaml` gets long. If you do, every instrument that counts resolutions must read both files. See Section 3.6 point 4 for what happens when one doesn't.
 
 #### Example (chiefofstaff)
 
@@ -418,6 +442,7 @@ That's the whole minimum. Briefs and reports appear later when expansion trigger
 - **Kanban sprawl.** Every subproject grows its own folder with its own schema. Unnavigable. Fix: one canonical schema per hub, resist per-project forking, use briefs instead.
 - **OVERVIEW.md as changelog.** User adds dates and diffs inline. Fix: state is overwrite-only; changelog is `vault/wiki/log.md`.
 - **Duplication with CLAUDE.md.** Current status copied into CLAUDE.md instead of pointed at. Drifts instantly. Fix: pointer only.
+- **The self-feeding queue.** Most of the open proposals cite *other* proposals: every piece of work closes by filing its own follow-ups, and the queue produces its successor work faster than it serves it. It looks like diligence and it never empties. The hub ends up spending its sessions on its own leftovers instead of what the user chose. Measured in the source fleet: 60–80% of open rows citing another row, in three separate hubs at once. Its sibling is **deferral**: high-priority rows sit older than the rest because the easy ones keep getting taken first. Fix: measure both with an instrument, not by eye (R-011). When either fires, the next session triages the queue against the user's current priorities *before* adding a row. A follow-up that is not worth a fresh decision from the user is not worth a row. *(Don't fire on arrivals outnumbering resolutions. In a research hub, filing a row is the output.)*
 
 ---
 
@@ -565,6 +590,40 @@ The vault's value is not the individual notes. It is the **graph they form when 
 
 Corollary: **no orphans.** A note that nothing links to and that links to nothing is effectively invisible. At session end, check for orphans; either link them in or delete them.
 
+#### The six semantic operations
+
+Wikilinks give a vault a graph. They do not, by themselves, make it behave like memory. A vault where notes get written and occasionally opened is a **filing cabinet with cross-references**: it stores meaning but never retrieves it at the moment it would change a decision. What turns storage into memory is a small set of named operations, each built only from primitives a coordinator already has (Read, Glob, Grep, frontmatter parsing, following wikilinks). No database, no embeddings, no extra tooling.
+
+There are six: three **writes**, where the graph is the destination, and three **reads**, where the graph is the source.
+
+| # | Operation | Family | Trigger | What it does |
+|---|---|---|---|---|
+| 1 | **Primary consolidation** | write | session end, when a claim survived the session | Turns an episode into a node. Split the session into claims and apply the **observer-swap test** to each: strip the first-person perspective. If the meaning survives, it is procedural and belongs outside the vault; if it does not, it is semantic and belongs in it. Title gate: if you can't write a concrete one-line title, the insight isn't ready yet. |
+| 2 | **Integration** | write | right after #1, in the same commit | Writes the *inbound* edges: every node the new one links to gets a back-reference. **Integration is what upgrades references to edges.** A link that resolves in only one direction is a reference, not an edge. Dead links are fixed on the spot: repoint or remove, never stub. |
+| 3 | **Re-consolidation** | write | integration escalates; a drift report; a stale framing noticed mid-session | Updates an existing node whose neighbourhood has moved. **Re-consolidation is constitutional interpretation, not editing.** The original body is preserved; the update goes in as a dated callout at the top. Never run it for polish. At most one cascade per session. |
+| 4 | **Priming** | read | session start, once | Loads the baseline frame: CLAUDE.md, auto-memory, `OVERVIEW.md`, `hot.md`. Then checks whether the user's opening message is a continuation or a pivot, and re-primes on a pivot. Priming's failure mode is not absence, it is **confirmation bias**: the loaded frame gets applied to a topic it doesn't fit. |
+| 5 | **Pattern surfacing** | read | session end if budget remains (walk the clusters touched); on demand | Walks several nodes looking for what exists in the aggregate but has no node of its own. **Find the question the cluster answers, then check whether that question has a node.** Output is a report in `kanban/reports/`, never a vault node. |
+| 6 | **Activation** | read | a `[[wikilink]]` or a named concept enters the conversation | Loads the comprehension frame around a concept: the node, its contrastive neighbours in full, its co-occurring neighbours in summary, two hops at most. Seed from the most specific node that covers the need, not the densest hub. It also watches for concepts the loaded frame can't reach. **Activation's value includes detecting absence of coverage, not just loading existing coverage.** |
+
+The reads consume what the writes produce, so the operations degrade as a set. A vault running only #1 is a filing cabinet with a good intake desk.
+
+**The schema the operations depend on.** Each node carries an append-only history of its neighbourhood in frontmatter:
+
+```yaml
+semantic_neighbors:
+  - pass: 1                         # append-only; each pass records only what changed
+    date: YYYY-MM-DD
+    type: primary | integration | re-consolidation
+    note: "one-line evidence"       # mandatory for re-consolidation
+    nodes:
+      - node: "[[Target Node]]"
+        relation: syntagmatic | paradigmatic   # default syntagmatic
+```
+
+`paradigmatic` marks a *contrast*: an alternative in the same slot, the thing this node is defined against. `syntagmatic` marks co-occurrence. Activation loads paradigmatic neighbours in full and syntagmatic ones in summary. **When unsure, leave it syntagmatic.** A missing contrast label only costs a little weight; a false one plants a contrast that isn't there.
+
+**Honest adoption note.** In the source hub, the writes (#1, #2) and priming (#4) run most sessions. Pattern surfacing and activation run far less often than the design asks, because nothing triggers them mechanically. That is the same gap Section 4.8 addresses for rituals. Start with #1, #2 and #4 on day one. Add the others when the vault is big enough that a stale neighbourhood actually misleads a decision.
+
 #### Slots
 
 | Slot | What fills it | Example (chiefofstaff) |
@@ -638,7 +697,7 @@ Not mandatory for hub-os to work, but strongly recommended — it lets the user 
 - **Procedural content in vault.** A routing rule, credential pattern, or cron config gets filed in the vault because it feels like "accumulated wisdom." Apply the retrieval test: *mechanics or meaning?* Routing rules are mechanics → Layer 5 ops; credential patterns are mechanics → Layer 6 safety; cron configs are mechanics → Layer 8 cadence. Only the *rationale* for those mechanics belongs in the vault.
 - **Semantic content forced into procedural layers.** The opposite failure: a project's philosophy or a person's character gets jammed into an ops `CONTEXT.md` or a routing comment because "it was relevant to the mechanics." Fix: mechanics references the meaning by wikilink, it does not absorb it. `ops/seo-agent/CONTEXT.md` may link `[[Nomods]]`; it does not copy the Nomods manifesto.
 - **Duplicate with auto-memory (Layer 3).** The same content appears in both `vault/wiki/` and `memory/MEMORY.md`. Because both are user-scoped this is easy to get wrong. Fix: apply the procedural-vs-semantic split. Procedural rule the user taught → Layer 3. Semantic concept the hub has come to understand → Layer 4. Section 3.2's canonicality table governs.
-- **Per-hub vault fragmentation.** User creates a separate `vault/` inside a new hub directory instead of pointing at the shared `~/thehub/vault/`. The graph splits; cross-hub wikilinks become impossible. Fix: there is one vault per user, not one per hub. New hubs point at the existing vault.
+- **Per-hub vault fragmentation.** User creates a separate `vault/` inside a new hub directory instead of pointing at the shared `~/thehub/vault/`. The graph splits; cross-hub wikilinks become impossible. Fix: there is one vault per user, not one per hub. New hubs point at the existing vault. *(One deliberate exception is on record, a hub whose domain is sealed off for commercial reasons. It is tracked as a promotion candidate in Section 8.9, not as a rule.)*
 - **Duplicate with CLAUDE.md.** Coordinator's CLAUDE.md starts quoting vault content inline. Drifts. Fix: CLAUDE.md can reference vault pages by name but never duplicates their content.
 
 ---
@@ -716,6 +775,28 @@ Day-one Layer 5 is an empty `ops/` folder with one template file. The routing ta
 
 **Rule of thumb: don't create roles preemptively.** A hub with zero populated roles is healthy. Creating an empty role folder "just in case" is worse than no role because it creates a delegation path with no substance behind it.
 
+#### Peers — the second tier
+
+Not every specialist belongs *under* the coordinator. Some functions stop working if the coordinator directs them:
+
+- **Audit and quality.** An auditor that reports to the thing it audits cannot report against it. Its findings reach the coordinator, but its direction comes from the user.
+- **Craft with its own taste.** Design, writing, research. The coordinator can brief the strategic frame; if it also picks the typography or the argument, the function turns into an extension of the coordinator's judgment instead of a check on it.
+
+These are **peers** (Section 2). A peer lives in its own directory beside the hub (not in `ops/`), has its own `CLAUDE.md` and archetype, and is listed in the coordinator's `CLAUDE.md` in a separate **peers table**, which is not the routing table. The table says what each peer owns and one line on what the coordinator may *not* direct.
+
+```markdown
+| Peer | Owns | Coordinator does not |
+|------|------|----------------------|
+| {name} | Quality, process, audits across hubs | set its audit targets or edit its findings |
+| {name} | Design and frontend craft | choose type, palette or components |
+```
+
+**The peer test:** *"Would this function be worse at its job if the coordinator could tell it what to conclude?"* If yes, make it a peer. If it just executes a decision already made, it is an ops role.
+
+**How peers talk to the coordinator.** A peer writes to a channel it owns (a log or a findings file). The coordinator does not remember to read that channel; a session-start hook surfaces the newest entry into the coordinator's context (Section 4.8). A peer channel that depends on the coordinator's memory will be skipped, for the same reason session-end rituals are.
+
+Most hubs have no peers. Add the first one when the user notices the coordinator grading its own work, usually around the second or third hub, when cross-hub audit becomes necessary (Section 3.6).
+
 #### Example (chiefofstaff)
 
 Six roles in `ops/`, each verb-named: **Store Manager** (manages Shopify stores), **SEO Agent** (optimizes discovery), **Translation Agent** (manages locales), **Ads Agent** (runs Meta campaigns), **Image Agent** (produces visuals), **Accounting Agent** (manages invoicing and MVA). Each has its own CLAUDE.md with domain-specific rules, credentials, and safety boundaries. Munger (Layer 1) never touches Shopify or Meta directly; every mutation flows through the relevant ops role after approval.
@@ -732,6 +813,7 @@ The 2026-03-27 incident happened specifically because a coordinator session bypa
 - **Role CLAUDE.md duplicates top-level.** A role's spec repeats identity/working-style content that belongs in Layer 1 or `USER.md`. Fix: role spec inherits by reference and stays narrow and specific.
 - **Silent bypass.** Coordinator decides "I'll just do this specialist task directly because it's quick." This is how incidents happen. Fix: routing table entries are non-negotiable; if a task is in the table, the coordinator routes it, period.
 - **Orphan role.** A role folder exists but nothing in the routing table points to it. Dead code. Fix: every role is either in the routing table or deleted.
+- **Auditor in the routing table.** The quality/audit function is set up as an ops role the coordinator dispatches, so the coordinator chooses what gets audited. Fix: make it a peer; the user directs it.
 
 ---
 
@@ -956,9 +1038,34 @@ Every hub has, at minimum, two rituals:
 
 These two are declared in Layer 1 CLAUDE.md at day one. Without them, state and memory go stale within a week.
 
+#### Declared is not enforced
+
+Declaring a ritual in CLAUDE.md makes the coordinator *read* it every session. It does not make the coordinator *do* it. The source hub found this out by audit: its session-end step 1 (reconcile the proposal queue) was written in CLAUDE.md, loaded every session for eleven weeks, and skipped **80 times**. The skipped step was the expensive one in a list of cheap ones, and nothing checked.
+
+The first proposed fix was to add a second CLAUDE.md line telling the coordinator to read the auditor's log. That is the instrument that had just failed, aimed at its own failure. **A skipped instruction is not fixed by writing another instruction** (R-009). The fix that worked was moving the check out of the coordinator's discretion and into a hook.
+
+So every ritual step falls into one of two classes:
+
+| Class | Test | Mechanism |
+|---|---|---|
+| **Critical** | Would silently skipping it let state, the queue, or a peer's warning go unseen for more than a session? | A **hook** that runs whether the coordinator remembers or not. Usually a `SessionStart` hook that injects what the coordinator would otherwise have to go and read. |
+| **Everything else** | Skipping it costs a little quality, not a blind spot | A declared step in CLAUDE.md |
+
+**The minimum hook** (day one, shipped in `skeleton/.claude/`) is a `SessionStart` hook that:
+
+1. reads the hub's own state (at minimum `kanban/proposals/pending.yaml`, plus any archive files next to it) and computes a few cheap numbers: the share of open rows that cite another row, whether high-priority rows are older than the rest, and whether the hub has been committing while resolving nothing;
+2. **prints nothing when everything is clean**, and a short warning into the session context when something fires;
+3. never blocks the session. A broken instrument must go quiet and get fixed, not lock the user out;
+4. is read-only and costs no model tokens.
+
+Point 2 is what keeps the hook alive. A hook that talks every session becomes background noise and gets tuned out, which is how a declared ritual gets skipped. Silence has to mean something.
+
+**Session end is harder to enforce than session start.** There is no reliable "session is ending" moment to hook into. The workable pattern is to verify session end at the *next* session start: the start hook checks whether the last session's work reached state (e.g. commits since `OVERVIEW.md` was last written, or queue rows that are stale) and says so. The coordinator can skip closing a session, but it cannot keep the next session from noticing.
+
 #### Files
 
 - **Layer 1 CLAUDE.md has a "Rituals" or "Session routine" section** — declares the rituals inline so the coordinator reads them at every session start. This is the declaration half of cadence and is required day one.
+- **`.claude/settings.json` + `.claude/hooks/session-start.py`** — the enforcement half. Registers a `SessionStart` hook that surfaces the critical checks (see *Declared is not enforced* above). Required day one; the skeleton ships a working minimum.
 - **`cadence/`** directory *(appears during expansion)* — for scheduled automation scripts, cron configs, and rhythm documentation that outgrows CLAUDE.md
 - **`cadence/session-start.md`** and **`cadence/session-end.md`** *(during expansion)* — canonical forms when rituals grow past what fits inline in CLAUDE.md
 - **Scheduled task configs** — cron, Windows Task Scheduler, GitHub Actions, launchd, whatever the host OS provides
@@ -990,10 +1097,17 @@ Layer 1 CLAUDE.md:
         3. (If vault populated) Update hot.md, append log.md, file decisions/lessons
         4. Run promotion checks
 
+.claude/
+├── settings.json          # registers the SessionStart hook
+└── hooks/
+    └── session-start.py   # silent when clean; warns on self-feeding / deferral / unreconciled
+
 cadence/:  # appears during expansion, absent on day one
 ```
 
-Day-one Layer 8 is a pair of short bulleted lists in CLAUDE.md. No scripts, no cron, no directory. The two rituals are *declared*, which is enough to make the coordinator perform them every session.
+Day-one Layer 8 is a pair of short bulleted lists in CLAUDE.md plus one hook. No cron, no `cadence/` directory. The two rituals are *declared*, so the coordinator knows what to do. The hook makes sure the one outcome that silently rots, a queue nobody reconciles, cannot go unnoticed across sessions.
+
+*(Before v0.4.0 this section said declaring the rituals "is enough to make the coordinator perform them every session." It isn't. See* Declared is not enforced *above.)*
 
 #### Expansion
 
@@ -1006,7 +1120,8 @@ Day-one Layer 8 is a pair of short bulleted lists in CLAUDE.md. No scripts, no c
 
 #### Example (chiefofstaff)
 
-- **Session start:** read OVERVIEW.md, read `~/Thehub/vault/wiki/hot.md`, check in with Gabriel on what's changed, offer COO check-in if ops agents have been used since last session
+- **Session start (hook, added 2026-08):** a `SessionStart` hook injects the newest entry from the audit peer's log plus any fleet-instrument tripwire that fired. It prints nothing when both are quiet. Its docstring records why it is a hook and not a line in CLAUDE.md, so that nobody later "fixes" it back into an instruction.
+- **Session start (declared):** read OVERVIEW.md, read `~/Thehub/vault/wiki/hot.md`, check in with Gabriel on what's changed, offer an audit check-in if ops agents or any other hub have been used since last session
 - **Session end:** reconcile `kanban/proposals/pending.yaml`, overwrite OVERVIEW.md, update vault `hot.md`, append to `log.md`, file decisions/lessons if any, review cross-agent notes in touched client briefs, promote important signals to `hot.md`'s agent signals section, timeline rotation if any brief overflows
 - **Scheduled automation (built 2026-03-14):** daily store health checks, proposal resurfacing, calendar sync, ad monitoring, weekly briefs. Runs on Windows Task Scheduler. Outputs land in `kanban/reports/`.
 - **Reconciliation loop:** `pending.yaml` reconciliation named as non-negotiable in CLAUDE.md.
@@ -1015,7 +1130,9 @@ Day-one Layer 8 is a pair of short bulleted lists in CLAUDE.md. No scripts, no c
 
 - **Implicit cadence.** Rituals exist in the user's head but aren't declared in CLAUDE.md. Coordinator doesn't know when to do what. Fix: declare rituals explicitly in Layer 1 so they're read every session.
 - **Cadence in auto-memory.** User puts session rituals in `memory/MEMORY.md` because "it's cross-session." Canonicality violation. Fix: rituals are Layer 8 and declared in Layer 1 CLAUDE.md under a rituals section.
-- **Drift between declared and actual.** CLAUDE.md says "reconcile pending.yaml at session end" but coordinator skips it. Fix: rule is non-negotiable or isn't a rule; if skipping happens, add hook enforcement via Layer 6 or remove the declaration.
+- **Drift between declared and actual.** CLAUDE.md says "reconcile pending.yaml at session end" but coordinator skips it. Fix: rule is non-negotiable or isn't a rule. Don't wait for the skipping to show up: critical steps get a hook from day one (see *Declared is not enforced*). Either move the step into a hook or delete the declaration.
+- **Fixing a skip with a sentence.** A ritual step is found skipped, and the fix is another CLAUDE.md line ("remember to…", "ALWAYS…", "NON-NEGOTIABLE"). It is the same instrument that just failed, pointed at its own failure. Fix: R-009. Replace the instruction with a mechanism, and delete the old wording so the two can't contradict each other.
+- **Chatty hook.** The session-start hook prints a status block every session, clean or not. Within a week it is wallpaper. Fix: silent when clean, specific when not.
 - **Scheduled automation with no output home.** Cron runs produce files but there's no canonical `kanban/reports/` destination, so outputs scatter. Fix: Layer 8 automation writes to Layer 2's `kanban/reports/` by convention.
 - **Over-scheduled.** User adds daily/weekly/monthly reviews that nobody reads. Bureaucracy. Fix: every scheduled task exists because a real need produced it.
 - **Session-end skipped.** Real work is done but session-end reconciliation is skipped because "I'll get it next time." State drifts, vault rots. Fix: this is exactly the kind of rule Layer 6 should enforce via hook.
@@ -1462,11 +1579,15 @@ Layer 6 doesn't usually get its own files on day one. Instead:
 
 #### Step 10 — Declare Layer 8 rituals
 
-"Rituals" or "Session routine" section in Layer 1 CLAUDE.md populated from Q15–16.
+"Rituals" or "Session routine" section in Layer 1 CLAUDE.md populated from Q15–16. Copy `skeleton/.claude/` into the hub so the session-start hook is live from the first session (Section 4.8, *Declared is not enforced*). If the hub's queue lives somewhere other than `kanban/proposals/`, point the hook at it now. Do not delete the hook to get started faster.
 
 #### Step 11 — (Optional) Create `reflexes.md` for tracked inheritance
 
 If you want to make reflex inheritance visible, create `hub/reflexes.md` listing which reflex IDs from Section 7 are active in this hub.
+
+#### Step 12 — Save the interview as `INSTANTIATION.md`
+
+Save the Section 6.2 answers at the hub root, and end the file with a **Deviations** section: every place the hub knowingly departs from this framework, why, and whether the author thinks it could generalise. This file is what an auditor checks the hub against later, and it is where Section 8.9 candidates come from. It stays in the hub. If the hub's domain is private, its instantiation file is too; only the generalised candidate goes into the framework.
 
 ### 6.4 Day-one verification
 
@@ -1482,6 +1603,8 @@ Before running the first real session, verify the hub is structurally sound:
 - [ ] Never list in `CLAUDE.md` is non-empty (has at least the inherited reflexes)
 - [ ] Tools available section declared
 - [ ] Rituals section declared with session start and session end
+- [ ] `.claude/settings.json` registers the session-start hook, and running it by hand (`python .claude/hooks/session-start.py`, needs PyYAML) prints `{}` on the empty queue
+- [ ] `INSTANTIATION.md` saved, with a Deviations section (may say "none")
 - [ ] If credentialed surfaces exist: read and write credentials are in separate files
 - [ ] No top-level `memory/MEMORY.md` contains hub-scoped or ritual content (canonicality check)
 
@@ -1553,7 +1676,7 @@ Day-one instantiation flow:
 
 A day-one hub should have **all eight reflexes active** by default — they are universal by design. R-001 through R-004 are the **safety-critical core** (incident-preventing rules about delegation, credentials, and enforcement); R-005 through R-008 are equally universal but address **operational hygiene** (state discipline, bidirectional ops flow, cost framing, canonicality). The only reason to drop a reflex during instantiation is if the domain genuinely doesn't exercise it — e.g., a read-only research hub has no mutation-capable surfaces and R-003 is a no-op until one appears. When in doubt, keep all eight.
 
-### 7.4 The reflex card (v0.2)
+### 7.4 The reflex card (v0.3)
 
 **R-001 — Coordinator routes, coordinator does not execute**
 
@@ -1651,13 +1774,49 @@ A day-one hub should have **all eight reflexes active** by default — they are 
 | source_hub | chiefofstaff |
 | enforcement | discipline-only (reinforced by Section 3.2) |
 
+**R-009 — A skipped instruction is not fixed by another instruction**
+
+| Field | Value |
+|---|---|
+| incident | 2026-08 audit: a session-end ritual step written in CLAUDE.md, loaded every session for eleven weeks, had been skipped 80 times. The first remedy proposed was one more CLAUDE.md line, telling the coordinator to read the auditor's findings. |
+| rule | When an instruction is found being skipped, the fix is a mechanism (a hook, a tool that won't run without the check, an instrument that surfaces what went unseen). Delete the skipped wording at the same time. Adding emphasis, capitals or a second copy of the instruction is not a fix. |
+| why | A skipped instruction shows that the coordinator's discretion is the weak point. A new instruction runs on that same discretion. Leaving the old wording in place after adding the mechanism also leaves two statements of the rule that can drift apart and contradict each other. *A policy is only fixed where every contradicting instruction is deleted.* |
+| layer | 8 (cadence) + 6 (enforcement) — the operational form of R-004 |
+| date | 2026-08-02 |
+| source_hub | chiefofstaff (audited by its quality peer) |
+| enforcement | meta-reflex |
+
+**R-010 — Instruments must not fail silently in the reassuring direction**
+
+| Field | Value |
+|---|---|
+| incident | 2026-08-02 → 2026-08-21: the fleet instrument reported "resolved 0, tripwire clear" for the healthiest hub it watched. That hub was closing ~20 proposals and making ~60 commits a week. The hub had started archiving resolved rows to a second file, and the instrument read only the first. The instrument ran every session through a hook for nineteen days and nobody questioned it. It was caught only when someone re-measured the hub by hand. |
+| rule | Every count an instrument reports names the files it came from. An instrument refuses to report "clear" over a reading it cannot justify (e.g. activity with zero resolutions), and flags its own reading as suspect instead. |
+| why | A wrong instrument that errs toward alarm gets fixed quickly because it annoys people. One that errs toward reassurance never gets fixed, because each run looks like good news. Running it more often doesn't help. It has to be built to distrust its own reading. |
+| layer | 8 (cadence instruments) + fleet (Section 3.6) |
+| date | 2026-08-21 |
+| source_hub | the fleet's audit peer |
+| enforcement | architecture (built into the instrument) |
+
+**R-011 — Measure the queue's shape, not just its size**
+
+| Field | Value |
+|---|---|
+| incident | 2026-07-31: one hub created 39 backlog rows in a day while making 17 commits, then spent the next two days working through its own residue. The first instrument built in response fired on arrivals exceeding resolutions. It was refuted within a day: in a research hub, filing a row *is* the output, and the rule would have fired on the day that hub closed its most valuable row. By 2026-09 the replacement metric was firing on three separate hubs, with 60–80% of open proposals citing another row. |
+| rule | Every hub with a proposal queue has an instrument (a hook is enough) that measures two things. **Self-feeding:** the share of open rows that cite another row's id. **Deferral:** whether high-priority open rows are systematically older than the rest. When either trips, the next session triages the queue against the user's current priorities before adding anything to it. Arrival vs. service is worth *reporting* but not worth *firing on*. |
+| why | A queue that feeds itself grows without bound and looks like diligence the whole time. A queue that defers its important rows is doing the easy work first. The coordinator can't see either from inside a session, because each row looks reasonable on its own. Both metrics hold regardless of *why* rows were filed, which is exactly where raw arrival counting fails. |
+| layer | 2 (state) + 8 (cadence instrument) |
+| date | 2026-08-02 |
+| source_hub | three hubs independently (passes the source-diversity check in 8.4) |
+| enforcement | hook (skeleton ships one) |
+
 ### 7.5 Maintenance
 
 - **New reflexes are added when incidents happen.** A real incident + a rule that would have prevented it = a new reflex card entry. No speculative reflexes.
 - **Universality check before adding.** Before a hub-specific reflex gets promoted into this card, it must pass the *"would this rule matter in a totally different hub?"* test. Hub-specific reflexes stay in the hub's own never list.
 - **Enforcement upgrades over time.** A discipline-only reflex that keeps getting violated gets upgraded — first to a hook, then to architecture enforcement if possible.
 - **Deprecation.** If a reflex turns out to be wrong, it gets marked deprecated rather than deleted, with a note on what replaced it. The deprecation record preserves the learning.
-- **Version the card.** The reflex card has a version number (currently v0.2). Each version change is logged in Section 11.
+- **Version the card.** The reflex card has a version number (currently v0.3). Each version change is logged in Section 11.
 
 ---
 
@@ -1705,6 +1864,7 @@ The three paths have different blast radii. Path B affects one hub's future. Pat
 | **Monthly review** (or when building a new hub) | Is there anything in `memory/` that has been stable long enough to promote to `USER.md`? | Claude proposes; user approves |
 | **When a new reflex is added to a hub's never list** | Is this reflex universal enough to promote to the framework (Path C)? | User decides explicitly |
 | **When instantiating a new hub** | Does anything in the current hub's never list or vault lessons belong in the framework or `USER.md`? | User decides explicitly |
+| **After instantiating a new hub** | Every deviation the new hub recorded from the playbook (see 6.3, `INSTANTIATION.md`) is copied into Section 8.9 as a candidate, with no domain specifics | Claude files the candidate; user decides promotion |
 
 ### 8.4 Bars and tests
 
@@ -1768,6 +1928,20 @@ Retractions and deprecations are logged in Section 11 the same way promotions ar
 - **Promoting hub-specific rules as universal.** "Never mutate Shopify without approval" gets promoted to the framework. But the framework doesn't know about Shopify. Fix: the *general* version is what's universal; the specific application stays in the hub.
 - **Using promotion as praise.** Promoting something because it feels like a compliment rather than because it's universal. Fix: apply the universality test with actual rigor.
 - **Mixing staging and canonical.** Leaving promoted content in `memory/` after it's been added to `USER.md`. Canonicality violation. Fix: after promotion, clean up the staging area.
+- **Instantiations that never report back.** Hubs are built from the framework, carefully record where they departed from it, and those records stay in the hub. Between v0.3.1 and v0.4.0, six hubs were instantiated against v0.3.1. Several recorded explicit "this is a promotion candidate" deviations, and none of them reached the framework for four months. It is the skipped-ritual failure (R-009) at framework scale. Fix: the post-instantiation trigger in 8.3, and a standing candidates list (8.9) so a deviation has somewhere to go on the day it is written.
+
+### 8.9 Open promotion candidates
+
+Deviations real hubs made on purpose that might become rules. **None of these are rules yet.** Each has a single instance, which fails the source-diversity check in 8.4. They are listed so the second instance, if it shows up, gets recognised as one.
+
+| # | Candidate | Deviates from | Instance | Promote when |
+|---|---|---|---|---|
+| C-1 | **A sealed hub-scoped vault** for a domain that must stay separable: sellable, reputationally distinct, or bound by confidentiality. Its own `vault/wiki/`, no outbound wikilinks, a single pointer stub in the user's vault. | 4.4 — one vault per user | a research hub, 2026-07 | a second hub needs a seal for a *different* reason |
+| C-2 | **An evidence layer** (`record/`): append-only, immutable artifacts supporting claims the hub publishes. It is not state (state is overwrite-only) and not meaning (vault). Currently sits outside the 8 layers. | 3.1 — the 8 layers are complete | the same research hub | a second hub whose output is a verifiable claim builds one |
+| C-3 | **Coordinator-as-engineer**: when the user *is* the only engineer and no engineering roles exist, the coordinator does the engineering directly. It is logged as a watch-item that ends when engineering volume justifies a role. | R-001 | an internal product hub, 2026-07 | a second hub adopts it, *and* the first hasn't had to create a role yet |
+| C-4 | **Agent-candidacy detection**: every plan ends with one line classifying whether the work should become a skill, agent, hook, or nothing. Hits accumulate in the queue as candidates with a 30-day kill clock. | 4.5 — roles are added "under pressure", with no detector for that pressure | chiefofstaff, 2026-04 | its own 30-day signal test passes in a second hub |
+
+Candidates that no second instance supports within ~6 months are removed with a one-line note in Section 11.
 
 ---
 
@@ -1788,6 +1962,32 @@ Retractions and deprecations are logged in Section 11 the same way promotions ar
 Append-only changelog for the framework itself. Newest entries at top. Never edit past entries.
 
 Every change gets one entry: a date, a version number, and a short note. Changes include: new reflexes promoted to Section 7, reflexes deprecated, layer definitions revised, new sections added, sections merged or split, structural rewrites, location conventions changing (e.g., if `USER.md` moves from `~/thehub/` to `~/.claude/`).
+
+---
+
+### 2026-09-25 — v0.4.0 (cadence enforcement, peers, the fleet, semantic operations)
+
+Between v0.3.1 and this version, six hubs were instantiated against v0.3.1 and the source hub ran for four more months. The framework text didn't change during that time, while practice moved away from it in five places. This version brings the text back in line with practice and adds nothing that hasn't been proven in use.
+
+**Sections changed:**
+
+1. **4.8 Cadence** — new subsection *Declared is not enforced*. The v0.3.1 claim that declaring rituals "is enough to make the coordinator perform them" is withdrawn, and the correction is noted inline. Critical ritual steps are now enforced by a `SessionStart` hook from day one instead of "if skipping happens". Session-end discipline is checked at the *next* session start. Two new anti-patterns: fixing a skip with a sentence, and a chatty hook. Minimum and Files updated.
+2. **2 Core concepts** — *Peer* and *Instrument* defined.
+3. **3.6 Many hubs — the fleet** (new) — shared user-scoped layers stay shared, no coordinator audits its own hub, the fleet instrument names what it cannot see, and instruments must not fail silently in the reassuring direction.
+4. **4.5 Ops** — new subsection *Peers — the second tier*, with the peer test, a peers-table template, and the rule that peer channels reach the coordinator through a hook rather than through its memory. New anti-pattern: auditor in the routing table.
+5. **4.4 Semantic Memory** — new subsection *The six semantic operations* (primary consolidation, integration, re-consolidation, priming, pattern surfacing, activation) plus the `semantic_neighbors` schema, condensed from the source hub's operations spec (in use since 2026-04-14). The five phrases marked for survival in that spec all appear. It includes an honest adoption note: the reads run less often than designed.
+6. **4.2 State** — new anti-pattern: the self-feeding queue (and deferral). New expansion note: an archive file must be read by every instrument that counts resolutions.
+7. **6.3 / 6.4 Instantiation** — Step 10 copies the hook. New Step 12 saves `INSTANTIATION.md` with a Deviations section. The day-one checklist adds the hook and the instantiation file.
+8. **7 Reflex card → v0.3** — R-009 (a skipped instruction is not fixed by another instruction), R-010 (instruments must not fail silently in the reassuring direction), R-011 (measure the queue's shape, not just its size).
+9. **8 Promotion** — new post-instantiation trigger, new anti-pattern (instantiations that never report back), and new **8.9 Open promotion candidates** with four entries (C-1 sealed hub-scoped vault, C-2 evidence layer, C-3 coordinator-as-engineer, C-4 agent-candidacy detection). Each has only one instance, so none is promoted.
+
+**Skeleton ripple.** New `skeleton/.claude/settings.json` + `skeleton/.claude/hooks/session-start.py`: the minimum instrument, read-only, silent when clean. Before shipping it was checked against the source fleet's own instrument on six live hubs and matched exactly on every one that fired (60% of 143, 61% of 185, 80% of 64). `skeleton/CLAUDE.md` session-start ritual points at the hook. README version label updated.
+
+**Found while building the hook, and kept.** (a) The first draft fired on arrivals outnumbering resolutions. The source fleet had already refuted that metric, so it was replaced by deferral. (b) The first draft counted commits for the whole enclosing repository, which produced a false UNRECONCILED warning on a hub nested inside a larger repo. It is now path-limited. (c) A regex fallback for hosts without PyYAML read 57% where the true figure was 60%, silencing a real finding. It was removed. The hook now reports "unmeasured" instead. All three are R-010 in miniature.
+
+**What was deliberately not done.** Nothing about multi-tenant client hubs, runtime substrates, or repository layout. Those belong to specific products built *on* hubs, not to hubs. No change to Layer 3. No change to the "one vault per user" rule: the one hub that broke it did so deliberately, and that exception is a candidate (C-1), not a rule. Agent-candidacy detection stays a candidate: it has run in one hub only, and its own 30-day signal test has not been checked against a second.
+
+**Origin.** A scope pass on 2026-09-25 asked whether the public framework was out of date. It was four months and six instantiations behind, and the hubs had been recording "promotion candidate" deviations that had nowhere to go. That gap is itself recorded as the anti-pattern *Instantiations that never report back*.
 
 ---
 
