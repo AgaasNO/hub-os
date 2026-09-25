@@ -592,37 +592,12 @@ Corollary: **no orphans.** A note that nothing links to and that links to nothin
 
 #### The six semantic operations
 
-Wikilinks give a vault a graph. They do not, by themselves, make it behave like memory. A vault where notes get written and occasionally opened is a **filing cabinet with cross-references**: it stores meaning but never retrieves it at the moment it would change a decision. What turns storage into memory is a small set of named operations, each built only from primitives a coordinator already has (Read, Glob, Grep, frontmatter parsing, following wikilinks). No database, no embeddings, no extra tooling.
+Wikilinks give a vault a graph; they don't make it behave like memory. A vault where notes get written and occasionally opened is a **filing cabinet with cross-references**: it stores meaning but never retrieves it when it would change a decision. Six named operations close that gap, built only from primitives a coordinator already has:
 
-There are six: three **writes**, where the graph is the destination, and three **reads**, where the graph is the source.
+- **Writes:** *primary consolidation* (turn a session's claims into nodes, but only the claims that fail the observer-swap test), *integration* (give every new link its back-reference, in the same commit; **integration is what upgrades references to edges**), *re-consolidation* (update an old node with a dated overlay and never rewrite the original; **constitutional interpretation, not editing**).
+- **Reads:** *priming* (the session-start load, which checks for a topic pivot), *pattern surfacing* (**find the question a cluster answers, then check whether that question has a node**), *activation* (load the neighbourhood around a concept when it comes up, and notice when nothing covers it).
 
-| # | Operation | Family | Trigger | What it does |
-|---|---|---|---|---|
-| 1 | **Primary consolidation** | write | session end, when a claim survived the session | Turns an episode into a node. Split the session into claims and apply the **observer-swap test** to each: strip the first-person perspective. If the meaning survives, it is procedural and belongs outside the vault; if it does not, it is semantic and belongs in it. Title gate: if you can't write a concrete one-line title, the insight isn't ready yet. |
-| 2 | **Integration** | write | right after #1, in the same commit | Writes the *inbound* edges: every node the new one links to gets a back-reference. **Integration is what upgrades references to edges.** A link that resolves in only one direction is a reference, not an edge. Dead links are fixed on the spot: repoint or remove, never stub. |
-| 3 | **Re-consolidation** | write | integration escalates; a drift report; a stale framing noticed mid-session | Updates an existing node whose neighbourhood has moved. **Re-consolidation is constitutional interpretation, not editing.** The original body is preserved; the update goes in as a dated callout at the top. Never run it for polish. At most one cascade per session. |
-| 4 | **Priming** | read | session start, once | Loads the baseline frame: CLAUDE.md, auto-memory, `OVERVIEW.md`, `hot.md`. Then checks whether the user's opening message is a continuation or a pivot, and re-primes on a pivot. Priming's failure mode is not absence, it is **confirmation bias**: the loaded frame gets applied to a topic it doesn't fit. |
-| 5 | **Pattern surfacing** | read | session end if budget remains (walk the clusters touched); on demand | Walks several nodes looking for what exists in the aggregate but has no node of its own. **Find the question the cluster answers, then check whether that question has a node.** Output is a report in `kanban/reports/`, never a vault node. |
-| 6 | **Activation** | read | a `[[wikilink]]` or a named concept enters the conversation | Loads the comprehension frame around a concept: the node, its contrastive neighbours in full, its co-occurring neighbours in summary, two hops at most. Seed from the most specific node that covers the need, not the densest hub. It also watches for concepts the loaded frame can't reach. **Activation's value includes detecting absence of coverage, not just loading existing coverage.** |
-
-The reads consume what the writes produce, so the operations degrade as a set. A vault running only #1 is a filing cabinet with a good intake desk.
-
-**The schema the operations depend on.** Each node carries an append-only history of its neighbourhood in frontmatter:
-
-```yaml
-semantic_neighbors:
-  - pass: 1                         # append-only; each pass records only what changed
-    date: YYYY-MM-DD
-    type: primary | integration | re-consolidation
-    note: "one-line evidence"       # mandatory for re-consolidation
-    nodes:
-      - node: "[[Target Node]]"
-        relation: syntagmatic | paradigmatic   # default syntagmatic
-```
-
-`paradigmatic` marks a *contrast*: an alternative in the same slot, the thing this node is defined against. `syntagmatic` marks co-occurrence. Activation loads paradigmatic neighbours in full and syntagmatic ones in summary. **When unsure, leave it syntagmatic.** A missing contrast label only costs a little weight; a false one plants a contrast that isn't there.
-
-**Honest adoption note.** In the source hub, the writes (#1, #2) and priming (#4) run most sessions. Pattern surfacing and activation run far less often than the design asks, because nothing triggers them mechanically. That is the same gap Section 4.8 addresses for rituals. Start with #1, #2 and #4 on day one. Add the others when the vault is big enough that a stale neighbourhood actually misleads a decision.
+**Day one: run primary consolidation, integration and priming.** Add the other three when the vault is big enough that a stale neighbourhood actually misleads a decision. The full procedure (triggers, steps, failure modes, worked examples, and the `semantic_neighbors` frontmatter schema) lives in **[`SEMANTIC-OPERATIONS.md`](SEMANTIC-OPERATIONS.md)**.
 
 #### Slots
 
@@ -1543,6 +1518,13 @@ Layer 3 is the only user-scoped required layer and its two sub-locations have di
 
 #### Step 6 — Create Layer 4 (vault)
 
+The vault is user-scoped (Section 4.4), so it lives at `~/thehub/vault/`, **not** inside the hub. The skeleton ships a `vault/` folder only as a template:
+
+- **First hub:** move the copied `vault/` to `~/thehub/vault/`.
+- **Every later hub:** delete the copied `vault/`. The hub's `CLAUDE.md` already points at `~/thehub/vault/`.
+
+Shape of the vault on day one:
+
 ```
 vault/wiki/
 ├── hot.md                         # 1-line seed, ~50 words
@@ -1975,7 +1957,9 @@ Between v0.3.1 and this version, six hubs were instantiated against v0.3.1 and t
 2. **2 Core concepts** — *Peer* and *Instrument* defined.
 3. **3.6 Many hubs — the fleet** (new) — shared user-scoped layers stay shared, no coordinator audits its own hub, the fleet instrument names what it cannot see, and instruments must not fail silently in the reassuring direction.
 4. **4.5 Ops** — new subsection *Peers — the second tier*, with the peer test, a peers-table template, and the rule that peer channels reach the coordinator through a hook rather than through its memory. New anti-pattern: auditor in the routing table.
-5. **4.4 Semantic Memory** — new subsection *The six semantic operations* (primary consolidation, integration, re-consolidation, priming, pattern surfacing, activation) plus the `semantic_neighbors` schema, condensed from the source hub's operations spec (in use since 2026-04-14). The five phrases marked for survival in that spec all appear. It includes an honest adoption note: the reads run less often than designed.
+5. **4.4 Semantic Memory** — new short subsection *The six semantic operations*, a summary with a day-one subset. The full procedure moved into a new companion file, **`SEMANTIC-OPERATIONS.md`**, taken from the version cleaned for strangers in the April handoff kit (in use in the source hub since 2026-04-14). The five phrases marked for survival in that spec are all in the framework text. The companion file includes an honest adoption note: the reads run less often than designed.
+10. **New entry point: `ESSENTIALS.md`**, a one-page version of the framework. FRAMEWORK.md is now around 29,000 words, and by its own "rituals too long" anti-pattern nobody reads all of it. The essentials page is what most readers need; FRAMEWORK.md becomes the reference.
+11. **6.3 Step 6** — resolves a contradiction left over from v0.3.0: the step built the vault inside the hub while 4.4 made it user-scoped. It now says to move the skeleton's `vault/` to `~/thehub/vault/` on the first hub and delete it on later ones.
 6. **4.2 State** — new anti-pattern: the self-feeding queue (and deferral). New expansion note: an archive file must be read by every instrument that counts resolutions.
 7. **6.3 / 6.4 Instantiation** — Step 10 copies the hook. New Step 12 saves `INSTANTIATION.md` with a Deviations section. The day-one checklist adds the hook and the instantiation file.
 8. **7 Reflex card → v0.3** — R-009 (a skipped instruction is not fixed by another instruction), R-010 (instruments must not fail silently in the reassuring direction), R-011 (measure the queue's shape, not just its size).
@@ -1988,6 +1972,8 @@ Between v0.3.1 and this version, six hubs were instantiated against v0.3.1 and t
 **What was deliberately not done.** Nothing about multi-tenant client hubs, runtime substrates, or repository layout. Those belong to specific products built *on* hubs, not to hubs. No change to Layer 3. No change to the "one vault per user" rule: the one hub that broke it did so deliberately, and that exception is a candidate (C-1), not a rule. Agent-candidacy detection stays a candidate: it has run in one hub only, and its own 30-day signal test has not been checked against a second.
 
 **Origin.** A scope pass on 2026-09-25 asked whether the public framework was out of date. It was four months and six instantiations behind, and the hubs had been recording "promotion candidate" deviations that had nowhere to go. That gap is itself recorded as the anti-pattern *Instantiations that never report back*.
+
+**The known gap this version does not close.** Every version so far has been checked only by its author's own hubs. The April handoff kit went to two people new to the framework as a stranger test, and no friction report came back. Until one does, the framework describes one operator's practice well and has not been shown to transfer. The next version should be driven by an outside report, not by another internal pass.
 
 ---
 
